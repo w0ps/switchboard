@@ -15,21 +15,31 @@
       {{> loginButtons}}
 
       {{#if currentUser}}
-        <form class="new-task">
+        <!-- <form class="new-task">
           <input type="text" name="text" placeholder="Type to add new tasks" />
+        </form> -->
+        <form class="new-need">
+          <input type="text" name="title" placeholder="what is your need" />
+          <input type="text" name="description" placeholder="provide additional details if you want" />
+          <input type="submit" value="add need" />
         </form>
       {{/if}}
     </header>
 
-    <ul>
+    <!-- <ul>
       {{#each tasks}}
         {{> task}}
+      {{/each}}
+    </ul> -->
+    <ul>
+      {{#each needs}}
+        {{> need}}
       {{/each}}
     </ul>
   </div>
 </body>
 
-<template name="task">
+<!-- <template name="task">
   <li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">
     <button class="delete">&times;</button>
 
@@ -46,5 +56,28 @@
     {{/if}}
 
     <span class="text"><strong>{{username}}</strong> - {{text}}</span>
+  </li>
+</template> -->
+
+<template name="need">
+  <li>
+    <button class="delete">&times;</button>
+
+    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
+
+    {{#if isOwner}}
+      <button class="toggle-private">
+        {{#if private}}
+          Private
+        {{else}}
+          Public
+        {{/if}}
+      </button>
+    {{/if}}
+
+    <span class="text"><strong>{{username}}</strong> - {{title}}</span>
+    {{#if description}}
+      <p>{{description}}</p>
+    {{/if}}
   </li>
 </template>
