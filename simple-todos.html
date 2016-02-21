@@ -1,4 +1,4 @@
-<head>
+<!-- <head>
   <title>Todo List</title>
 </head>
 
@@ -14,30 +14,31 @@
 
       {{> loginButtons}}
 
-      {{#if currentUser}}
+      {{#if currentUser}} -->
         <!-- <form class="new-task">
           <input type="text" name="text" placeholder="Type to add new tasks" />
         </form> -->
-        <form class="new-need">
+        <!-- <form class="new-need">
           <input type="text" name="title" placeholder="what is your need" />
           <input type="text" name="description" placeholder="provide additional details if you want" />
           <input type="submit" value="add need" />
         </form>
       {{/if}}
-    </header>
+    </header> -->
 
     <!-- <ul>
       {{#each tasks}}
         {{> task}}
       {{/each}}
     </ul> -->
-    <ul>
+    <!-- <ul>
       {{#each needs}}
         {{> need}}
       {{/each}}
     </ul>
   </div>
-</body>
+  {{yield}}
+</body> -->
 
 <!-- <template name="task">
   <li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">
@@ -59,25 +60,37 @@
   </li>
 </template> -->
 
+<template name="needs">
+  <h1>Needs:</h1>
+  <ul>
+    {{log needs}}
+    {{#each needs}}
+      {{> need}}
+    {{/each}}
+  </ul>
+</template>
+
+<template name="needchat">
+  <h1></h1>
+</template>
+
 <template name="need">
   <li>
-    <button class="delete">&times;</button>
-
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-
-    {{#if isOwner}}
-      <button class="toggle-private">
-        {{#if private}}
-          Private
-        {{else}}
-          Public
-        {{/if}}
-      </button>
-    {{/if}}
-
-    <span class="text"><strong>{{username}}</strong> - {{title}}</span>
+    <span class="text"><strong>{{username}}</strong> - <a href="/needs/{{_id}}">{{title}}</a></span><button class="delete">x</button>
     {{#if description}}
       <p>{{description}}</p>
     {{/if}}
   </li>
+</template>
+
+<template name="need-detail">
+  <section>
+    {{log need}}
+    {{#with need}}
+      <h1>{{title}}</h1>
+      {{#if description}}
+        <span>{{description}}</span>
+      {{/if}}
+    {{/with}}
+  </section>
 </template>
