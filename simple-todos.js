@@ -91,9 +91,7 @@ if (Meteor.isClient) {
   Template.registerHelper( 'userIdToUserName', userIdToUserName );
 
   function userIdToUserName( userId ) {
-    console.log( this, arguments );
     return Meteor.users.findOne( { _id: userId} ).username;
-    return 'a name';
   }
 
   Template.needs.helpers({
@@ -105,16 +103,13 @@ if (Meteor.isClient) {
     },
     incompleteCount: function () {
       return Tasks.find({checked: {$ne: true}}).count();
-    },
-    log: function( something ) {
-      console.log( something );
     }
   });
 
   Template['need-detail'].helpers({
-    log: function( something ) {
-      console.log( something, this );
-    }
+    // log: function( something ) {
+    //   console.log( something, this );
+    // }
   });
 
   Template.needs.events( {
@@ -163,7 +158,6 @@ if (Meteor.isClient) {
       var value = event.target.value;
       if( !value ) return;
       event.target.value = '';
-      console.log( 'creating chat message:', value, this.need()._id );
       Meteor.call( 'addChatMessage', value, this.need()._id );
     }
   } );
