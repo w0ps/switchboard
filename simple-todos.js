@@ -52,7 +52,7 @@ if (Meteor.isServer) {
   } );
 
   Meteor.publish( 'users', function(){
-    return Users.find( {}, {
+    return Meteor.users.find( {}, {
       fields: { username: 1, avatar: 1 }
     } );
   } );
