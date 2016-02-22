@@ -2,7 +2,7 @@ Tasks = new Mongo.Collection("tasks");
 
 Needs = new Mongo.Collection( 'needs' );
 
-NeedChatMessages = new Mongo.Collection( 'needchatmessages' );
+ChatMessages = new Mongo.Collection( 'chatmessages' );
 
 function Post() {
   this.createdBy = Meteor.userId();
@@ -24,7 +24,7 @@ function Need( need ) {
   this.requirements = need.requirements || [];
 }
 
-function NeedChatMessage( text, sourceId ) {
+function ChatMessage( text, sourceId ) {
   this.text = text;
   this.created = new Date();
   this.createdBy = Meteor.userId();
@@ -46,7 +46,21 @@ if (Meteor.isServer) {
   Meteor.publish( 'needs', function() {
     return Needs.find( {} );
   } );
+
+  Meteor.publish( 'chatmessages', function() {
+    return ChatMessages.find( {} );
+  } );
+
+  Meteor.publish( 'users', function(){
+    return Users.find( {}, {
+      fields: { username: 1, avatar: 1 }
+    } );
+  } );
 }
+
+Router.route( '/', function(){
+  this.render( 'root' );
+} );
 
 Router.route( '/needs' );
 
@@ -55,8 +69,10 @@ Router.route( '/needs/:id', function() {
   this.render( 'need-detail', {
     data: {
       need: function() {
-        console.log( 'this.params.id', id );
         return Needs.findOne( { _id: id } );
+      },
+      chatmessages: function() {
+          return ChatMessages.find( { sourceId: id } );
       }
     }
   } );
@@ -68,16 +84,19 @@ if (Meteor.isClient) {
 
   Meteor.subscribe( 'needs' );
 
+  Meteor.subscribe( 'chatmessages' );
+
+  Meteor.subscribe( 'users' );
+
+  Template.registerHelper( 'userIdToUserName', userIdToUserName );
+
+  function userIdToUserName( userId ) {
+    console.log( this, arguments );
+    return Meteor.users.findOne( { _id: userId} ).username;
+    return 'a name';
+  }
+
   Template.needs.helpers({
-    tasks: function () {
-      if (Session.get("hideCompleted")) {
-        // If hide completed is checked, filter tasks
-        return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}});
-      } else {
-        // Otherwise, return all of the tasks
-        return Tasks.find({}, {sort: {createdAt: -1}});
-      }
-    },
     needs: function() {
       return Needs.find( {} );
     },
@@ -98,32 +117,20 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.body.events({
-    "submit .new-task": function (event) {
-      // Prevent default browser form submit
-      event.preventDefault();
+  Template.needs.events( {
+    "keyup input[name=need]": function( event ) {
+      if( event.keyCode !== 13 ) return;
+      var value = event.target.value, split, description;
+      if( !value ) return;
+      event.target.value = '';
+      if( ( split = value.split( '-' ) ).length > 1 ) {
+        value = split[ 0 ];
+        description = split[ 1 ];
+      }
 
-      // Get value from form element
-      var text = event.target.text.value;
-
-      // Insert a task into the collection
-      Meteor.call("addTask", text);
-
-      // Clear form
-      event.target.text.value = "";
-    },
-    "submit .new-need": function( event ) {
-      event.preventDefault();
-
-      var title = event.target.title.value,
-          description = event.target.description.value;
-
-      Meteor.call( 'addNeed', { title: title, description: description } );
-    },
-    "change .hide-completed input": function (event) {
-      Session.set("hideCompleted", event.target.checked);
+      Meteor.call( 'addNeed', { title: value, description: description } );
     }
-  });
+  } );
 
   // Template.task.helpers({
   //   isOwner: function () {
@@ -150,9 +157,20 @@ if (Meteor.isClient) {
     }
   } );
 
+  Template[ 'need-detail' ].events( {
+    'keyup input[name=message]': function( event ) {
+      if( event.keyCode !== 13 ) return;
+      var value = event.target.value;
+      if( !value ) return;
+      event.target.value = '';
+      console.log( 'creating chat message:', value, this.need()._id );
+      Meteor.call( 'addChatMessage', value, this.need()._id );
+    }
+  } );
+
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
-  });
+  } );
 }
 
 Meteor.methods({
@@ -167,6 +185,11 @@ Meteor.methods({
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
     Needs.remove( needId );
+  },
+  addChatMessage: function( text, sourceId ) {
+    if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
+
+    ChatMessages.insert( new ChatMessage( text, sourceId ) );
   },
   addTask: function (text) {
     // Make sure the user is logged in before inserting a task

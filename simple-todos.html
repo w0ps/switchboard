@@ -62,6 +62,9 @@
 
 <template name="needs">
   <h1>Needs:</h1>
+  {{#if currentUser}}
+    <input type="text" name="need" placeholder="what is your need" />
+  {{/if}}
   <ul>
     {{log needs}}
     {{#each needs}}
@@ -70,13 +73,9 @@
   </ul>
 </template>
 
-<template name="needchat">
-  <h1></h1>
-</template>
-
 <template name="need">
   <li>
-    <span class="text"><strong>{{username}}</strong> - <a href="/needs/{{_id}}">{{title}}</a></span><button class="delete">x</button>
+    <span class="text"><strong>{{userIdToUserName createdBy}}</strong> - <a href="/needs/{{_id}}">{{title}}</a></span><button class="delete">x</button>
     {{#if description}}
       <p>{{description}}</p>
     {{/if}}
@@ -85,7 +84,6 @@
 
 <template name="need-detail">
   <section>
-    {{log need}}
     {{#with need}}
       <h1>{{title}}</h1>
       {{#if description}}
@@ -93,4 +91,16 @@
       {{/if}}
     {{/with}}
   </section>
+  <section>
+    <div class="chat">
+      {{#each chatmessages}}
+        {{> chatmessage}}
+      {{/each}}
+    </div>
+    <input type="text" name="message" />
+  </section>
+</template>
+
+<template name="chatmessage">
+  <p>{{userIdToUserName createdBy}}: {{text}}</p>
 </template>
