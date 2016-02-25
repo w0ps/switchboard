@@ -97,18 +97,6 @@ if (Meteor.isClient) {
 
   Template.registerHelper( 'formatTime', formatTime );
 
-  Template.needs.helpers( {
-    needs: function() {
-      return Needs.find( {}, { sort: { created: -1 } } );
-    },
-    hideCompleted: function () {
-      return Session.get("hideCompleted");
-    },
-    incompleteCount: function () {
-      return Tasks.find({checked: {$ne: true}}).count();
-    }
-  } );
-
   Template['need-detail'].helpers({
     // log: function( something ) {
     //   console.log( something, this );
