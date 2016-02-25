@@ -4,8 +4,14 @@ Router.route( '/', function(){
 
 Router.route( '/needs' );
 
+var needId;
+
 Router.route( '/needs/:id', function() {
-  var id = this.params.id;
+  var id = needId = this.params.id;
+  Meteor.call( 'joinChat', id );
+
+  window.onbeforeunload = beforeUnLoad;
+
   this.render( 'need-detail', {
     data: {
       need: function() {
@@ -19,3 +25,7 @@ Router.route( '/needs/:id', function() {
 } );
 
 Router.route( '/profile' );
+
+function beforeUnLoad( event ) {
+	Meteor.call( 'leaveChat', needId );
+}

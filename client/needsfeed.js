@@ -25,7 +25,7 @@ Template.need.events( {
     event.preventDefault();
 
     var windowName = this.title;
-    alert( windowName );
+
     chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + chatHeight + ',width=' + chatWidth );
     return false;
   }

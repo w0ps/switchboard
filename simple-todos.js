@@ -24,6 +24,7 @@ function Need( need ) {
   this.responses = need.responses || [];
   // other needs this need needs to be met
   this.requirements = need.requirements || [];
+  this.inChat = need.inChat || [];
 }
 
 function ChatMessage( text, sourceId ) {
@@ -38,7 +39,7 @@ function Response( text, sourceId ) {
   this.created = new Date();
   this.createdBy = Meteor.userId();
   this.sourceId = sourceId;
-  this.responses = []; 
+  this.responses = [];
 }
 
 if (Meteor.isServer) {
@@ -96,9 +97,9 @@ if (Meteor.isClient) {
 
   Template.registerHelper( 'formatTime', formatTime );
 
-  Template.needs.helpers({
+  Template.needs.helpers( {
     needs: function() {
-      return Needs.find( {} );
+      return Needs.find( {}, { sort: { created: -1 } } );
     },
     hideCompleted: function () {
       return Session.get("hideCompleted");
@@ -106,7 +107,7 @@ if (Meteor.isClient) {
     incompleteCount: function () {
       return Tasks.find({checked: {$ne: true}}).count();
     }
-  });
+  } );
 
   Template['need-detail'].helpers({
     // log: function( something ) {
@@ -146,5 +147,15 @@ Meteor.methods({
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
     ChatMessages.insert( new ChatMessage( text, sourceId ) );
+  },
+  joinChat: function( id ) {
+    Needs.update( { _id: id }, {
+      $addToSet: { inChat: Meteor.userId() }
+    } );
+  },
+  leaveChat: function( id ) {
+    Needs.update( { _id: id }, {
+      $pull: { inChat: Meteor.userId() }
+    } );
   }
 });
