@@ -4,6 +4,8 @@ Needs = new Mongo.Collection( 'needs' );
 
 ChatMessages = new Mongo.Collection( 'chatmessages' );
 
+Responses = new Mongo.Collection( 'responses' );
+
 function Post() {
   this.createdBy = Meteor.userId();
   this.created = new Date();
@@ -31,6 +33,14 @@ function ChatMessage( text, sourceId ) {
   this.sourceId = sourceId;
 }
 
+function Response( text, sourceId ) {
+  this.text = text;
+  this.created = new Date();
+  this.createdBy = Meteor.userId();
+  this.sourceId = sourceId;
+  this.responses = []; 
+}
+
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish tasks that are public or belong to the current user
@@ -56,27 +66,11 @@ if (Meteor.isServer) {
       fields: { username: 1, avatar: 1 }
     } );
   } );
-}
 
-Router.route( '/', function(){
-  this.render( 'root' );
-} );
-
-Router.route( '/needs' );
-
-Router.route( '/needs/:id', function() {
-  var id = this.params.id;
-  this.render( 'need-detail', {
-    data: {
-      need: function() {
-        return Needs.findOne( { _id: id } );
-      },
-      chatmessages: function() {
-          return ChatMessages.find( { sourceId: id } );
-      }
-    }
+  Meteor.publish( 'avatars', function(){
+    return Meteor.avatars.find( {} );
   } );
-} );
+}
 
 if (Meteor.isClient) {
   // This code only runs on the client
@@ -87,6 +81,8 @@ if (Meteor.isClient) {
   Meteor.subscribe( 'chatmessages' );
 
   Meteor.subscribe( 'users' );
+
+  Meteor.subscribe( 'avatars' );
 
   Template.registerHelper( 'userIdToUserName', userIdToUserName );
 
@@ -111,46 +107,6 @@ if (Meteor.isClient) {
     //   console.log( something, this );
     // }
   });
-
-  Template.needs.events( {
-    "keyup input[name=need]": function( event ) {
-      if( event.keyCode !== 13 ) return;
-      var value = event.target.value, split, description;
-      if( !value ) return;
-      event.target.value = '';
-      if( ( split = value.split( '-' ) ).length > 1 ) {
-        value = split[ 0 ];
-        description = split[ 1 ];
-      }
-
-      Meteor.call( 'addNeed', { title: value, description: description } );
-    }
-  } );
-
-  // Template.task.helpers({
-  //   isOwner: function () {
-  //     return this.owner === Meteor.userId();
-  //   }
-  // });
-
-  // Template.task.events({
-  //   "click .toggle-checked": function () {
-  //     // Set the checked property to the opposite of its current value
-  //     Meteor.call("setChecked", this._id, ! this.checked);
-  //   },
-  //   "click .delete": function () {
-  //     Meteor.call("deleteTask", this._id);
-  //   },
-  //   "click .toggle-private": function () {
-  //     Meteor.call("setPrivate", this._id, ! this.private);
-  //   }
-  // });
-  
-  Template.need.events( {
-    'click button.delete': function( event ) {
-      Meteor.call( 'deleteNeed', this._id );
-    }
-  } );
 
   Template[ 'need-detail' ].events( {
     'keyup input[name=message]': function( event ) {
@@ -184,46 +140,5 @@ Meteor.methods({
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
     ChatMessages.insert( new ChatMessage( text, sourceId ) );
-  },
-  addTask: function (text) {
-    // Make sure the user is logged in before inserting a task
-    if (! Meteor.userId()) {
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Tasks.insert({
-      text: text,
-      createdAt: new Date(),
-      owner: Meteor.userId(),
-      username: Meteor.user().username
-    });
-  },
-  deleteTask: function (taskId) {
-    var task = Tasks.findOne(taskId);
-    if (task.private && task.owner !== Meteor.userId()) {
-      // If the task is private, make sure only the owner can delete it
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Tasks.remove(taskId);
-  },
-  setChecked: function (taskId, setChecked) {
-    var task = Tasks.findOne(taskId);
-    if (task.private && task.owner !== Meteor.userId()) {
-      // If the task is private, make sure only the owner can check it off
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Tasks.update(taskId, { $set: { checked: setChecked} });
-  },
-  setPrivate: function (taskId, setToPrivate) {
-    var task = Tasks.findOne(taskId);
-
-    // Make sure only the task owner can make a task private
-    if (task.owner !== Meteor.userId()) {
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Tasks.update(taskId, { $set: { private: setToPrivate } });
   }
 });

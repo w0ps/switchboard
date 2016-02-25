@@ -60,33 +60,17 @@
   </li>
 </template> -->
 
-<template name="needs">
-  <h1>Needs:</h1>
-  {{#if currentUser}}
-    <input type="text" name="need" placeholder="what is your need" />
-  {{/if}}
-  <ul>
-    {{#each needs}}
-      {{> need}}
-    {{/each}}
-  </ul>
-</template>
-
-<template name="need">
-  <li>
-    <span class="text"><strong>{{userIdToUserName createdBy}}</strong> - <a href="/needs/{{_id}}">{{title}}</a></span><button class="delete">x</button>
-    {{#if description}}
-      <p>{{description}}</p>
-    {{/if}}
-  </li>
-</template>
-
 <template name="need-detail">
   <section>
     {{#with need}}
       <h1>{{title}}</h1>
       {{#if description}}
         <span>{{description}}</span>
+      {{/if}}
+      {{#if responses}}
+        {{#each responses}}
+          {{> response}}
+        {{/each}}
       {{/if}}
     {{/with}}
   </section>
@@ -96,10 +80,17 @@
         {{> chatmessage}}
       {{/each}}
     </div>
-    <input type="text" name="message" />
+    <input type="text" name="message" autosuggest="false" />
   </section>
 </template>
 
 <template name="chatmessage">
   <p>{{userIdToUserName createdBy}}: {{text}}</p>
+</template>
+
+<template name="response">
+  <p>{{userIdToUserName createdBy}}: {{text}}</p>
+  {{#each responses}}
+    {{> response}}
+  {{/each}}
 </template>
