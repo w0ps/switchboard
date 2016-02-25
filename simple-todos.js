@@ -72,6 +72,14 @@ if (Meteor.isServer) {
   } );
 }
 
+function userIdToUserName( userId ) {
+  return Meteor.users.findOne( { _id: userId} ).username;
+}
+
+function formatTime( date ) {
+  return date.toTimeString().substring( 0, 8 );
+}
+
 if (Meteor.isClient) {
   // This code only runs on the client
   Meteor.subscribe("tasks");
@@ -86,9 +94,7 @@ if (Meteor.isClient) {
 
   Template.registerHelper( 'userIdToUserName', userIdToUserName );
 
-  function userIdToUserName( userId ) {
-    return Meteor.users.findOne( { _id: userId} ).username;
-  }
+  Template.registerHelper( 'formatTime', formatTime );
 
   Template.needs.helpers({
     needs: function() {
