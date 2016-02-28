@@ -1,0 +1,6 @@
+<template name="response">
+  <p>{{userIdToUserName createdBy}}: {{text}}</p>
+  {{#each responses}}
+    {{> response}}
+  {{/each}}
+</template>
