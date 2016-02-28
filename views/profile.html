@@ -1,7 +1,6 @@
 <template name="profile">
 	<h1>Profile</h1>
 	{{#with currentUser}}
-		{{> avatar}}
 		<img src="{{avatar}}" alt="{{username}}" />
 		<p>update your username (press enter to confirm)</p>
 		<input name="username" value={{username}} />

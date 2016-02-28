@@ -1,0 +1,24 @@
+<template name="need-detail">
+  <section>
+    {{#with need}}
+      <h1>{{title}}</h1>
+      {{#if description}}
+        <span>{{description}}</span>
+      {{/if}}
+      {{#each inChat}}
+        {{{getAvatar this}}}
+      {{/each}}
+      {{#each responses}}
+        {{> response}}
+      {{/each}}
+    {{/with}}
+  </section>
+  <section>
+    <div class="chat">
+      {{#each chatmessages}}
+        {{> chatmessage}}
+      {{/each}}
+    </div>
+    <input type="text" name="message" autosuggest="false" />
+  </section>
+</template>
