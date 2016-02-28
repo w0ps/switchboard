@@ -1,10 +1,6 @@
 <template name="need-detail">
   <section>
     {{#with need}}
-      <h1>{{title}}</h1>
-      {{#if description}}
-        <span>{{description}}</span>
-      {{/if}}
       {{#each inChat}}
         {{{getAvatar this}}}
       {{/each}}

@@ -10,9 +10,13 @@ Meteor.methods({
   addNeed: function( need ) {
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
-    //need = new Need( need );
+    need = new Need( need );
 
-    Needs.insert( new Need( need ) );
+    var nId = Needs.insert( need );
+    console.log( 'created need with id: ', nId );
+
+    Meteor.call( 'addChatMessage', need.title, nId );
+    if( need.description ) Meteor.call( 'addChatMessage', need.description, nId );
   },
   deleteNeed: function( needId ) {
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
