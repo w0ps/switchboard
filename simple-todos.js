@@ -67,10 +67,6 @@ if (Meteor.isServer) {
       fields: { username: 1, avatar: 1 }
     } );
   } );
-
-  Meteor.publish( 'avatars', function(){
-    return Meteor.avatars.find( {} );
-  } );
 }
 
 function userIdToUserName( userId ) {
@@ -91,11 +87,11 @@ if (Meteor.isClient) {
 
   Meteor.subscribe( 'users' );
 
-  Meteor.subscribe( 'avatars' );
-
   Template.registerHelper( 'userIdToUserName', userIdToUserName );
 
   Template.registerHelper( 'formatTime', formatTime );
+
+  Template.registerHelper( 'log', console.log.bind( console ) );
 
   Template['need-detail'].helpers({
     // log: function( something ) {
