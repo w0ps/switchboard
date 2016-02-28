@@ -1,16 +1,18 @@
-Router.route( '/', function(){
-  this.render( 'root' );
-} );
-
+Router.route( '/', function(){ this.render( 'root' ); } );
 Router.route( '/needs' );
+Router.route( '/profile' );
+Router.route( '/needs/:id', showNeed );
 
-var needId;
 
-Router.route( '/needs/:id', function() {
-  var id = needId = this.params.id;
+function beforeUnLoad( event ) {
+	Meteor.call( 'leaveChat', this.params.id );
+}
+
+function showNeed() {
+  var id = this.params.id;
   Meteor.call( 'joinChat', id );
 
-  window.onbeforeunload = beforeUnLoad;
+  window.onbeforeunload = beforeUnLoad.bind( this );
 
   this.render( 'need-detail', {
     data: {
@@ -22,10 +24,4 @@ Router.route( '/needs/:id', function() {
       }
     }
   } );
-} );
-
-Router.route( '/profile' );
-
-function beforeUnLoad( event ) {
-	Meteor.call( 'leaveChat', needId );
 }
