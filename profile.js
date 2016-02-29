@@ -57,14 +57,17 @@ function usernameKeyup( event ) {
 
 function avatarFileChange( event ) {
   FS.Utility.eachFile(event, function(file) {
-    Avatars.insert(file, function (err, fileObj) {
-      ( function getUrl(){
-        // this is a bit of a hack because I cannot find a load method on fileObj
-        var url = fileObj.url();
-        if( !url ) return setTimeout( getUrl );
-
-        Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ] );
-      } )();
-    });
+    Avatars.insert(file, updateAvatar );
   });
+}
+
+function updateAvatar(err, fileObj) {
+  
+  // this is a bit of a hack because url is undefined at first
+  ( function getUrl(){
+    var url = fileObj.url();
+    if( !url ) return setTimeout( getUrl, 10 );
+
+    Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ] );
+  } )();
 }

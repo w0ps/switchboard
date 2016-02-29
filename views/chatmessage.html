@@ -1,6 +1,11 @@
 <template name="chatmessage">
-  <p>
-    {{> avatar}}
-    {{userIdToUserName createdBy}}: {{text}}
-  </p>
+	<!-- <div class="chatmessage-container{{whose}}"> -->
+	  <div class="chatmessage{{whose}}">
+			<p class="chat-timecode">{{formatTime created}}</p>
+	    <!-- {{> avatar}} -->
+	    <span class="text">
+	    	{{userIdToUserName createdBy}}: {{text}}
+	    </span>
+	  </div>
+	<!-- </div> -->
 </template>

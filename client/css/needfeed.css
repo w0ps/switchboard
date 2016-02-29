@@ -1,52 +1,52 @@
 ul.needs {
 	padding: 0;
-}
-
-input[name="need"] {
-	width: 100%;
-	line-height: 25px;
-	height: 25px;
-	background-color: gray;
-	border: none;
-	font-size: 15px;
+	margin: 0;
 }
 
 li.need {
+	position: relative;
 	min-height: 50px;
-	line-height: 50px;
+	line-height: 15px;
 	list-style: none;
 	margin: 5px;
 	padding: 4px;
-	padding-left: 10px;
 	background-color: black;
 	color: white;
 }
 
 li.need span.time {
-	font-family: monaco;
+	padding-top: 20px;
+	margin-right: 5px;
 }
 
 li.need a {
 	color: orange;
 	text-decoration: none;
+	line-height: 15px;
 }
 
 li.need img.avatar {
 	float: right;
-	margin-left: 10px;
+	margin-left: 4px;
 }
 
 li.need strong.name {
-	float: right;
+	position: absolute;
+	bottom: 5px;
+	right: 50px;
 	font-size: 12px;
 	line-height: 12px;
-	margin-top: 36px;
 }
 
 li.need p {
 	line-height: 10px;
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+input[name="need"] {
+	line-height: 25px;
+	height: 25px;
 }
 
 /*li.need span.timecode {

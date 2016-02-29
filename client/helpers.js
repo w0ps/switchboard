@@ -10,6 +10,15 @@ var helpers = {
 			  return '<img class="avatar" src="' + user.avatar + '" alt="' + user.username + '" />';
 			},
 			formatTime: function( date ) {
+				var yesterday = new Date();
+				yesterday.setDate( yesterday.getDate() - 1 );
+
+				if( date < yesterday ) return [
+					date.getMonth(),
+					date.getDate(),
+					new Date().getFullYear().toString().slice( 2 )
+				].join( '/' );
+
 				return date.toTimeString().substring( 0, 8 );
 			},
 			isOwner: function() {

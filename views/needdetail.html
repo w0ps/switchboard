@@ -1,20 +1,3 @@
 <template name="need-detail">
-  <section>
-    {{#with need}}
-      {{#each inChat}}
-        {{{getAvatar this}}}
-      {{/each}}
-      {{#each responses}}
-        {{> response}}
-      {{/each}}
-    {{/with}}
-  </section>
-  <section>
-    <div class="chat">
-      {{#each chatmessages}}
-        {{> chatmessage}}
-      {{/each}}
-    </div>
-    <input type="text" name="message" autosuggest="false" />
-  </section>
+  {{> chat}}
 </template>
