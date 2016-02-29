@@ -1,6 +1,6 @@
 var resizeAvatar = function( fileObj, readStream, writeStream ) {
   // Transform the image into a 10x10px thumbnail
-  gm( readStream, fileObj.name() ).resize( '50', '50' ).stream().pipe( writeStream );
+  gm( readStream, fileObj.name() ).resize( '50', '50', "!" ).stream().pipe( writeStream );
 };
 
 Avatars = new FS.Collection( 'avatars', {
@@ -56,8 +56,6 @@ function usernameKeyup( event ) {
 }
 
 function avatarFileChange( event ) {
-  console.log( event.target.files );
-
   FS.Utility.eachFile(event, function(file) {
     Avatars.insert(file, function (err, fileObj) {
       ( function getUrl(){
@@ -65,7 +63,7 @@ function avatarFileChange( event ) {
         var url = fileObj.url();
         if( !url ) return setTimeout( getUrl );
 
-        Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ], console.log.bind( console, 'updated avatar' ) );
+        Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ] );
       } )();
     });
   });
