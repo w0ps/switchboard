@@ -1,6 +1,6 @@
 <template name="avatar">
 	{{#if isOwner}}
-	  <img src="{{currentUser.avatar}}" alt="{{currentUser.name}}" />
+	  <img class="avatar" src="{{currentUser.avatar}}" alt="{{currentUser.name}}" />
 	{{else}}
 	  {{{getAvatar createdBy}}}
 	{{/if}}
