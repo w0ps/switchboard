@@ -1,26 +1,24 @@
-Template.registerHelper( 'userIdToUserName', userIdToUserName );
+var helpers = {
+			log: console.log.bind( console ),
+			userIdToUserName: function ( userId ) {
+				var user = Meteor.users.findOne( { _id: userId} );
+			  return user ? user.username : user;
+			},
+			getAvatar: function ( userId ) {
+			  var user = Meteor.users.findOne( { _id: userId } );
+			  if( !user ) return;
+			  return '<img class="avatar" src="' + user.avatar + '" alt="' + user.username + '" />';
+			},
+			formatTime: function( date ) {
+				return date.toTimeString().substring( 0, 8 );
+			},
+			isOwner: function() {
+			  return this.createdBy && this.createdBy === Meteor.userId();
+			}
+		};
 
-Template.registerHelper( 'getAvatar', getAvatar );
-
-Template.registerHelper( 'formatTime', formatTime );
-
-Template.registerHelper( 'log', console.log.bind( console ) );
-
-Template.registerHelper( 'isOwner', isOwner );
-
-function userIdToUserName( userId ) {
-  return Meteor.users.findOne( { _id: userId} ).username;
+function registerHelper( name ) {
+	Template.registerHelper( name, helpers[ name ] );
 }
 
-function getAvatar( userId ) {
-  var user = Meteor.users.findOne( { _id: userId } );
-  return '<img src="' + user.avatar + '" alt="' + user.username + '" />';
-}
-
-function formatTime( date ) {
-  return date.toTimeString().substring( 0, 8 );
-}
-
-function isOwner() {
-  return this.createdBy && this.createdBy === Meteor.userId();
-}
+Object.keys( helpers ).forEach( registerHelper );
