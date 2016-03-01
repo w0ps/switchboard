@@ -18,6 +18,11 @@ Meteor.methods({
     Meteor.call( 'addChatMessage', need.title, nId );
     if( need.description ) Meteor.call( 'addChatMessage', need.description, nId );
   },
+  updateNeed: function( needId, updateData ) {
+    if( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
+
+    Needs.update( { _id: needId }, { $set: updateData } );
+  },
   deleteNeed: function( needId ) {
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
