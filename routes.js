@@ -47,7 +47,7 @@ function getConversation( id ) {
       } );
     }
 
-    if( message.created.getTime() - previousLine.created.getTime() > 60 * 100 ) {
+    if( message.created.getTime() - previousLine.created.getTime() > 60 * 1000 ) {
       return previousSpeakingTurn.streaks.push( newStreak );
     }
 
