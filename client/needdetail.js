@@ -5,6 +5,10 @@ function needDetailBodyKeyupHandler( event ) {
 			keyPressed = String.fromCharCode( event.which ),
 			handlers = {
 				U: function updateNeedTitle() {
+					var selectedText = getSelectedText();
+
+					if( !selectedText ) return;
+
 					Meteor.call( 'updateNeed', need._id, { title: getSelectedText() } );
 				},
 				'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
