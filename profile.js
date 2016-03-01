@@ -33,6 +33,9 @@ if( Meteor.isServer ) {
     },
     updateAvatar: function( url ) {
       Meteor.users.update( { _id: Meteor.userId() }, { $set: { avatar: url } } );
+    },
+    updateAvatarUrl: function( url ) {
+      Avatars.insert( url, updateAvatar );
     }
   } );
 
@@ -40,8 +43,9 @@ if( Meteor.isServer ) {
   Meteor.subscribe( 'avatars' );
 
   Template.profile.events( {
-    'keyup input[name=username]': usernameKeyup,
-    'change input[name=avatar-file]': avatarFileChange
+    'keyup input[name="username"]': usernameKeyup,
+    'change input[name="avatar-file"]': avatarFileChange,
+    'keyup input[name="avatar-url"]': avatarUrlChange
   } );
 }
 
@@ -56,17 +60,31 @@ function usernameKeyup( event ) {
 }
 
 function avatarFileChange( event ) {
-  FS.Utility.eachFile(event, function(file) {
-    Avatars.insert(file, updateAvatar );
+  FS.Utility.eachFile( event, function( file ) {
+    Avatars.insert( file, updateAvatar );
   });
+}
+
+function avatarUrlChange( event ) {
+  if( event.keyCode !== 13 ) return;
+  
+  var url = event.target.value;
+  
+  if( !url || !isImgURlRegexp.exec( url ) ) return;
+
+  Meteor.call( 'updateAvatarUrl', url );
 }
 
 function updateAvatar(err, fileObj) {
   
   // this is a bit of a hack because url is undefined at first
   ( function getUrl(){
+    console.log( 'updateAvatar', {
+      err: err,
+      'fileObj.url()': fileObj.url()
+    } );
     var url = fileObj.url();
-    if( !url ) return setTimeout( getUrl, 10 );
+    if( !url ) return setTimeout( Meteor.bindEnvironment( getUrl ), 10 );
 
     Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ] );
   } )();
