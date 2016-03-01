@@ -14,6 +14,10 @@ section.chat {
 	text-align: center;
 }
 
+.speakingturn:first-child {
+	margin-top: 0;
+}
+
 .speakingturn.mine {
 	float: right;
 	text-align: right;
@@ -91,6 +95,7 @@ span.chatline {
 
 span.chatline.mine {
 	float: right;
+	text-align: right;
 }
 
 #need-detail-footer {
