@@ -47,6 +47,8 @@ li.need p {
 input[name="need"] {
 	line-height: 25px;
 	height: 25px;
+	width: 100%;
+	padding-left: 5px;
 }
 
 /*li.need span.timecode {

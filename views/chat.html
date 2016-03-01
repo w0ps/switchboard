@@ -1,0 +1,33 @@
+<template name="chat">
+  <section class="chat">
+    <div>
+      {{#each speakingTurns}}
+        <div class="speakingturn{{whose}}">
+          <span class="name">{{userIdToUserName createdBy}}</span>
+          {{> avatar}}
+        </div>
+        {{#each streaks}}
+          <div class="streak{{whose}}">
+            {{#each lines}}
+              <span class="chatline{{whose}}">
+                {{text}}
+              </span>
+            {{/each}}
+          </div>
+          <p class="chat-timecode{{whose}}">{{formatTime created}}</p>
+        {{/each}}
+      {{/each}}
+    </div>
+  </section>
+  <footer id="need-detail-footer">
+    <input style="width: calc( 100% - 50px * {{need.inChat.length}} )" class="inverted" name="message" placeholder="..." autocomplete="off" />
+    {{#with need}}
+      {{#each inChat}}
+        {{{getAvatar this}}}
+      {{/each}}
+      {{#each responses}}
+        {{> response}}
+      {{/each}}
+    {{/with}}
+  </footer>
+</template>
