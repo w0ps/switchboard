@@ -1,7 +1,7 @@
 <template name="chat">
   <section class="chat">
     <div>
-      {{#each speakingTurns}}
+      {{#each conversation}}
         <div class="speakingturn{{whose}}">
           <span class="name">{{userIdToUserName createdBy}}</span>
           {{> avatar}}

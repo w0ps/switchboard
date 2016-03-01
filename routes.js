@@ -19,38 +19,41 @@ function showNeed() {
       need: function() {
         return Needs.findOne( { _id: id } );
       },
-      speakingTurns: function() {
-          var messages = ChatMessages.find( { sourceId: id } ),
-              conversation = [];
-
-          messages.forEach( function( message, i ) {
-            var previousSpeakingTurn = i && conversation[ conversation.length - 1 ],
-                previousStreak = i && previousSpeakingTurn.streaks[ previousSpeakingTurn.streaks.length - 1 ],
-                previousLine = i && previousStreak.lines[ previousStreak.lines.length - 1 ],
-                newStreak = {
-                  createdBy: message.createdBy,
-                  created: message.created,
-                  lines: [ message ]
-                };
-
-            if( !i || previousSpeakingTurn.createdBy !== message.createdBy ) {
-              return conversation.push( {
-                createdBy: message.createdBy,
-                streaks: [ newStreak ]
-              } );
-            }
-
-            if( message.created.getTime() - previousLine.created.getTime() > 60 * 100 ) {
-              return previousSpeakingTurn.streaks.push( newStreak );
-            }
-
-            previousStreak.lines.push( message );
-          } );
-
-          console.log( conversation );
-
-          return conversation;
+      conversation: function() {
+        return getConversation( id );
       }
     }
   } );
+}
+
+function getConversation( id ) {
+  var messages = ChatMessages.find( { sourceId: id } ),
+      conversation = [];
+
+  messages.forEach( function( message, i ) {
+    var previousSpeakingTurn = i && conversation[ conversation.length - 1 ],
+        previousStreak = i && previousSpeakingTurn.streaks[ previousSpeakingTurn.streaks.length - 1 ],
+        previousLine = i && previousStreak.lines[ previousStreak.lines.length - 1 ],
+        newStreak = {
+          createdBy: message.createdBy,
+          created: message.created,
+          lines: [ message ]
+        };
+
+    if( !i || previousSpeakingTurn.createdBy !== message.createdBy ) {
+      return conversation.push( {
+        createdBy: message.createdBy,
+        streaks: [ newStreak ]
+      } );
+    }
+
+    if( message.created.getTime() - previousLine.created.getTime() > 60 * 100 ) {
+      return previousSpeakingTurn.streaks.push( newStreak );
+    }
+
+    previousStreak.lines.push( message );
+    previousStreak.created = message.created;
+  } );
+
+  return conversation;
 }
