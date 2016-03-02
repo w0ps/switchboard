@@ -17,6 +17,14 @@
           <p class="chat-timecode{{whose}}">{{formatTime created}}</p>
         {{/each}}
       {{/each}}
+      {{#each need.writingMessage}}
+        <div class="speakingturn">
+          <span class="name">{{userIdToUserName this}}</span>
+        </div>
+        <div class="streak">
+          <chatline>...</chatline>
+        </div>
+      {{/each}}
     </div>
   </section>
   <footer id="need-detail-footer">

@@ -38,6 +38,16 @@ Meteor.methods({
     Needs.update( { _id: id }, {
       $pull: { inChat: Meteor.userId() }
     } );
+  },
+  startTyping: function( id ) {
+    Needs.update( { _id: id }, {
+      $addToSet: { writingMessage: Meteor.userId() }
+    } );
+  },
+  stopTyping: function( id ) {
+    Needs.update( { _id: id }, {
+      $pull: { writingMessage: Meteor.userId() }
+    } );
   }
 });
 
