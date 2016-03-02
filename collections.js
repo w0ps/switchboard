@@ -6,6 +6,7 @@ Responses = new Mongo.Collection( 'responses' );
 
 Meteor.methods({
   addNeed: function( title ) {
+    console.log( 'addneed called', title);
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
     var need = new Need( { title: title } ),
@@ -46,8 +47,8 @@ function Post() {
   this.responses = [];
 }
 
-function Need( need ) {
-  this.title = need.title;
+function Need( options ) {
+  this.title = options.title;
 
   this.created = new Date();
   this.createdBy = Meteor.userId();
@@ -56,13 +57,13 @@ function Need( need ) {
 
   // users that get notified when something happens in this thread
   this.subscribed = [ this.createdBy ];
-  this.keywords = need.keywords || [];
+  this.keywords = options.keywords || [];
   // ids of response posts
-  this.responses = need.responses || [];
+  this.responses = options.responses || [];
   // other needs this need needs to be met
-  this.requirements = need.requirements || [];
-  this.inChat = need.inChat || [];
-  this.writingMessage = needs.writingMessage || [];
+  this.requirements = options.requirements || [];
+  this.inChat = options.inChat || [];
+  this.writingMessage = options.writingMessage || [];
 }
 
 function ChatMessage( text, sourceId ) {

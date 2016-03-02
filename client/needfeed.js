@@ -8,7 +8,7 @@ Template.needs.events( {
     var value = event.target.value, split, description;
     if( !value ) return;
     event.target.value = '';
-
+console.log( value );
     Meteor.call( 'addNeed', value );
   }
 } );
