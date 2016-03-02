@@ -1,6 +1,8 @@
 ul.needs {
 	padding: 0;
 	margin: 0;
+	background-color: black;
+	padding-top: 2px;
 }
 
 li.need {
@@ -8,10 +10,10 @@ li.need {
 	min-height: 50px;
 	line-height: 15px;
 	list-style: none;
-	margin: 5px;
+	margin: 2px;
 	padding: 4px;
-	background-color: black;
-	color: white;
+	background-color: white;
+	color: black;
 }
 
 li.need span.time {
@@ -19,28 +21,21 @@ li.need span.time {
 	margin-right: 5px;
 }
 
-li.need a {
-	color: orange;
-	text-decoration: none;
-	line-height: 15px;
-}
-
 li.need img.avatar {
-	float: right;
-	margin-left: 4px;
+	/*float: left;*/
+	margin: 0 4px;
 }
 
-li.need strong.name {
-	position: absolute;
-	bottom: 5px;
-	right: 50px;
-	font-size: 12px;
-	line-height: 12px;
+li.need a {
+	text-decoration: none;
+}
+
+li.need .name {
+	font-family: open-sans-extrabold, impact;
 }
 
 li.need p {
-	line-height: 10px;
-	margin-top: 0;
+	margin-top: 3px;
 	margin-bottom: 0;
 }
 
