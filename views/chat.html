@@ -18,11 +18,8 @@
         {{/each}}
       {{/each}}
       {{#each need.writingMessage}}
-        <div class="speakingturn">
-          <span class="name">{{userIdToUserName this}}</span>
-        </div>
         <div class="streak">
-          <chatline>...</chatline>
+          <chatline>{{userIdToUserName this}} is typing...</chatline>
         </div>
       {{/each}}
     </div>

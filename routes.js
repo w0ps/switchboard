@@ -6,6 +6,7 @@ Router.route( '/needs/:id', showNeed );
 
 function beforeUnLoad( event ) {
 	Meteor.call( 'leaveChat', this.params.id );
+  Meteor.call( 'stopTyping', this.params.id );
 }
 
 function showNeed() {
