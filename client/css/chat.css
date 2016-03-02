@@ -86,6 +86,10 @@ section.chat {
 	margin-right: 0px;
 }
 
+.chat-timecode:not(.mine) + .speakingturn:not(.mine) {
+	margin-top: 0;
+}
+
 span.chatline {
 	clear: both;
 	float: left;
