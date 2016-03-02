@@ -112,8 +112,8 @@ span.chatline.mine {
 
 #need-detail-footer input[name="message"] {
 	box-sizing: border-box;
-	height: 50px;
-	line-height: 50px;
+	height: 25px;
+	line-height: 25px;
 	padding: 0 8px;
 	font-size: 17px;
 }

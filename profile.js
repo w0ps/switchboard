@@ -1,6 +1,6 @@
 var resizeAvatar = function( fileObj, readStream, writeStream ) {
   // Transform the image into a 10x10px thumbnail
-  gm( readStream, fileObj.name() ).resize( '50', '50', "!" ).stream().pipe( writeStream );
+  gm( readStream, fileObj.name() ).resize( '25', '25', "!" ).stream().pipe( writeStream );
 };
 
 Avatars = new FS.Collection( 'avatars', {
