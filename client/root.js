@@ -1,4 +1,4 @@
-var needsFeedWidth = 300,
+var needsFeedWidth = 350,
 		needsFeedWindow;
 
 Template.root.events( {
@@ -7,8 +7,6 @@ Template.root.events( {
 
 function openNeeds( event ) {
 	event.preventDefault();
-
-	needsFeedWindow = window.open( '/needs', 'needs', 'height=' + window.innerHeight + ',width=' + needsFeedWidth );
 
 	return false;
 }

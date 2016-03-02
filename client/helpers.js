@@ -1,3 +1,5 @@
+var defaultPictureSrc = '/defaultpicture.jpg';
+
 var helpers = {
 			log: console.log.bind( console ),
 			userIdToUserName: function ( userId ) {
@@ -7,7 +9,7 @@ var helpers = {
 			getAvatar: function ( userId ) {
 			  var user = Meteor.users.findOne( { _id: userId } );
 			  if( !user ) return;
-			  return '<img class="avatar" src="' + user.avatar + '" alt="' + user.username + '" />';
+			  return '<img class="avatar" src="' + ( user.avatar || defaultPictureSrc ) + '" alt="' + user.username + '" />';
 			},
 			formatTime: function( date ) {
 				var yesterday = new Date();

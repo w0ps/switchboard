@@ -13,3 +13,8 @@ input.inverted {
 input.inverted:focus {
 	background-color: #AAA;
 }
+
+img.avatar {
+	width: 25px;
+	height: 25px;
+}
