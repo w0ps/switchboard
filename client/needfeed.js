@@ -1,6 +1,6 @@
 var chatWindows = {},
-    chatWidth = 200,
-    chatHeight = 300;
+    chatWidth = 300,
+    chatHeight = 400;
 
 Template.needs.events( {
   "keyup input[name=need]": function( event ) {
