@@ -8,5 +8,7 @@ Template.root.events( {
 function openNeeds( event ) {
 	event.preventDefault();
 
+	needsFeedWindow = window.open( '/needs', 'needs', 'height=' + window.innerHeight + ',width=' + needsFeedWidth );
+
 	return false;
 }
