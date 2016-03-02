@@ -5,12 +5,12 @@ section.chat {
 }
 
 .speakingturn {
-	display: inline-block;
+	/*display: inline-block;*/
 	float: left;
 	clear: both;
 	position: relative;
 	padding: 0 20px;
-	margin-top: -50px;
+	margin-top: -25px;
 	text-align: center;
 }
 
@@ -34,7 +34,7 @@ section.chat {
 
 .speakingturn span.name {
 	margin: 0 10px;
-	line-height: 50px;
+	line-height: 25px;
 	font-family: open-sans-light, impact;
 }
 

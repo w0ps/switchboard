@@ -1,5 +1,3 @@
-Tasks = new Mongo.Collection("tasks");
-
 Needs = new Mongo.Collection( 'needs' );
 
 ChatMessages = new Mongo.Collection( 'chatmessages' );
@@ -7,16 +5,13 @@ ChatMessages = new Mongo.Collection( 'chatmessages' );
 Responses = new Mongo.Collection( 'responses' );
 
 Meteor.methods({
-  addNeed: function( need ) {
+  addNeed: function( title ) {
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
-    need = new Need( need );
-
-    var nId = Needs.insert( need );
-    console.log( 'created need with id: ', nId );
+    var need = new Need( { title: title } ),
+        nId = Needs.insert( need );
 
     Meteor.call( 'addChatMessage', need.title, nId );
-    if( need.description ) Meteor.call( 'addChatMessage', need.description, nId );
   },
   updateNeed: function( needId, updateData ) {
     if( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
@@ -53,9 +48,12 @@ function Post() {
 
 function Need( need ) {
   this.title = need.title;
-  this.description = need.description;
+
   this.created = new Date();
   this.createdBy = Meteor.userId();
+
+  this.updated = new Date( this.created );
+
   // users that get notified when something happens in this thread
   this.subscribed = [ this.createdBy ];
   this.keywords = need.keywords || [];
@@ -64,6 +62,7 @@ function Need( need ) {
   // other needs this need needs to be met
   this.requirements = need.requirements || [];
   this.inChat = need.inChat || [];
+  this.writingMessage = needs.writingMessage || [];
 }
 
 function ChatMessage( text, sourceId ) {

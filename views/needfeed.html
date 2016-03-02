@@ -11,12 +11,12 @@
 
 <template name="need">
   <li class="need">
-    <a class="open-chat" href="/needs/{{_id}}">
-      <span class="timecode">{{formatTime created}}</span>
-      {{{getAvatar createdBy}}}
-      <span class="name">{{userIdToUserName createdBy}}</span>
-      <!-- <button class="delete">x</button> -->
-      <p>{{title}}</p>
-    </a>
+    <span class="timecode">{{formatTime created}}</span>
+    {{{getAvatar createdBy}}}
+    <span class="name">{{userIdToUserName createdBy}}</span>
+    <!-- <button class="delete">x</button> -->
+    <p><a class="open-chat" href="/needs/{{_id}}">
+      {{title}}
+    </a></p>
   </li>
 </template>

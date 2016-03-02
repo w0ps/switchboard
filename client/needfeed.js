@@ -8,12 +8,8 @@ Template.needs.events( {
     var value = event.target.value, split, description;
     if( !value ) return;
     event.target.value = '';
-    if( ( split = value.split( '-' ) ).length > 1 ) {
-      value = split[ 0 ];
-      description = split[ 1 ];
-    }
 
-    Meteor.call( 'addNeed', { title: value, description: description } );
+    Meteor.call( 'addNeed', value );
   }
 } );
 
