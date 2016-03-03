@@ -4,7 +4,18 @@ function needDetailBodyKeyupHandler( event ) {
 	var need = this.need(),
 			keyPressed = String.fromCharCode( event.which ),
 			handlers = {
-				U: function updateNeedTitle() {
+				// C: function updateNeedColor () {
+				// 	var input = document.createElement( 'input' ),
+				// 			colorpicker;
+
+				// 	input.classList.add( 'modal', 'color' );
+				// 	document.body.appendChild( input );
+
+				// 	// colorpicker = new ColorPicker( input, {
+				// 	// 	mode: 'rgb'
+				// 	// } );
+				// },
+				U: function updateNeedTitle () {
 					var selectedText = getSelectedText();
 
 					if( !selectedText ) return;
@@ -17,20 +28,11 @@ function needDetailBodyKeyupHandler( event ) {
 	return ( handlers[ keyPressed ] || handlers[ undefined ] )();
 }
 
-Template['need-detail'].onCreated( function() {
-	console.log( 'created chat' );
+Template[ 'need-detail' ].onCreated( function() {
 	boundNeedDetailBodyKeyupHandler = needDetailBodyKeyupHandler.bind( this.data );
 	document.body.addEventListener( 'keyup', boundNeedDetailBodyKeyupHandler );
-    // $(window).on('mouseup', chatMouseUpHandler);
 } );
 
-Template['need-detail'].onRendered(function() {
-	console.log( 'rendered chat' );
-    // $(window).on('mouseup', chatMouseUpHandler);
-});
-
-Template['need-detail'].onDestroyed(function() {
-	console.log( 'destroyed chat' );
+Template[ 'need-detail' ].onDestroyed( function() {
 	document.body.removeEventListener( boundNeedDetailBodyKeyupHandler );
-    // $(window).off('mouseup', chatMouseUpHandler);
-});
+} );
