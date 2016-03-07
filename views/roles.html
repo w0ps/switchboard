@@ -1,0 +1,41 @@
+<template name="roles">
+	<h1>Roles</h1>
+	<table id="roles">
+		<thead>
+			<tr>
+				<td>role name</td>
+				{{#each permissions}}
+					<td>{{this}}</td>
+				{{/each}}
+			</tr>
+		</thead>
+		<tbody>	
+			{{#each roles}}
+				<tr data-name="{{name}}">
+					<td>{{name}}</td>
+					{{#each permissionsforrole}}
+						<td data-permission="{{name}}">
+							{{#if enabled}}
+								<input type="checkbox" checked />
+							{{else}}
+								<input type="checkbox" />
+							{{/if}}
+						</td>
+					{{/each}}
+					<td>
+						{{#if userCount}}
+							{{userCount}} users
+						{{else}}
+							<button class="delete">delete role</button>
+						{{/if}}
+					</td>
+				</tr>
+			{{/each}}
+			<tr>
+				<td>
+					<input name="new-role" placeholder="new role" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</template>

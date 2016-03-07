@@ -1,10 +1,17 @@
 <template name="root">
-	{{#if currentUser}}
-		<img src="{{currentUser.avatar}}" alt="{{currentUser.username}}" />
-	{{/if}}
-	{{> loginButtons}}
-	<a href="/needs">view needs</a>
-	<a href="/profile">view/edit profile</a>
+	<aside>
+		{{#if currentUser}}
+			<img src="{{currentUser.avatar}}" alt="{{currentUser.username}}" />
+		{{/if}}
+		{{> loginButtons}}
+	</aside>
+	<nav>
+		<a href="/needs">view needs</a>
+		<a href="/profile">view/edit profile</a>
+		<a href="/manage users">manage users</a>
+		<a href="/users">manage users</a>
+		<a href="/roles">manage roles</a>
+	</nav>
 	<h4>
 		keybinds:
 	</h4>

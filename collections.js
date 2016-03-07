@@ -4,6 +4,21 @@ ChatMessages = new Mongo.Collection( 'chatmessages' );
 
 Responses = new Mongo.Collection( 'responses' );
 
+Roles = new Mongo.Collection( 'roles' );
+
+permissions = [
+  'post chatmessages',
+  'post needs',
+  'post responses',
+  'edit roles',
+  'edit users',
+  'edit needs',
+  'edit chatmessages',
+  // 'multiuser',
+  // 'chatroom',
+  // 'separate windows' ?
+];
+
 Meteor.methods({
   addNeed: function( title ) {
     console.log( 'addneed called', title);
@@ -48,6 +63,49 @@ Meteor.methods({
     Needs.update( { _id: id }, {
       $pull: { writingMessage: Meteor.userId() }
     } );
+  },
+  updateRole: function( name, incomingPermissions ) {
+    incomingPermissions = incomingPermissions || {};
+    var userId = Meteor.userId();
+
+    var instructions = {
+          $set: {
+            name: name,
+            updated: new Date(),
+            updatedBy: userId
+          }
+        },
+        target = instructions.$set;
+    
+    Object.keys( incomingPermissions ).forEach( receivePermission );
+
+    Roles.update( { name: name }, instructions, { upsert: true } );
+
+    function receivePermission( key ) {
+      if( permissions.indexOf( key ) > -1 ) target[ key ] = !!incomingPermissions[ key ];
+    }
+  },
+  deleteRole: function( name ) {
+
+    // check if role is in use, then don't delete
+    var count = Meteor.users.find( { role: name } ).count();
+
+    if ( count ) {
+      throw( new Meteor.Error(
+        403,
+        'role is used',
+        'the role ' + name + ' is currently assigned to ' + count + ' users'
+      ) );
+    }
+
+    Roles.remove( {
+      name: name
+    } );
+  },
+  setUserRole: function( username, role ) {
+    Meteor.users.update( { username: username }, { $set: {
+      role: role
+    } } );
   }
 });
 
