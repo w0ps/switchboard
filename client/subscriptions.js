@@ -1,4 +1,4 @@
-Meteor.subscribe( 'needs' );
-Meteor.subscribe( 'chatmessages' );
-Meteor.subscribe( 'users' );
-Meteor.subscribe( 'roles' );
+needsHandle = Meteor.subscribe( 'needs' );
+usersHandle = Meteor.subscribe( 'users' );
+rolesHandle = Meteor.subscribe( 'roles' );
+chatmessagesHandle = Meteor.subscribe( 'chatmessages' );

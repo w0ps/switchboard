@@ -8,9 +8,12 @@
 	<nav>
 		<a href="/needs">view needs</a>
 		<a href="/profile">view/edit profile</a>
-		<a href="/manage users">manage users</a>
+		{{#if isAllowed 'edit users'}}
 		<a href="/users">manage users</a>
-		<a href="/roles">manage roles</a>
+		{{/if}}
+		{{#if isAllowed 'edit roles'}}
+			<a href="/roles">manage roles</a>
+		{{/if}}
 	</nav>
 	<h4>
 		keybinds:

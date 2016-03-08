@@ -66,13 +66,16 @@ Meteor.methods({
   },
   updateRole: function( name, incomingPermissions ) {
     incomingPermissions = incomingPermissions || {};
-    var userId = Meteor.userId();
+    
+    if( !isAllowed( 'edit roles' ) ) {
+      throw( new Meteor.Error( 503, 'not allowed', 'you are not allowed to edit roles' ) );
+    }
 
     var instructions = {
           $set: {
             name: name,
             updated: new Date(),
-            updatedBy: userId
+            updatedBy: Meteor.userId()
           }
         },
         target = instructions.$set;

@@ -29,6 +29,8 @@ function showNeed() {
 }
 
 function showRoles() {
+  if( !isAllowed( 'edit roles' ) ) this.redirect( '/' );
+
   this.render( 'roles', {
     data: {
       roles: function() {
@@ -49,6 +51,8 @@ function showRoles() {
 }
 
 function showUsers() {
+  if( !isAllowed( 'edit users' ) ) this.redirect( '/' );
+
   this.render( 'users', {
     data: {
       usersByRole: function() {
@@ -63,6 +67,7 @@ function showUsers() {
         allUsers.forEach( placeUserInList );
 
         populateUsersByRoleArray( 'no role' );
+        
         Object.keys( rolesByName ).forEach( populateUsersByRoleArray );
 
         return usersByRoleArray;
