@@ -28,6 +28,16 @@ var helpers = {
       },
       isAllowed: function( permission ) {
         return isAllowed( permission );
+      },
+      compare: function( a, b, comparison ) {
+        if( comparison === '==' ) return a == b;
+        if( comparison === '<' ) return a < b;
+        if( comparison === '>' ) return a > b;
+        if( comparison === '<=' ) return a <= b;
+        if( comparison === '>=' ) return a >= b;
+        if( comparison === '!=' ) return a != b;
+        if( comparison === '!==' ) return a !== b;
+        return a === b;
       }
     };
 

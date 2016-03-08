@@ -8,6 +8,9 @@ var publications = {
       },
       roles: function() {
         return Roles.find( {} );
+      },
+      snapshots: function() {
+        return Snapshots.find( {} );
       }
     };
 

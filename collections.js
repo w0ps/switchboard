@@ -6,6 +6,8 @@ Responses = new Mongo.Collection( 'responses' );
 
 Roles = new Mongo.Collection( 'roles' );
 
+Snapshots = new Mongo.Collection( 'snapshots' );
+
 permissions = [
   'post chatmessages',
   'post needs',
@@ -14,6 +16,7 @@ permissions = [
   'edit users',
   'edit needs',
   'edit chatmessages',
+  'edit snapshots'
   // 'multiuser',
   // 'chatroom',
   // 'separate windows' ?
@@ -150,4 +153,10 @@ function Response( text, sourceId ) {
   this.createdBy = Meteor.userId();
   this.sourceId = sourceId;
   this.responses = [];
+}
+
+function Snapshot( name ) {
+  this.name = name;
+  this.created = new Date();
+  this.createdBy = Meteor.userId();
 }

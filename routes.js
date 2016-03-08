@@ -4,6 +4,7 @@ Router.route( '/profile' );
 Router.route( '/needs/:id', showNeed );
 Router.route( '/roles', showRoles );
 Router.route( '/users', showUsers );
+Router.route( '/snapshots', showSnapshots );
 
 function beforeUnLoad( event ) {
 	Meteor.call( 'leaveChat', this.params.id );
@@ -29,7 +30,7 @@ function showNeed() {
 }
 
 function showRoles() {
-  if( !isAllowed( 'edit roles' ) ) this.redirect( '/' );
+  if( !isAllowed( 'edit roles' ) ) return this.redirect( '/' );
 
   this.render( 'roles', {
     data: {
@@ -51,7 +52,7 @@ function showRoles() {
 }
 
 function showUsers() {
-  if( !isAllowed( 'edit users' ) ) this.redirect( '/' );
+  if( !isAllowed( 'edit users' ) ) return this.redirect( '/' );
 
   this.render( 'users', {
     data: {
@@ -108,6 +109,54 @@ function showUsers() {
             role: rolesByName[ name ] || { name: name },
             users: usersByRole[ name ] || []
           } );
+        }
+      }
+    }
+  } );
+}
+
+function showSnapshots() {
+  if( !isAllowed( 'edit snapshots' ) ) return this.redirect( '/' );
+  this.render( 'snapshots', {
+    data: {
+      snapshots: function() {
+        var snapshots = [];
+        
+        addSnapshot( { name: 'current content', _id: { $exists: false } } );
+        Snapshots.find( {} ).forEach( addSnapshot );
+        
+        return snapshots;
+
+        function addSnapshot( snapshot ) {
+          snapshot.timeline = [];
+
+          Needs.find( { snapshot: snapshot._id } ).forEach( addNeedAndItsChatsToTimeline );
+
+          if( typeof snapshot._id === 'object' ) delete snapshot._id;
+
+          snapshot.timeline.sort( sortByDate );
+
+          return snapshots.push( snapshot );
+
+          function addNeedAndItsChatsToTimeline( need ) {
+            addEntityToTimeline( 'need', need );
+
+            return ChatMessages.find( { sourceId: need._id } ).forEach( addChatmessageToTimeline );
+
+            function addChatmessageToTimeline( chatmessage ) {
+              chatmessage.need = need;
+              addEntityToTimeline( 'chatmessage', chatmessage );
+            }
+          }
+
+          function addEntityToTimeline( entityType, entity ) {
+            entity.type = entityType;
+            snapshot.timeline.push( entity );
+          }
+
+          function sortByDate( a, b ) {
+            return a.created > b.created ? 1 : -1;
+          }
         }
       }
     }

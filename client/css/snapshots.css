@@ -1,0 +1,19 @@
+#snapshots {
+	position: relative;
+	width: 100%;
+	min-height: 100%;
+}
+
+#snapshots ul {
+	list-style: none;
+}
+
+#snapshots aside {
+	width: 300px;
+	float: left;
+}
+
+#snapshots section {
+	width: calc( 100% - 300px );
+	float: left;
+}
