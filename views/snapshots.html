@@ -1,30 +1,49 @@
 <template name="snapshots">
 	<div id="snapshots">
 		<h1>Snapshots</h1>
-		<aside>
+		<aside class="snapshot-list">
 			<ul>
 				{{#each snapshots}}
-					<li>{{name}}: {{needs.count}} needs</li>
+					<li class="snapshot{{activesnapshot}}">
+						<h3>{{name}}</h3>
+						<p>{{timeline.length}} items</p>
+						{{#if created}}
+							<p>{{formatTime created}}</p>
+						{{/if}}
+					</li>
 				{{/each}}
 			</ul>
 		</aside>
-		<section>
-			{{#with getSelectedSnapshot}}
-				<ul>
-					{{#each timeline}}
-						<li>
-							{{#if compare type 'need'}}
-								<h3>{{userIdToUserName createdBy}} posted a need at {{formatTime created}}:</h3>
-								<p>{{title}}</p>
-							{{/if}}
-							{{#if compare type 'chatmessage'}}
-								<h3>{{userIdToUserName createdBy}} replied to {{need.title}} at {{formatTime created}}:</h3>
-								<p>{{text}}</p>
-							{{/if}}
-						</li>
-					{{/each}}
-				</ul>
-			{{/with}}
-		</section>
+		{{#with getSelectedSnapshot}}
+			<section>
+					<ul>
+						{{#each timeline}}
+							<li>
+								{{#if compare type 'need'}}
+									<h3>{{userIdToUserName createdBy}} posted a need at {{formatTime created}}:</h3>
+									<p>{{title}}</p>
+								{{/if}}
+								{{#if compare type 'chatmessage'}}
+									<h3>{{userIdToUserName createdBy}} replied to {{need.title}} at {{formatTime created}}:</h3>
+									<p>{{text}}</p>
+								{{/if}}
+							</li>
+						{{/each}}
+					</ul>
+			</section>
+			<aside class="actions">
+					<button class="delete">
+						{{#if compare name 'current content' '!=='}}
+							delete
+						{{else}}
+							clear
+						{{/if}}
+					</button>
+				{{#if compare name 'current content' '!=='}}
+					<button class="load">load</button>
+				{{/if}}
+				<input class="save" placeholder="save as..." />
+			</aside>
+		{{/with}}
 	</div>
 </template>

@@ -15,7 +15,7 @@ console.log( value );
 
 Template.needs.helpers( {
   needs: function() {
-    return Needs.find( {}, { sort: { created: -1 } } );
+    return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
   }
 } );
 

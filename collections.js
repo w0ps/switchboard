@@ -69,9 +69,9 @@ Meteor.methods({
   },
   updateRole: function( name, incomingPermissions ) {
     incomingPermissions = incomingPermissions || {};
-    
+
     if( !isAllowed( 'edit roles' ) ) {
-      throw( new Meteor.Error( 503, 'not allowed', 'you are not allowed to edit roles' ) );
+      throw( new Meteor.Error( 'not allowed', 'you are not allowed to edit roles' ) );
     }
 
     var instructions = {
@@ -82,7 +82,7 @@ Meteor.methods({
           }
         },
         target = instructions.$set;
-    
+
     Object.keys( incomingPermissions ).forEach( receivePermission );
 
     Roles.update( { name: name }, instructions, { upsert: true } );
@@ -98,7 +98,6 @@ Meteor.methods({
 
     if ( count ) {
       throw( new Meteor.Error(
-        403,
         'role is used',
         'the role ' + name + ' is currently assigned to ' + count + ' users'
       ) );
@@ -112,8 +111,91 @@ Meteor.methods({
     Meteor.users.update( { username: username }, { $set: {
       role: role
     } } );
+  },
+  copyToSnapshot: function( name, source ) {
+    var snapshot = new Snapshot( name ),
+        needQuery = {},
+        snapshotId;
+
+    Snapshots.update( { name: name }, { $set: snapshot }, { upsert: true } );
+
+    snapshotId = Snapshots.findOne( { name: name } )._id;
+
+    // copy needs
+    if( source ) needQuery.snapshot = source;
+    else needQuery.snapshot = { $exists: false };
+
+    return Needs.find( needQuery ).forEach( copyNeed );
+
+    function copyNeed( need ) {
+      var oldNeedId = need._id;
+
+      delete need._id;
+      need.snapshot = snapshotId;
+
+      Needs.insert( need, copyChatMessages );
+
+      function copyChatMessages( err, _id ) {
+        ChatMessages.find( { sourceId: oldNeedId } ).forEach( copyChatMessage );
+
+        function copyChatMessage( chatmessage ) {
+          delete chatmessage._id;
+          chatmessage.sourceId = _id;
+
+          ChatMessages.insert( chatmessage );
+        }
+      }
+    }
+  },
+  loadSnapshot: function( name ) {
+    if( name === 'current content' ) return;
+
+    var snapshotId = Snapshots.findOne( { name: name } )._id;
+
+    return Needs.find( { snapshot: snapshotId } ).forEach( copyNeed );
+
+    function copyNeed( need ) {
+      var oldNeedId = need._id;
+
+      delete need._id;
+      delete need.snapshot;
+
+      return Needs.insert( need, copyChatMessages );
+
+      function copyChatMessages( err, _id ) {
+        return ChatMessages.find( { sourceId : oldNeedId } ).forEach( copyChatmessage );
+
+        function copyChatmessage( chatmessage ) {
+          delete chatmessage._id;
+          chatmessage.sourceId = _id;
+
+          ChatMessages.insert( chatmessage );
+        }
+      }
+    }
+  },
+  deleteSnapshot: function( name ) {
+    var query = {},
+        fields = {
+          _id: true
+        },
+        sourceIds = [];
+
+    if( name === 'current content' ) {
+      query.snapshot = { $exists: false };
+    } else query.snapshot = Snapshots.findOne( { name: name } )._id;
+
+    Needs.find( query ).forEach( getId );
+    Needs.remove( query );
+    ChatMessages.remove( { sourceId : { $in: sourceIds } } );
+
+    if( name !== 'current content' ) Snapshots.remove( { name: name } );
+
+    function getId( need ) {
+      sourceIds.push( need._id );
+    }
   }
-});
+} );
 
 function Post() {
   this.createdBy = Meteor.userId();

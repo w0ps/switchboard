@@ -30,7 +30,7 @@ function showNeed() {
 }
 
 function showRoles() {
-  if( !isAllowed( 'edit roles' ) ) return this.redirect( '/' );
+  redirectIfNotAllowed( 'edit roles', this );
 
   this.render( 'roles', {
     data: {
@@ -52,7 +52,7 @@ function showRoles() {
 }
 
 function showUsers() {
-  if( !isAllowed( 'edit users' ) ) return this.redirect( '/' );
+  redirectIfNotAllowed( 'edit users', this );
 
   this.render( 'users', {
     data: {
@@ -116,7 +116,8 @@ function showUsers() {
 }
 
 function showSnapshots() {
-  if( !isAllowed( 'edit snapshots' ) ) return this.redirect( '/' );
+  redirectIfNotAllowed( 'edit snapshots', this );
+  
   this.render( 'snapshots', {
     data: {
       snapshots: function() {

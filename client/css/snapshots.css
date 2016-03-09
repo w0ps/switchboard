@@ -1,19 +1,49 @@
 #snapshots {
-	position: relative;
-	width: 100%;
-	min-height: 100%;
+  position: relative;
+  width: 100%;
+  min-height: 100%;
 }
 
-#snapshots ul {
-	list-style: none;
+#snapshots aside.snapshot-list {
+  width: 200px;
+  float: left;
+  background-color: #888;
 }
 
-#snapshots aside {
-	width: 300px;
-	float: left;
+#snapshots .snapshot-list ul {
+  padding: 0;
+  margin: 0;
+}
+
+#snapshots .snapshot-list li {
+  background-color: #CCC;
+  margin: 3px;
+  cursor: pointer;
+  padding: 3px;
+}
+
+#snapshots .snapshot-list li.active {
+  background-color: #FFF;
+}
+
+#snapshots .snapshot-list li:not(.active):hover {
+  background-color: #FFC;
+}
+
+#snapshots .snapshot-list li h3 {
+  margin: 0;
+}
+
+#snapshots .snapshot-list li p {
+  margin: 0;
 }
 
 #snapshots section {
-	width: calc( 100% - 300px );
-	float: left;
+  width: calc( 100% - 400px );
+  float: left;
+}
+
+#snapshots aside.actions {
+  width: 200px;
+  float: left;
 }

@@ -18,3 +18,7 @@ img.avatar {
 	width: 25px;
 	height: 25px;
 }
+
+ul {
+	list-style: none;
+}
