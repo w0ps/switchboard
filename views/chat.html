@@ -25,7 +25,9 @@
     </div>
   </section>
   <footer id="need-detail-footer">
-    <input style="width: calc( 100% - 25px * {{need.inChat.length}} )" class="inverted" name="message" placeholder="..." autocomplete="off" />
+    {{#if isAllowed 'post chatmessages'}}
+      <input style="width: calc( 100% - 25px * {{need.inChat.length}} )" class="inverted" name="message" placeholder="..." autocomplete="off" />
+    {{/if}}
     {{#with need}}
       {{#each inChat}}
         {{{getAvatar this}}}

@@ -9,8 +9,8 @@ Roles = new Mongo.Collection( 'roles' );
 Snapshots = new Mongo.Collection( 'snapshots' );
 
 permissions = [
-  'post chatmessages',
   'post needs',
+  'post chatmessages',
   'post responses',
   'edit roles',
   'edit users',

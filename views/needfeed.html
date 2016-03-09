@@ -1,5 +1,5 @@
 <template name="needs">
-  {{#if currentUser}}
+  {{#if isAllowed 'post needs'}}
     <input class="inverted" name="need" placeholder="what is your need" />
   {{/if}}
   <ul class="needs">
