@@ -189,7 +189,7 @@ function getConversation( id ) {
       } );
     }
 
-    if( message.created.getTime() - previousLine.created.getTime() > 60 * 1000 ) {
+    if( message.created.getTime() - previousLine.created.getTime() > constants.bubbleJoinGap * 1000 ) {
       return previousSpeakingTurn.streaks.push( newStreak );
     }
 
