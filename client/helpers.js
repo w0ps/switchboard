@@ -45,14 +45,21 @@ var helpers = {
         return isAllowed( permission );
       },
       compare: function( a, b, comparison ) {
-        if( comparison === '==' ) return a == b;
-        if( comparison === '<' ) return a < b;
-        if( comparison === '>' ) return a > b;
-        if( comparison === '<=' ) return a <= b;
-        if( comparison === '>=' ) return a >= b;
-        if( comparison === '!=' ) return a != b;
-        if( comparison === '!==' ) return a !== b;
-        return a === b;
+        comparison = typeof comparison === 'string' ? comparison : '===';
+
+        switch( comparison ) {
+
+          case '===': return a === b;
+          case '!==': return a !== b;
+          case '==': return a == b;
+          case '!=': return a != b;
+          case '<=': return a <= b;
+          case '>=': return a >= b;
+          case '<': return a < b;
+          case '>': return a > b;
+        }
+
+        throw( new Meteor.Error( 'illegal operator', 'compare: "' + comparison + '" is not a valid operator' ) );
       }
     };
 
