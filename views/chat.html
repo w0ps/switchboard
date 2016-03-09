@@ -3,8 +3,12 @@
     <div>
       {{#each conversation}}
         <div class="speakingturn{{whose}}">
-          <span class="name">{{userIdToUserName createdBy}}</span>
-          {{> avatar}}
+          {{#if isOwner}}
+            <span class="name">me</span>
+          {{else}}
+            <span class="name">{{userIdToUserName createdBy}}</span>
+            {{> avatar}}
+          {{/if}}
         </div>
         {{#each streaks}}
           <div class="streak{{whose}}">
