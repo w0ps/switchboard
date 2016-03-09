@@ -1,8 +1,7 @@
 ul.needs {
-	padding: 0;
+	padding: 2px 0;
 	margin: 0;
 	background-color: black;
-	padding-top: 2px;
 }
 
 li.need {
