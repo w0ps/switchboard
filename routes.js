@@ -38,7 +38,7 @@ function showRoles() {
         var roles = [];
 
         Roles.find( {} ).forEach( addUserCount );
-        
+
         return roles;
 
         function addUserCount( role ) {
@@ -68,7 +68,7 @@ function showUsers() {
         allUsers.forEach( placeUserInList );
 
         populateUsersByRoleArray( 'no role' );
-        
+
         Object.keys( rolesByName ).forEach( populateUsersByRoleArray );
 
         return usersByRoleArray;
@@ -117,15 +117,15 @@ function showUsers() {
 
 function showSnapshots() {
   redirectIfNotAllowed( 'edit snapshots', this );
-  
+
   this.render( 'snapshots', {
     data: {
       snapshots: function() {
         var snapshots = [];
-        
+
         addSnapshot( { name: 'current content', _id: { $exists: false } } );
         Snapshots.find( {} ).forEach( addSnapshot );
-        
+
         return snapshots;
 
         function addSnapshot( snapshot ) {
@@ -142,9 +142,13 @@ function showSnapshots() {
           function addNeedAndItsChatsToTimeline( need ) {
             addEntityToTimeline( 'need', need );
 
-            return ChatMessages.find( { sourceId: need._id } ).forEach( addChatmessageToTimeline );
+            return ChatMessages.find( { sourceId: need._id }, { sort: { created: 1 } } ).forEach( addChatmessageToTimeline );
 
-            function addChatmessageToTimeline( chatmessage ) {
+            function addChatmessageToTimeline( chatmessage, index ) {
+              if( !index ) {
+                if( chatmessage.text === need.title ) return;
+              }
+
               chatmessage.need = need;
               addEntityToTimeline( 'chatmessage', chatmessage );
             }
