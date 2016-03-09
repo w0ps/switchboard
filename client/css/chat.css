@@ -64,6 +64,7 @@ section.chat {
 .streak.mine {
 	float: right;
 	border-bottom-right-radius: 0;
+	background-color: #FFC;
 }
 
 .chat-timecode {
