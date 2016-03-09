@@ -43,6 +43,21 @@
   float: left;
 }
 
+#snapshots section li {
+  position: relative;
+}
+
+#snapshots section button.delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: none;
+}
+
+#snapshots section li:hover button.delete {
+  display: initial;
+}
+
 #snapshots aside.actions {
   width: 200px;
   float: left;

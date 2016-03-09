@@ -6,8 +6,9 @@ Template.snapshots.helpers( {
 Template.snapshots.events( {
   'click aside.snapshot-list li:not(.active)': clickSnapshot,
   'keyup input.save': saveFieldKeyup,
-  'click button.delete': clickDelete,
-  'click button.load': clickLoad
+  'click aside button.delete': clickDeleteSnapshot,
+  'click button.load': clickLoad,
+  'click section button.delete': clickDeleteItem
 } );
 
 function getSelectedSnapshot() {
@@ -25,7 +26,7 @@ function getSelectedSnapshot() {
 function activesnapshot() {
   var selectedSnapshotName = Session.get( 'selected snapshot' ),
       isActive;
-  
+
   if( selectedSnapshotName ) isActive = this.name === selectedSnapshotName;
   else isActive = this.name === 'current content';
 
@@ -39,18 +40,25 @@ function clickSnapshot( event ) {
 function saveFieldKeyup( event ) {
   var name = getValueIfReturnKey( event, true ); // clear = true
   if( !name ) return;
-  
-  Meteor.call( 'copyToSnapshot', name, this._id );
-  
-  Session.set( 'selected snapshot', name );
-}
 
-function clickDelete( event ) {
-  Meteor.call( 'deleteSnapshot', this.name );
-  Session.set( 'selected snapshot', null );
+  Meteor.call( 'copyToSnapshot', name, this._id );
+
+  Session.set( 'selected snapshot', name );
 }
 
 function clickLoad( event ) {
   Meteor.call( 'loadSnapshot', this.name );
   Session.set( 'selected snapshot', null );
+}
+
+function clickDeleteSnapshot( event ) {
+  Meteor.call( 'deleteSnapshot', this.name );
+  Session.set( 'selected snapshot', null );
+}
+
+function clickDeleteItem( event ) {
+  switch( this.type ) {
+    case 'need': return Meteor.call( 'deleteNeed', this._id );
+    case 'chatmessage': return Meteor.call( 'deleteChatMessage', this._id );
+  }
 }

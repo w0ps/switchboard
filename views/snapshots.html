@@ -19,6 +19,7 @@
 					<ul>
 						{{#each timeline}}
 							<li>
+								<button class="delete">x</button>
 								{{#if compare type 'need'}}
 									<h3>{{userIdToUserName createdBy}} posted a need at {{formatTime created}}:</h3>
 									<p>{{title}}</p>
