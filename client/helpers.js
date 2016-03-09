@@ -23,6 +23,21 @@ var helpers = {
 
         return date.toTimeString().substring( 0, 8 );
       },
+      truncate: function( string, ending, limit ) {
+        limit = parseInt( limit, 10 );
+        if( string.length <= limit ) return string;
+
+        var split = string.split( ' ' ),
+            newString = split.shift(),
+            part = split.shift();
+
+        while( part && newString.length + part.length + ending.length < limit ) {
+          newString += ' ' + part;
+          part = split.shift();
+        }
+
+        return newString + ending;
+      },
       isOwner: function() {
         return this.createdBy && this.createdBy === Meteor.userId();
       },

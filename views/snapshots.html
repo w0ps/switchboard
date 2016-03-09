@@ -24,7 +24,7 @@
 									<p>{{title}}</p>
 								{{/if}}
 								{{#if compare type 'chatmessage'}}
-									<h3>{{userIdToUserName createdBy}} replied to {{need.title}} at {{formatTime created}}:</h3>
+									<h3>{{userIdToUserName createdBy}} replied to "{{truncate need.title '...' 25}}" at {{formatTime created}}:</h3>
 									<p>{{text}}</p>
 								{{/if}}
 							</li>
