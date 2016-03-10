@@ -43,6 +43,11 @@ Meteor.methods({
     Needs.remove( needId );
     ChatMessages.remove( { sourceId: needId } );
   },
+  changeNeedOwner: function( needId, newOwnerId ) {
+    if( !isAllowed( 'edit needs') ) throw new Meteor.Error( 'not-authorized' );
+
+    Needs.update( { _id: needId }, { $set: { createdBy: newOwnerId } } );
+  },
   addChatMessage: function( text, sourceId ) {
     if ( !isAllowed( 'post chatmessages') ) throw new Meteor.Error( 'not-authorized' );
 
@@ -52,6 +57,11 @@ Meteor.methods({
     if( !isAllowed( 'edit chatmessages' ) ) throw new Meteor.Error( 'not-authorized' );
 
     ChatMessages.remove( { _id: chatmessageId } );
+  },
+  changeChatMessageOwner: function( chatmessageId, newOwnerId ) {
+    if( !isAllowed( 'edit chatmessages') ) throw new Meteor.Error( 'not-authorized' );
+
+    ChatMessages.update( { _id: chatmessageId }, { $set: { createdBy: newOwnerId } } );
   },
   joinChat: function( id ) {
     Needs.update( { _id: id }, {

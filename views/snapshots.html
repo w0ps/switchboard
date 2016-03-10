@@ -21,11 +21,19 @@
 							<li>
 								<button class="delete">x</button>
 								{{#if compare type 'need'}}
-									<h3>{{userIdToUserName createdBy}} posted a need at {{formatTime created}}:</h3>
+									<h3>
+										<span class="name">{{userIdToUserName createdBy}}</span>
+										<span class="action"> posted a need at </span>
+										<span class="datetime">{{formatTime created}}:</span>
+									</h3>
 									<p>{{title}}</p>
 								{{/if}}
 								{{#if compare type 'chatmessage'}}
-									<h3>{{userIdToUserName createdBy}} replied to "{{truncate need.title '...' 25}}" at {{formatTime created}}:</h3>
+									<h3>
+										<span class="name">{{userIdToUserName createdBy}}</span>
+										<span class="action"> replied to "{{truncate need.title "..." 30}}" </span>
+										<span class="datetime">{{formatTime created}}:</span>
+									</h3>
 									<p>{{text}}</p>
 								{{/if}}
 							</li>

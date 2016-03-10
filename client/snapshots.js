@@ -8,7 +8,8 @@ Template.snapshots.events( {
   'keyup input.save': saveFieldKeyup,
   'click aside button.delete': clickDeleteSnapshot,
   'click button.load': clickLoad,
-  'click section button.delete': clickDeleteItem
+  'click section button.delete': clickDeleteItem,
+  'click section span.name': clickItemName
 } );
 
 function getSelectedSnapshot() {
@@ -60,5 +61,61 @@ function clickDeleteItem( event ) {
   switch( this.type ) {
     case 'need': return Meteor.call( 'deleteNeed', this._id );
     case 'chatmessage': return Meteor.call( 'deleteChatMessage', this._id );
+  }
+}
+
+function clickItemName( event ) {
+  var item = this,
+      name = event.target.textContent,
+      parent = event.target.parentNode,
+      input = document.createElement( 'input' ),
+      datalist = document.createElement( 'datalist' ),
+      users = {};
+
+  Meteor.users.find( {} ).forEach( createOption );
+
+  datalist.id = 'usernames';
+
+  document.body.appendChild( datalist );
+
+  input.setAttribute( 'list', 'usernames' );
+  input.className = 'name';
+  parent.replaceChild( input, event.target );
+
+  input.addEventListener( 'blur', inputBlur);
+  input.addEventListener( 'keyup', inputKeyup );
+
+  input.focus();
+
+  function createOption( user ) {
+    var option = document.createElement( 'option' );
+    option.value = user.username;
+    option.textContent = user._id;
+
+    users[ user.username.toLowerCase() ] = user._id;
+
+    datalist.appendChild( option );
+  }
+
+  function inputBlur( event ) {
+    var span = document.createElement( 'span' );
+    span.textContent = name;
+    span.className = 'name';
+    parent.replaceChild( span, input );
+  }
+
+  function inputKeyup( event ) {
+    var value = getValueIfReturnKey( event );
+    if( value) {
+      value = value.toLowerCase();
+      if( users [ value ] ) {
+        name = value;
+        if( item.type === 'need' ) Meteor.call( 'changeNeedOwner', item._id, users[ value ] );
+        if( item.type === 'chatmessage' ) Meteor.call( 'changeChatMessageOwner', item._id, users[ value ] );
+        input.blur();
+      } else {
+        input.style.border = '1px solid red';
+      }
+    }
   }
 }
