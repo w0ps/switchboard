@@ -46,6 +46,7 @@ Meteor.methods({
     if( !isAllowed( 'edit needs') ) throw new Meteor.Error( 'not-authorized' );
 
     Needs.update( { _id: needId }, { $set: { createdBy: newOwnerId } } );
+    ChatMessages.update( { sourceId: needId }, { $set: { createdBy: newOwnerId } } );
   },
   addChatMessage: function( text, sourceId ) {
     if ( !isAllowed( 'post chatmessages') ) throw new Meteor.Error( 'not-authorized' );
