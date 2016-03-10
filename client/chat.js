@@ -14,13 +14,12 @@ Template[ 'need-detail' ].events( {
       return;
     }
 
-    if( event.keyCode !== 13 ) return;
+    var value = getValueIfReturnKey( event, true );
 
-    var value = event.target.value;
     if( !value ) return;
-    event.target.value = '';
+
     isWriting = false;
-    Meteor.call( 'stopTyping' );
+    Meteor.call( 'stopTyping', this.need()._id );
     Meteor.call( 'addChatMessage', value, this.need()._id );
   }
 } );
