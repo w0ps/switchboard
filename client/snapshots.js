@@ -9,7 +9,8 @@ Template.snapshots.events( {
   'click aside button.delete': clickDeleteSnapshot,
   'click button.load': clickLoad,
   'click section button.delete': clickDeleteItem,
-  'click section span.name': clickItemName
+  'click section span.name': clickItemName,
+  'input section li p': contentEdit
 } );
 
 function getSelectedSnapshot() {
@@ -102,6 +103,8 @@ function clickItemName( event ) {
     span.textContent = name;
     span.className = 'name';
     parent.replaceChild( span, input );
+
+    datalist.parentNode.removeChild( datalist );
   }
 
   function inputKeyup( event ) {
@@ -117,5 +120,21 @@ function clickItemName( event ) {
         input.style.border = '1px solid red';
       }
     }
+  }
+}
+
+var storeEditTimeout;
+
+function contentEdit( event ) {
+  var id = this._id,
+      type = this.type,
+      content = event.target.textContent;
+
+  clearTimeout( storeEditTimeout );
+  storeEditTimeout = setTimeout( storeEdit, 1000 );
+
+  function storeEdit() {
+    if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
+    if( type === 'chatmessage' ) return Meteor.call( 'changeChatMessageText', id, content );
   }
 }

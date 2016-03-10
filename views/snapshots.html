@@ -26,7 +26,7 @@
 										<span class="action"> posted a need at </span>
 										<span class="datetime">{{formatTime created}}:</span>
 									</h3>
-									<p>{{title}}</p>
+									<p class="content" contentEditable="true">{{title}}</p>
 								{{/if}}
 								{{#if compare type 'chatmessage'}}
 									<h3>
@@ -34,7 +34,7 @@
 										<span class="action"> replied to "{{truncate need.title "..." 30}}" </span>
 										<span class="datetime">{{formatTime created}}:</span>
 									</h3>
-									<p>{{text}}</p>
+									<p class="content" contentEditable="true">{{text}}</p>
 								{{/if}}
 							</li>
 						{{/each}}
