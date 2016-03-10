@@ -49,7 +49,6 @@ function onRendered() {
 }
 
 function scrollToBottom() {
-  console.log( 'scroll to bottom' );
   autoScrolling = true;
   document.body.scrollTop = document.body.scrollHeight;
 
@@ -62,7 +61,7 @@ function onScroll( event ) {
     autoScrolling = false;
     return;
   }
-  console.log( 'onScroll' );
+
   var delay = 150;
 
   if( scrollTimeout ) clearTimeout( scrollTimeout );
@@ -71,6 +70,5 @@ function onScroll( event ) {
   function detectScrollPosition(){
     scrollTimeout = null;
     scrolledToBottom = document.body.scrollHeight < ( document.body.scrollTop + window.innerHeight + 30 );
-    console.log( 'setting scroll', scrolledToBottom );
   }
 }
