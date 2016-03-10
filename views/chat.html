@@ -22,9 +22,11 @@
         {{/each}}
       {{/each}}
       {{#each need.writingMessage}}
-        <div class="streak">
-          <chatline>{{userIdToUserName this}} is typing...</chatline>
-        </div>
+        {{#if compare this currentUser._id '!=='}}
+          <div class="streak">
+            <chatline>{{userIdToUserName this}} is typing...</chatline>
+          </div>
+        {{/if}}
       {{/each}}
     </div>
   </section>
