@@ -60,6 +60,11 @@ var helpers = {
         }
 
         throw( new Meteor.Error( 'illegal operator', 'compare: "' + comparison + '" is not a valid operator' ) );
+      },
+      keyvalues: function( object ) {
+        return Object.keys( object ).map( function( key ) {
+          return { key: key, value: object[ key ] };
+        } );
       }
     };
 
