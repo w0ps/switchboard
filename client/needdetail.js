@@ -25,7 +25,7 @@ function needDetailBodyKeyupHandler( event ) {
 				'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
 			};
 
-	return ( handlers[ keyPressed ] || handlers[ undefined ] )();
+	return handlers[ keyPressed ] ? handlers[ keyPressed ]() : undefined;
 }
 
 Template[ 'need-detail' ].onCreated( function() {
