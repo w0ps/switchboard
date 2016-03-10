@@ -24,7 +24,6 @@ permissions = [
 
 Meteor.methods({
   addNeed: function( title ) {
-    console.log( 'addneed called', title);
     if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
 
     var need = new Need( { title: title } ),
