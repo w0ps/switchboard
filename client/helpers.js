@@ -11,18 +11,7 @@ var helpers = {
         if( !user ) return;
         return '<img class="avatar" src="' + ( user.avatar || defaultPictureSrc ) + '" alt="' + user.username + '" />';
       },
-      formatTime: function( date ) {
-        var yesterday = new Date();
-        yesterday.setDate( yesterday.getDate() - 1 );
-
-        if( date < yesterday ) return [
-          date.getMonth(),
-          date.getDate(),
-          new Date().getFullYear().toString().slice( 2 )
-        ].join( '/' );
-
-        return date.toTimeString().substring( 0, 8 );
-      },
+      formatTime: formatTime,
       truncate: function( string, ending, limit ) {
         limit = parseInt( limit, 10 );
         if( string.length <= limit ) return string;
@@ -65,7 +54,8 @@ var helpers = {
         return Object.keys( object ).map( function( key ) {
           return { key: key, value: object[ key ] };
         } );
-      }
+      },
+      now: function() { return new Date(); }
     };
 
 function registerHelper( name ) {
