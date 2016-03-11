@@ -8,10 +8,11 @@ Template.snapshots.events( {
   'keyup input.save': saveFieldKeyup,
   'click aside button.delete': clickDeleteSnapshot,
   'click button.load': clickLoad,
+  'change #timeoffset': changeTimeOffset,
   'click section button.delete': clickDeleteItem,
   'click section span.name': clickItemName,
   'input section li p': contentEdit,
-  'click section span.datetime': clickDateTime
+  'click section span.datetime': clickDateTime,
 } );
 
 function getSelectedSnapshot() {
@@ -57,6 +58,11 @@ function clickLoad( event ) {
 function clickDeleteSnapshot( event ) {
   Meteor.call( 'deleteSnapshot', this.name );
   Session.set( 'selected snapshot', null );
+}
+
+function changeTimeOffset( event ) {
+  Meteor.call( 'timeOffsetSnapshot', this.name, event.target.value );
+  setTimeout( function(){ event.target.selectedIndex = 19; }, 1000 );
 }
 
 function clickDeleteItem( event ) {

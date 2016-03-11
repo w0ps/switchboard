@@ -226,6 +226,42 @@ Meteor.methods({
     function getId( need ) {
       sourceIds.push( need._id );
     }
+  },
+  timeOffsetSnapshot: function( name, offsetAndUnit ) {
+    var needQuery = {},
+        split = offsetAndUnit.split( ' ' ),
+        offset = parseInt( split.shift(), 10 ),
+        unit = split.shift();
+
+    if( name === 'current content' ) needQuery.snapshot = { $exists: false };
+    else needQuery.snapshot = Snapshots.findOne( { name: name } )._id;
+
+    Needs.find( needQuery ).forEach( updateNeedAndChatMessages );
+
+    function updateNeedAndChatMessages( need ) {
+      Needs.update( { _id: need._id }, { $set: { created: offsetDate( need.created ) } } );
+      ChatMessages.find( { sourceId: need._id } ).forEach( updateChatMessage );
+    }
+
+    function updateChatMessage( chatmessage ) {
+      ChatMessages.update( { _id: chatmessage._id }, { $set: { created: offsetDate( chatmessage.created ) } } );
+    }
+
+    function offsetDate( date ) {
+      var newDate = new Date( date );
+
+      switch( unit ) {
+        case 'Y': newDate.setFullYear( date.getFullYear() + offset ); break;
+        case 'M': newDate.setMonth( date.getMonth() + offset ); break;
+        case 'W': newDate.setDate( date.getDate() + offset * 7 ); break;
+        case 'D': newDate.setDate( date.getDate() + offset ); break;
+        case 'h': newDate.setHours( date.getHours() + offset ); break;
+        case 'm': newDate.setMinutes( date.getMinutes() + offset ); break;
+        case 's': newDate.setSeconds( date.getSeconds() + offset ); break;
+      }
+
+      return newDate;
+    }
   }
 } );
 
