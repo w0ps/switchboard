@@ -47,7 +47,7 @@
   position: relative;
 }
 
-#snapshots section button.delete {
+#snapshots section li button.delete {
   position: absolute;
   top: 0;
   right: 0;
@@ -55,7 +55,12 @@
 }
 
 #snapshots section li:hover button.delete {
-  display: initial;
+  display: inherit;
+}
+
+#snapshots section li span.name:hover, #snapshots section li span.datetime:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 #snapshots aside.actions {

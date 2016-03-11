@@ -10,7 +10,8 @@ Template.snapshots.events( {
   'click button.load': clickLoad,
   'click section button.delete': clickDeleteItem,
   'click section span.name': clickItemName,
-  'input section li p': contentEdit
+  'input section li p': contentEdit,
+  'click section span.datetime': clickDateTime
 } );
 
 function getSelectedSnapshot() {
@@ -120,6 +121,68 @@ function clickItemName( event ) {
         input.style.border = '1px solid red';
       }
     }
+  }
+}
+
+function clickDateTime( event ) {
+  var item = this,
+      type = this.type,
+      created = this.created,
+      parent = event.target.parentNode,
+      input = document.createElement( 'input' );
+
+  input.type = 'datetime-local';
+  input.value = created.toISOString();
+
+  parent.replaceChild( input, event.target );
+
+  var timezoneOffset = created.getTimezoneOffset() * 60 * 1000,
+      localDate = new Date( created.getTime() - timezoneOffset );
+
+  console.log( { localDate: localDate, created: created } );
+
+  input.value = localDate.toISOString().replace( 'Z', '' );
+
+  input.addEventListener( 'keyup', inputKeyup );
+  input.addEventListener( 'blur', inputBlur );
+
+  input.focus();
+
+  var removing;
+
+  function inputKeyup( event ) {
+    if( event.keyCode === 27 ) {
+      return input.blur();
+    }
+
+    if( event.keyCode !== 13 ) return;
+    if( removing ) return;
+    removing = true;
+
+    var date = new Date( input.value ),
+        globalDate = new Date( date.getTime() + timezoneOffset ),
+        span = document.createElement( 'span' );
+
+
+    span.textContent = formatTime( globalDate );
+    span.className = 'datetime';
+
+    parent.replaceChild( span, input );
+
+    if( type === 'need' ) Meteor.call( 'changeNeedCreated', item._id, globalDate );
+    if( type === 'chatmessage' ) Meteor.call( 'changeChatMessageCreated', item._id, globalDate );
+  }
+
+  function inputBlur() {
+    if( removing ) return;
+    removing = true;
+
+    var span = document.createElement( 'span' );
+
+    span.textContent = formatTime( created );
+    span.className = 'datetime';
+
+    parent.replaceChild( span, input );
   }
 }
 
