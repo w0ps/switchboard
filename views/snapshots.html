@@ -24,7 +24,7 @@
 									<h3>
 										<span class="name">{{userIdToUserName createdBy}}</span>
 										<span class="action"> posted a need at </span>
-										<span class="datetime">{{formatTime created}}:</span>
+										<span class="datetime">{{formatTime created 'both'}}:</span>
 									</h3>
 									<p class="content" contentEditable="true">{{title}}</p>
 								{{/if}}
@@ -32,7 +32,7 @@
 									<h3>
 										<span class="name">{{userIdToUserName createdBy}}</span>
 										<span class="action"> replied to "{{truncate need.title "..." 30}}" </span>
-										<span class="datetime">{{formatTime created}}:</span>
+										<span class="datetime">{{formatTime created 'both'}}:</span>
 									</h3>
 									<p class="content" contentEditable="true">{{text}}</p>
 								{{/if}}
