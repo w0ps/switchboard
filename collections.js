@@ -16,20 +16,23 @@ permissions = [
   'edit users',
   'edit needs',
   'edit chatmessages',
-  'edit snapshots'
-  // 'multiuser',
+  'edit snapshots',
+  'pretend'
   // 'chatroom',
   // 'separate windows' ?
 ];
 
 Meteor.methods({
   addNeed: function( title ) {
-    if ( !Meteor.userId() ) throw new Meteor.Error( 'not-authorized' );
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+        userId = user.pretend || user._id;
 
-    var need = new Need( { title: title } ),
+    if( !isAllowed( 'post needs' ) ) throw new Meteor.Error( 'not-authorized' );
+
+    var need = new Need( { title: title, createdBy: userId } ),
         nId = Needs.insert( need );
 
-    Meteor.call( 'addChatMessage', need.title, nId );
+    Meteor.call( 'addChatMessage', { text: need.title, sourceId: nId } );
   },
   deleteNeed: function( needId ) {
     if ( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
@@ -54,10 +57,11 @@ Meteor.methods({
     Needs.update( { _id: needId }, { $set: { created: created } } );
     ChatMessages.update( { sourceId: needId }, { $set: { created: created } } );
   },
-  addChatMessage: function( text, sourceId ) {
+  addChatMessage: function( options ) {
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
     if ( !isAllowed( 'post chatmessages') ) throw new Meteor.Error( 'not-authorized' );
 
-    ChatMessages.insert( new ChatMessage( text, sourceId ) );
+    ChatMessages.insert( new ChatMessage( { text: options.text, sourceId: options.sourceId, createdBy: user.pretend || user._id } ) );
   },
   deleteChatMessage: function( chatmessageId ) {
     if( !isAllowed( 'edit chatmessages' ) ) throw new Meteor.Error( 'not-authorized' );
@@ -80,23 +84,31 @@ Meteor.methods({
     ChatMessages.update( { _id: chatmessageId }, { $set: { created: created } } );
   },
   joinChat: function( id ) {
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
     Needs.update( { _id: id }, {
-      $addToSet: { inChat: Meteor.userId() }
+      $addToSet: { inChat: user.pretend || user._id }
     } );
   },
   leaveChat: function( id ) {
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
     Needs.update( { _id: id }, {
-      $pull: { inChat: Meteor.userId() }
+      $pull: { inChat: user.pretend || user._id }
     } );
   },
   startTyping: function( id ) {
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
     Needs.update( { _id: id }, {
-      $addToSet: { writingMessage: Meteor.userId() }
+      $addToSet: { writingMessage: user.pretend || user._id }
     } );
   },
   stopTyping: function( id ) {
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
     Needs.update( { _id: id }, {
-      $pull: { writingMessage: Meteor.userId() }
+      $pull: { writingMessage: user.pretend || user._id }
     } );
   },
   updateRole: function( name, incomingPermissions ) {
@@ -262,20 +274,47 @@ Meteor.methods({
 
       return newDate;
     }
+  },
+  pretend: function( username ) {
+    if( !isAllowed( 'pretend' ) ) return new Meteor.Error( 'not-authorized' );
+
+    var ownUserId = Meteor.userId(),
+        user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+        otherUserId = Meteor.users.findOne( { username: username } )._id,
+        update = otherUserId === ownUserId ? { $unset: { pretend: true } } : { $set: { pretend: otherUserId } },
+        previousUserId = user.pretend || ownUserId;
+
+    Meteor.users.update( { _id: ownUserId }, update );
+
+    arrayReplaceUpdate( Needs, 'inChat', previousUserId, otherUserId );
+    arrayReplaceUpdate( Needs, 'writingMessage', previousUserId, otherUserId );
   }
 } );
 
-function Post() {
-  this.createdBy = Meteor.userId();
-  this.created = new Date();
-  this.responses = [];
+// to circumvent mongodb issue where you cannot push and pull to the same array in 1 update
+// http://stackoverflow.com/questions/9823140/multiple-mongo-update-operator-in-a-single-statement
+function arrayReplaceUpdate( collection, key, originalValue, newValue ) {
+  var tempKey = key + 'Temp',
+      tempKeyPart = {},
+      originalQuery = {},
+      secondQuery = tempKeyPart,
+      update1 = { $pull: {}, $set: tempKeyPart },
+      update2 = { $push: {}, $unset: tempKeyPart };
+
+  originalQuery[ key ] = originalValue;
+  update1.$pull[ key ] = originalValue;
+  tempKeyPart[ tempKey ] = newValue;
+  update2.$push[ key ] = newValue;
+
+  collection.update( originalQuery, update1, { multi: true } );
+  collection.update( secondQuery, update2, { multi: true} );
 }
 
 function Need( options ) {
   this.title = options.title;
 
   this.created = new Date();
-  this.createdBy = Meteor.userId();
+  this.createdBy = options.createdBy || Meteor.userId();
 
   this.updated = new Date( this.created );
 
@@ -290,11 +329,11 @@ function Need( options ) {
   this.writingMessage = options.writingMessage || [];
 }
 
-function ChatMessage( text, sourceId ) {
-  this.text = text;
+function ChatMessage( options ) {
+  this.text = options.text;
   this.created = new Date();
-  this.createdBy = Meteor.userId();
-  this.sourceId = sourceId;
+  this.createdBy = options.createdBy || Meteor.userId();
+  this.sourceId = options.sourceId;
 }
 
 function Response( text, sourceId ) {

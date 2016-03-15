@@ -1,0 +1,15 @@
+<template name="pretend">
+	<h1>Pretend to be someone else</h1>
+	{{#if pretendingAs}}
+		I am currently pretending to be {{pretendingAs.username}}.
+	{{else}}
+		I am currently myself.
+	{{/if}}
+	I now want to be
+	<input name="pretend" list="users" />
+	<datalist id="users">
+		{{#each users}}
+			<option value="{{username}}"></option>
+		{{/each}}
+	</datalist>
+</template>

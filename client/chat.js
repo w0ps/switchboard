@@ -20,7 +20,7 @@ Template[ 'need-detail' ].events( {
 
     isWriting = false;
     Meteor.call( 'stopTyping', this.need()._id );
-    Meteor.call( 'addChatMessage', value, this.need()._id );
+    Meteor.call( 'addChatMessage', { text: value, sourceId: this.need()._id } );
   }
 } );
 

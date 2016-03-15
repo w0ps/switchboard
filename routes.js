@@ -5,6 +5,7 @@ Router.route( '/needs/:id', showNeed );
 Router.route( '/roles', showRoles );
 Router.route( '/users', showUsers );
 Router.route( '/snapshots', showSnapshots );
+Router.route( '/pretend', showPretend );
 
 function beforeUnLoad( event ) {
 	Meteor.call( 'leaveChat', this.params.id );
@@ -166,6 +167,20 @@ function showSnapshots() {
       }
     }
   } );
+}
+
+function showPretend() {
+  redirectIfNotAllowed( 'pretend', this );
+  this.render( 'pretend', { data: {
+    users: function() {
+      return Meteor.users.find( {} );
+    },
+    pretendingAs: function() {
+      var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
+      if( user && user.pretend ) return Meteor.users.findOne( { _id: user.pretend } );
+    }
+  } } );
 }
 
 function getConversation( id ) {
