@@ -28,7 +28,7 @@ Template.need.events( {
 
     var windowName = this.title;
 
-    chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + chatHeight + ',width=' + chatWidth );
+    chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + chatHeight + ',width=' + chatWidth + ',left=' + window.innerWidth );
     return false;
   }
 } );
