@@ -20,7 +20,7 @@ function needDetailBodyKeyupHandler( event ) {
 
 					if( !selectedText ) return;
 
-					Meteor.call( 'updateNeedTitle', need._id, getSelectedText() );
+					Meteor.call( 'changeNeedTitle', need._id, getSelectedText() );
 				},
 				'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
 			};
