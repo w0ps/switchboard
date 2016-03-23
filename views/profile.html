@@ -3,10 +3,12 @@
 	{{#with currentUser}}
 		<img src="{{avatar}}" alt="{{username}}" />
 		<p>update your username (press enter to confirm)</p>
-		<input name="username" value={{username}} />
+		<input name="username" value="{{username}}" />
 		<p>add an avatar from your computer</p>
 		<input type="file" name="avatar-file" />
 		<p>or add an avatar with a url</p>
 		<input name="avatar-url" />
+		<p>setup your videochat connection</p>
+		<input name="videochaturl" value="{{videochaturl}}" />
 	{{/with}}
 </template>

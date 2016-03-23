@@ -36,6 +36,9 @@ if( Meteor.isServer ) {
     },
     updateAvatarUrl: function( url ) {
       Avatars.insert( url, updateAvatar );
+    },
+    updateVideochaturl: function( url ) {
+      Meteor.users.update( { _id: Meteor.userId() }, { $set: { videochaturl: url } } );
     }
   } );
 
@@ -45,7 +48,8 @@ if( Meteor.isServer ) {
   Template.profile.events( {
     'keyup input[name="username"]': usernameKeyup,
     'change input[name="avatar-file"]': avatarFileChange,
-    'keyup input[name="avatar-url"]': avatarUrlChange
+    'keyup input[name="avatar-url"]': avatarUrlChange,
+    'keyup input[name="videochaturl"]': videochaturlChange
   } );
 }
 
@@ -67,16 +71,16 @@ function avatarFileChange( event ) {
 
 function avatarUrlChange( event ) {
   if( event.keyCode !== 13 ) return;
-  
+
   var url = event.target.value;
-  
+
   if( !url || !isImgURlRegexp.exec( url ) ) return;
 
   Meteor.call( 'updateAvatarUrl', url );
 }
 
 function updateAvatar(err, fileObj) {
-  
+
   // this is a bit of a hack because url is undefined at first
   ( function getUrl(){
     console.log( 'updateAvatar', {
@@ -88,4 +92,9 @@ function updateAvatar(err, fileObj) {
 
     Meteor.call( 'updateAvatar', url.split( '?' )[ 0 ] );
   } )();
+}
+
+function videochaturlChange( event ) {
+  var value = event.target.value;
+  Meteor.call( 'updateVideochaturl', value );
 }
