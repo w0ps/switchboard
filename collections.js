@@ -87,7 +87,7 @@ Meteor.methods({
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
 
     Needs.update( { _id: id }, {
-      $addToSet: { inChat: user.pretend || user._id }
+      $addToSet: { inChat: user ? user.pretend || user._id : Meteor.userId() }
     } );
   },
   leaveChat: function( id ) {
