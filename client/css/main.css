@@ -4,13 +4,13 @@ body {
 	padding: 0;
 }
 
-input.inverted {
+.inverted {
 	background-color: gray;
 	border: none;
 	font-size: 15px;
 }
 
-input.inverted:focus {
+.inverted:focus {
 	background-color: #AAA;
 }
 

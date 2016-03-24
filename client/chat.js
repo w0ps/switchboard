@@ -1,7 +1,15 @@
 var isWriting;
 
 Template[ 'need-detail' ].events( {
-  'keyup input[name=message]': function( event ) {
+  'keyup textarea[name=message]': function( event ) {
+    var target = event.target,
+        currentHeight = parseInt( style = window.getComputedStyle( target ).height, 10 ),
+        scrollHeight = target.scrollHeight;
+
+    if( scrollHeight > currentHeight ) {
+      target.style.height = scrollHeight + 'px';
+    }
+
     if( !isWriting && event.keyCode !== 13 && event.target.value ) {
       isWriting = true;
       Meteor.call( 'startTyping', this.need()._id );
@@ -17,6 +25,8 @@ Template[ 'need-detail' ].events( {
     var value = getValueIfReturnKey( event, true );
 
     if( !value ) return;
+
+    target.style.height = '25px';
 
     isWriting = false;
     Meteor.call( 'stopTyping', this.need()._id );

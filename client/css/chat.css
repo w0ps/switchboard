@@ -111,12 +111,12 @@ span.chatline.mine {
 	background-color: gray;
 }
 
-#need-detail-footer input[name="message"] {
+#need-detail-footer textarea[name="message"] {
 	box-sizing: border-box;
 	height: 25px;
 	line-height: 25px;
-	padding: 0 8px;
-	font-size: 17px;
+	padding: 0 4px;
+	resize: none;
 }
 
 #need-detail-footer img.avatar {
