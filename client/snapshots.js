@@ -12,6 +12,7 @@ Template.snapshots.events( {
   'click section button.delete': clickDeleteItem,
   'click section span.name': clickItemName,
   'input section li p': contentEdit,
+  'blur section li p': contentEdit,
   'click section span.datetime': clickDateTime,
 } );
 
@@ -200,7 +201,9 @@ function contentEdit( event ) {
       content = event.target.textContent;
 
   clearTimeout( storeEditTimeout );
-  storeEditTimeout = setTimeout( storeEdit, 1000 );
+
+  if( event.type === 'focusout' || event.type === 'blur' ) storeEdit();
+  else storeEditTimeout = setTimeout( storeEdit, constants.editableTypingStoreDelay * 1000 );
 
   function storeEdit() {
     if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
