@@ -7,9 +7,22 @@ var helpers = {
         return user ? user.username : user;
       },
       getAvatar: function ( userId ) {
-        var user = Meteor.users.findOne( { _id: userId } );
+        var user = Meteor.users.findOne( { _id: userId } ),
+            htmlString;
         if( !user ) return;
-        return '<img class="avatar" src="' + ( user.avatar || defaultPictureSrc ) + '" alt="' + user.username + '" />';
+
+        htmlString = [
+          '<img class="avatar" src="', user.avatar || defaultPictureSrc, '" alt="', user.username, '" />'
+        ].join( '' );
+
+        if( user.videochaturl ) {
+          htmlString = '<a href="' + user.videochaturl + '" title="videochat with ' + user.username + '" >' + htmlString + '</a>';
+          htmlString = [
+          '<a href="', user.videochaturl, '" title="videochat with ', user.username, '">', htmlString, '</a>'
+          ].join( '' );
+        }
+
+        return htmlString;
       },
       formatTime: formatTime,
       truncate: function( string, ending, limit ) {
