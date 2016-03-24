@@ -1,5 +1,3 @@
-console.log( 'attempting to load sounds', sounds );
-
 sounds.load( [
   'sounds/pop1.mp3',
   'sounds/pop2.mp3',
