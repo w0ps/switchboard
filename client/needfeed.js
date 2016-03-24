@@ -8,7 +8,7 @@ Template.needs.events( {
     var value = event.target.value, split, description;
     if( !value ) return;
     event.target.value = '';
-console.log( value );
+
     Meteor.call( 'addNeed', value );
   }
 } );
@@ -32,3 +32,39 @@ Template.need.events( {
     return false;
   }
 } );
+
+
+var previousNeedTitles;
+
+Template.needs.onRendered( onRendered );
+
+function onRendered() {
+  Tracker.autorun( function(){
+
+    var currentNeedTitles = [],
+        prevTitles = previousNeedTitles ? previousNeedTitles.slice() : [];
+
+    Needs.find( { snapshot: { $exists: false } } ).forEach( registerName );
+
+    if( previousNeedTitles && currentNeedTitles.length > previousNeedTitles.length ) {
+      playSound( 'pop1' ); // new need
+    }
+
+    if( prevTitles.length ) {
+      playSound( 'snare' ); // changed need
+    }
+
+    previousNeedTitles = currentNeedTitles;
+
+    function registerName( need ) {
+      var title = need.title,
+          index;
+
+      currentNeedTitles.push( title );
+      index = prevTitles.indexOf( title );
+      if( index > -1 ) {
+        prevTitles.splice( index, 1 );
+      }
+    }
+  } );
+}
