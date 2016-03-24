@@ -47,13 +47,11 @@ function onRendered() {
     Needs.find( { snapshot: { $exists: false } } ).forEach( registerName );
 
     if( previousNeedTitles && currentNeedTitles.length > previousNeedTitles.length ) {
-      // need added, play sound
-      console.log( 'play new need sound' );
+      playSound( 'pop1' ); // new need
     }
 
     if( prevTitles.length ) {
-      // need title changed, play sound
-      console.log( 'play need changed sound' );
+      playSound( 'snare' ); // changed need
     }
 
     previousNeedTitles = currentNeedTitles;
