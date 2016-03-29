@@ -7,7 +7,9 @@
 	</aside>
 	<nav>
 		<a href="/needs">view needs</a>
-		<a href="/profile">view/edit profile</a>
+		{{#if currentUser}}
+			<a href="/profile">profile</a>
+		{{/if}}
 		{{#if isAllowed 'edit users'}}
 		<a href="/users">manage users</a>
 		{{/if}}
