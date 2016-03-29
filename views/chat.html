@@ -22,13 +22,13 @@
             <p class="chat-timecode{{whose}}">{{formatTime created}}</p>
           {{/each}}
         {{/each}}
-        {{#each need.writingMessage}}
-          {{#if compare this currentUser._id '!=='}}
-            <div class="streak">
-              <chatline>{{userIdToUserName this}} is typing...</chatline>
-            </div>
-          {{/if}}
-        {{/each}}
+        {{#if showTyping need.writingMessage}}
+          <div class="streak">
+            <span class="chatline typing">
+              <span>.</span><span>.</span><span>.</span>
+            </span>
+          </div>
+        {{/if}}
       </div>
     </section>
     <footer id="need-detail-footer">

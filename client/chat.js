@@ -41,7 +41,15 @@ Template.chat.helpers( {
   getConversation: getConversation,
 	whose: function() {
 		return this.createdBy === Meteor.userId() ? ' mine' : '';
-	}
+	},
+  showTyping: function( whosTyping ) {
+    var copy = whosTyping.slice(),
+        index = copy.indexOf( Meteor.userId() );
+
+    if( index > -1 ) copy.splice( index, 1 );
+
+    return !!copy.length;
+  }
 } );
 
 scrolledToBottom = true;
