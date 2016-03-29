@@ -1,14 +1,14 @@
 #needlist {
 	width: 300px;
 	float: left;
-	height: calc( 100% - 77px );
+	height: calc( 100% - 52px );
 	overflow-y: scroll;
 }
 
 #openchats {
 	width: calc( 100% - 305px );
 	float: left;
-	height: calc( 100% - 77px );
+	height: calc( 100% - 52px );
 	overflow-x: scroll;
 	overflow-y: hidden;
 	position: relative;
