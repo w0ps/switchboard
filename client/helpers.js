@@ -8,14 +8,17 @@ var helpers = {
       },
       getAvatar: function ( userId ) {
         var user = Meteor.users.findOne( { _id: userId } ),
+            self = Meteor.userId() && Meteor.users.findOne( { _id: Meteor.userId() } ),
+            pretend = self && self.pretend,
             htmlString;
+
         if( !user ) return;
 
         htmlString = [
           '<img class="avatar" src="', user.avatar || defaultPictureSrc, '" alt="', user.username, '" />'
         ].join( '' );
 
-        if( user.videochaturl ) {
+        if( user.videochaturl && user._id !== Meteor.userId() && user._id !== pretend ) {
           htmlString = '<a href="' + user.videochaturl + '" title="videochat with ' + user.username + '" >' + htmlString + '</a>';
           htmlString = [
           '<a href="', user.videochaturl, '" title="videochat with ', user.username, '">', htmlString, '</a>'
