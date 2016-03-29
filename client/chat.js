@@ -34,6 +34,7 @@ Template.chat.events( {
     Meteor.call( 'addChatMessage', { text: value, sourceId: sourceId } );
   },
   'focus [contentEditable=true]': editableFocusHandler,
+  'keyup [contentEditable=true]': chatMessageKeyup,
   'blur [contentEditable=true]': editableBlurHandler
 } );
 
@@ -131,4 +132,34 @@ function getConversation( id ) {
     previousStreak.lines.push( message );
     previousStreak.created = message.created;
   }
+}
+
+function chatMessageKeyup( event ) {
+  if( !event.ctrlKey ) return;
+
+  var keyPressed = String.fromCharCode( event.which ),
+      needId = this._id,
+      handlers = {
+        // C: function updateNeedColor () {
+        //  var input = document.createElement( 'input' ),
+        //      colorpicker;
+
+        //  input.classList.add( 'modal', 'color' );
+        //  document.body.appendChild( input );
+
+        //  // colorpicker = new ColorPicker( input, {
+        //  //  mode: 'rgb'
+        //  // } );
+        // },
+        U: function updateNeedTitle () {
+          var selectedText = getSelectedText();
+
+          if( !selectedText ) return;
+
+          Meteor.call( 'changeNeedTitle', needId, getSelectedText() );
+        },
+        'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
+      };
+
+  return handlers[ keyPressed ] ? handlers[ keyPressed ]() : undefined;
 }
