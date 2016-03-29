@@ -65,6 +65,10 @@ li.need {
 	cursor: pointer;
 }
 
+li.need:hover {
+	background-color: #FFC;
+}
+
 li.need span.time {
 	padding-top: 20px;
 	margin-right: 5px;
