@@ -75,8 +75,9 @@ li.need img.avatar {
 	margin: 0 4px;
 }
 
-li.need a {
-	text-decoration: none;
+li.need p:hover {
+	text-decoration: underline;
+	cursor: text;
 }
 
 li.need .name {
