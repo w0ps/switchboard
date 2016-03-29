@@ -1,5 +1,10 @@
+Router.configure( {
+    layoutTemplate: "mainlayout",
+    before: setLayout
+} );
+
 Router.route( '/', function(){ this.render( 'root' ); } );
-Router.route( '/needs' );
+Router.route( '/needs', showFeed );
 Router.route( '/profile' );
 Router.route( '/needs/:id', showNeed );
 Router.route( '/roles', showRoles );
@@ -7,27 +12,40 @@ Router.route( '/users', showUsers );
 Router.route( '/snapshots', showSnapshots );
 Router.route( '/pretend', showPretend );
 
-function beforeUnLoad( event ) {
-	Meteor.call( 'leaveChat', this.params.id );
-  Meteor.call( 'stopTyping', this.params.id );
+function showFeed() {
+  if( isAllowed( 'separate windows' ) ) window.onbeforeunload = beforeUnLoadFeed.bind( this );
+
+  return this.render( 'needs' );
+
+  function beforeUnloadNeedDetail( event ) {
+    Session.get( 'openConversations' ).forEach( leave );
+
+    function leave( sourceId ) {
+      Meteor.call( 'leaveChat', sourceId );
+      Meteor.call( 'stopTyping', sourceId );
+    }
+  }
 }
 
 function showNeed() {
   var id = this.params.id;
   Meteor.call( 'joinChat', id );
 
-  window.onbeforeunload = beforeUnLoad.bind( this );
+  window.onbeforeunload = beforeUnloadNeedDetail.bind( this );
 
-  this.render( 'need-detail', {
+  return this.render( 'need-detail', {
     data: {
       need: function() {
         return Needs.findOne( { _id: id } );
       },
-      conversation: function() {
-        return getConversation( id );
-      }
+      conversationId: id
     }
   } );
+
+  function beforeUnloadNeedDetail() {
+    Meteor.call( 'leaveChat', this.params.id );
+    Meteor.call( 'stopTyping', this.params.id );
+  }
 }
 
 function showRoles() {
@@ -183,34 +201,13 @@ function showPretend() {
   } } );
 }
 
-function getConversation( id ) {
-  var messages = ChatMessages.find( { sourceId: id } ),
-      conversation = [];
+function setLayout(){
+  if( (
+    this.url === '/needs' ||
+    this.route.getName() === 'needs.:id'
+  ) && isAllowed( 'separate windows' ) ) {
+    this.layout( 'emptylayout' );
+  }
 
-  messages.forEach( function( message, i ) {
-    var previousSpeakingTurn = i && conversation[ conversation.length - 1 ],
-        previousStreak = i && previousSpeakingTurn.streaks[ previousSpeakingTurn.streaks.length - 1 ],
-        previousLine = i && previousStreak.lines[ previousStreak.lines.length - 1 ],
-        newStreak = {
-          createdBy: message.createdBy,
-          created: message.created,
-          lines: [ message ]
-        };
-
-    if( !i || previousSpeakingTurn.createdBy !== message.createdBy ) {
-      return conversation.push( {
-        createdBy: message.createdBy,
-        streaks: [ newStreak ]
-      } );
-    }
-
-    if( message.created.getTime() - previousLine.created.getTime() > constants.bubbleJoinGap * 1000 ) {
-      return previousSpeakingTurn.streaks.push( newStreak );
-    }
-
-    previousStreak.lines.push( message );
-    previousStreak.created = message.created;
-  } );
-
-  return conversation;
+  this.next();
 }

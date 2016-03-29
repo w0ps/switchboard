@@ -17,9 +17,8 @@ permissions = [
   'edit needs',
   'edit chatmessages',
   'edit snapshots',
-  'pretend'
-  // 'chatroom',
-  // 'separate windows' ?
+  'pretend',
+  'separate windows'
 ];
 
 Meteor.methods({
@@ -110,6 +109,14 @@ Meteor.methods({
     Needs.update( { _id: id }, {
       $pull: { writingMessage: user.pretend || user._id }
     } );
+  },
+  leave: function() {
+    Session.get( 'openConversations' ).forEach( leave );
+
+    function leave( sourceId ) {
+      Meteor.call( 'leaveChat', sourceId );
+      Meteor.call( 'stopTyping', sourceId );
+    }
   },
   updateRole: function( name, incomingPermissions ) {
     incomingPermissions = incomingPermissions || {};

@@ -1,0 +1,24 @@
+<template name="header">
+	<aside>
+		{{#if currentUser}}
+			<img src="{{currentUser.avatar}}" alt="{{currentUser.username}}" />
+		{{/if}}
+		{{> loginButtons}}
+	</aside>
+	<nav>
+		<a href="/needs">view needs</a>
+		<a href="/profile">view/edit profile</a>
+		{{#if isAllowed 'edit users'}}
+		<a href="/users">manage users</a>
+		{{/if}}
+		{{#if isAllowed 'edit roles'}}
+			<a href="/roles">manage roles</a>
+		{{/if}}
+		{{#if isAllowed 'edit snapshots'}}
+			<a href="/snapshots">snapshots</a>
+		{{/if}}
+		{{#if isAllowed 'pretend'}}
+			<a href="/pretend">pretend</a>
+		{{/if}}
+	</nav>
+</template>

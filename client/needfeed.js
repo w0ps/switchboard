@@ -1,6 +1,4 @@
-var chatWindows = {},
-    chatWidth = 300,
-    chatHeight = 400;
+var chatWindows = {};
 
 Template.needs.events( {
   "keyup input[name=need]": function( event ) {
@@ -13,9 +11,15 @@ Template.needs.events( {
   }
 } );
 
-Template.needs.helpers( {
+Template.needlist.helpers( {
   needs: function() {
     return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+  }
+} );
+
+Template.chatcollection.helpers( {
+  conversations: function(){
+    return Session.get( 'openConversations' );
   }
 } );
 
@@ -26,12 +30,56 @@ Template.need.events( {
   'click a.open-chat': function( event ) {
     event.preventDefault();
 
-    var windowName = this.title;
+    if( isAllowed( 'separate windows' ) ) {
+      var windowName = this.title;
 
-    chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + chatHeight + ',width=' + chatWidth + ',left=' + window.innerWidth );
-    return false;
+      chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
+      return false;
+    }
+
+    var openConversations = Session.get( 'openConversations' ) && Session.get( 'openConversations' ).slice() || [],
+        index = openConversations.indexOf( this._id );
+
+    if( index > -1 ) openConversations.splice( index, 1 );
+    openConversations.unshift( this._id );
+
+    Session.set( 'openConversations', openConversations );
+    Meteor.call( 'joinChat', this._id );
+  },
+} );
+
+Template.chatcollection.events( {
+  'click .close': function() {
+    var sourceId = this.toString();
+    Meteor.call( 'leaveChat', sourceId );
+    Meteor.call( 'stopTyping', sourceId );
+
+    var openConversations = Session.get( 'openConversations' ).slice(),
+        index = openConversations.indexOf( sourceId );
+
+    if( index > -1 ) openConversations.splice( index, 1 );
+    Session.set( 'openConversations', openConversations );
   }
 } );
+
+
+var storeEditTimeout;
+
+function contentEdit( event ) {
+  var id = this._id,
+      type = this.type,
+      content = event.target.textContent;
+
+  clearTimeout( storeEditTimeout );
+
+  if( event.type === 'focusout' || event.type === 'blur' ) storeEdit();
+  else storeEditTimeout = setTimeout( storeEdit, constants.editableTypingStoreDelay * 1000 );
+
+  function storeEdit() {
+    Meteor.call( 'changeNeedTitle', id, content );
+  }
+}
+
 
 
 var previousNeedTitles;

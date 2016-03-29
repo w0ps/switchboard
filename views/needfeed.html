@@ -1,4 +1,13 @@
 <template name="needs">
+  {{#if isAllowed 'separate windows'}}
+    {{> needlist}}
+  {{else}}
+    <aside id="needlist">{{> needlist}}</aside>
+    <section id="openchats">{{> chatcollection}}</section>
+  {{/if}}
+</template>
+
+<template name="needlist">
   {{#if isAllowed 'post needs'}}
     <input class="inverted" name="need" placeholder="what is your need" />
   {{/if}}
@@ -19,4 +28,15 @@
       {{title}}
     </a></p>
   </li>
+</template>
+
+<template name="chatcollection">
+  <div style="width: calc( {{conversations.length}} * 300px ); height: 100%; position: relative">
+    {{#each conversations}}
+      <div class="conversation">
+        <button class="close">x</button>
+        {{> chat this}}
+      </div>
+    {{/each}}
+  </div>
 </template>

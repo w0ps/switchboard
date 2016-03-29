@@ -104,7 +104,7 @@ span.chatline.mine {
 }
 
 #need-detail-footer {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	width: 100%;
 	border-top: 3px solid black;

@@ -1,3 +1,52 @@
+#needlist {
+	width: 300px;
+	float: left;
+	height: calc( 100% - 77px );
+	overflow-y: scroll;
+}
+
+#openchats {
+	width: calc( 100% - 305px );
+	float: left;
+	height: calc( 100% - 77px );
+	overflow-x: scroll;
+	overflow-y: hidden;
+	position: relative;
+}
+
+div.conversation {
+	float: left;
+	position: relative;
+	width: 300px;
+	height: 100%;
+	outline: 1px solid black;
+}
+
+div.conversation .close {
+	display: none;
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	width: 20px;
+	height: 20px;
+	color: white;
+	font-family: open-sans-extrabold, impact;
+	text-shadow: 0 0 7px black;
+	background-color: #C00;
+	content: 'x';
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+div.conversation:hover .close {
+	display: inherit;
+}
+
+div.conversation .close:hover {
+	background-color: red;
+}
+
 ul.needs {
 	padding: 2px 0;
 	margin: 0;
@@ -43,6 +92,7 @@ input[name="need"] {
 	height: 25px;
 	width: 100%;
 	padding-left: 5px;
+	box-sizing: border-box;
 }
 
 /*li.need span.timecode {

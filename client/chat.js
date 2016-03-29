@@ -1,8 +1,9 @@
 var isWriting;
 
-Template[ 'need-detail' ].events( {
+Template.chat.events( {
   'keyup textarea[name=message]': function( event ) {
-    var target = event.target,
+    var sourceId = this._id,
+        target = event.target,
         currentHeight = parseInt( style = window.getComputedStyle( target ).height, 10 ),
         scrollHeight = target.scrollHeight;
 
@@ -12,13 +13,13 @@ Template[ 'need-detail' ].events( {
 
     if( !isWriting && event.keyCode !== 13 && event.target.value ) {
       isWriting = true;
-      Meteor.call( 'startTyping', this.need()._id );
+      Meteor.call( 'startTyping', sourceId );
       return;
     }
 
     if( isWriting && !event.target.value ) {
       isWriting = false;
-      Meteor.call( 'stopTyping', this.need()._id );
+      Meteor.call( 'stopTyping', sourceId );
       return;
     }
 
@@ -29,12 +30,13 @@ Template[ 'need-detail' ].events( {
     target.style.height = '25px';
 
     isWriting = false;
-    Meteor.call( 'stopTyping', this.need()._id );
-    Meteor.call( 'addChatMessage', { text: value, sourceId: this.need()._id } );
+    Meteor.call( 'stopTyping', sourceId );
+    Meteor.call( 'addChatMessage', { text: value, sourceId: sourceId } );
   }
 } );
 
 Template.chat.helpers( {
+  getConversation: getConversation,
 	whose: function() {
 		return this.createdBy === Meteor.userId() ? ' mine' : '';
 	}
@@ -47,11 +49,12 @@ var autoScrolling = false;
 Template.chat.onRendered( onRendered );
 
 function onRendered() {
-  var chat = this;
+  var sourceId = this.data;
 
   Tracker.autorun( function(){
     // refer to data.conversation to make this rerun on update
-    if( scrolledToBottom && chat.data.conversation().length ) scrollToBottom();
+
+    if( scrolledToBottom && getConversation( sourceId ).length ) scrollToBottom();
   } );
 
   window.addEventListener( 'scroll', onScroll );
@@ -79,5 +82,43 @@ function onScroll( event ) {
   function detectScrollPosition(){
     scrollTimeout = null;
     scrolledToBottom = document.body.scrollHeight < ( document.body.scrollTop + window.innerHeight + 30 );
+  }
+}
+
+function getConversation( id ) {
+  var need = Needs.findOne( { _id: id } ),
+      messages = ChatMessages.find( { sourceId: id } ),
+      speakingTurns = [];
+
+  messages.forEach( processMessage );
+
+  return {
+    need: need,
+    speakingTurns: speakingTurns
+  };
+
+  function processMessage( message, i ) {
+    var previousSpeakingTurn = i && speakingTurns[ speakingTurns.length - 1 ],
+        previousStreak = i && previousSpeakingTurn.streaks[ previousSpeakingTurn.streaks.length - 1 ],
+        previousLine = i && previousStreak.lines[ previousStreak.lines.length - 1 ],
+        newStreak = {
+          createdBy: message.createdBy,
+          created: message.created,
+          lines: [ message ]
+        };
+
+    if( !i || previousSpeakingTurn.createdBy !== message.createdBy ) {
+      return speakingTurns.push( {
+        createdBy: message.createdBy,
+        streaks: [ newStreak ]
+      } );
+    }
+
+    if( message.created.getTime() - previousLine.created.getTime() > constants.bubbleJoinGap * 1000 ) {
+      return previousSpeakingTurn.streaks.push( newStreak );
+    }
+
+    previousStreak.lines.push( message );
+    previousStreak.created = message.created;
   }
 }
