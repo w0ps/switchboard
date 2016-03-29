@@ -32,7 +32,9 @@ Template.chat.events( {
     isWriting = false;
     Meteor.call( 'stopTyping', sourceId );
     Meteor.call( 'addChatMessage', { text: value, sourceId: sourceId } );
-  }
+  },
+  'focus [contentEditable=true]': editableFocusHandler,
+  'blur [contentEditable=true]': editableBlurHandler
 } );
 
 Template.chat.helpers( {

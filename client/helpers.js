@@ -68,7 +68,14 @@ var helpers = {
           return { key: key, value: object[ key ] };
         } );
       },
-      now: function() { return new Date(); }
+      now: function() { return new Date(); },
+      contenteditability: function() {
+        var type = guessType( this );
+        if(
+          ( type === 'need' && isAllowed( 'edit needs' ) ) ||
+          ( type === 'chatmessage' && isAllowed( 'edit chatmessages' ) )
+        ) return { contentEditable: true };
+      }
     };
 
 function registerHelper( name ) {

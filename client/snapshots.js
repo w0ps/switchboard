@@ -11,8 +11,8 @@ Template.snapshots.events( {
   'change #timeoffset': changeTimeOffset,
   'click section button.delete': clickDeleteItem,
   'click section span.name': clickItemName,
-  'input section li p': contentEdit,
-  'blur section li p': contentEdit,
+  'focus section li p': editableFocusHandler,
+  'blur section li p': editableBlurHandler,
   'click section span.datetime': clickDateTime,
 } );
 
@@ -146,8 +146,6 @@ function clickDateTime( event ) {
   var timezoneOffset = created.getTimezoneOffset() * 60 * 1000,
       localDate = new Date( created.getTime() - timezoneOffset );
 
-  console.log( { localDate: localDate, created: created } );
-
   input.value = localDate.toISOString().replace( 'Z', '' );
 
   input.addEventListener( 'keyup', inputKeyup );
@@ -171,7 +169,7 @@ function clickDateTime( event ) {
         span = document.createElement( 'span' );
 
 
-    span.textContent = formatTime( globalDate );
+    span.textContent = formatTime( globalDate, 'both' );
     span.className = 'datetime';
 
     parent.replaceChild( span, input );
@@ -186,27 +184,18 @@ function clickDateTime( event ) {
 
     var span = document.createElement( 'span' );
 
-    span.textContent = formatTime( created );
+    span.textContent = formatTime( created, 'both' );
     span.className = 'datetime';
 
     parent.replaceChild( span, input );
   }
 }
 
-var storeEditTimeout;
-
 function contentEdit( event ) {
   var id = this._id,
       type = this.type,
       content = event.target.textContent;
 
-  clearTimeout( storeEditTimeout );
-
-  if( event.type === 'focusout' || event.type === 'blur' ) storeEdit();
-  else storeEditTimeout = setTimeout( storeEdit, constants.editableTypingStoreDelay * 1000 );
-
-  function storeEdit() {
-    if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
-    if( type === 'chatmessage' ) return Meteor.call( 'changeChatMessageText', id, content );
-  }
+  if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
+  if( type === 'chatmessage' ) return Meteor.call( 'changeChatMessageText', id, content );
 }

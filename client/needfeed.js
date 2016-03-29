@@ -8,7 +8,9 @@ Template.needs.events( {
     event.target.value = '';
 
     Meteor.call( 'addNeed', value );
-  }
+  },
+  'focus [contentEditable=true]': editableFocusHandler,
+  'blur [contentEditable=true]': editableBlurHandler
 } );
 
 Template.needlist.helpers( {
@@ -27,13 +29,11 @@ Template.need.events( {
   'click button.delete': function( event ) {
     Meteor.call( 'deleteNeed', this._id );
   },
-  'click a.open-chat': function( event ) {
-    event.preventDefault();
-
+  'click li.need': function( event ) {
     if( isAllowed( 'separate windows' ) ) {
       var windowName = this.title;
 
-      chatWindows[ windowName ] = window.open( event.target.href, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
+      chatWindows[ windowName ] = window.open( '/needs/' + this._id, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
       return false;
     }
 
@@ -46,6 +46,9 @@ Template.need.events( {
     Session.set( 'openConversations', openConversations );
     Meteor.call( 'joinChat', this._id );
   },
+  'click li.need [contentEditable=true]': function() {
+    return false;
+  }
 } );
 
 Template.chatcollection.events( {

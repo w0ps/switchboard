@@ -21,7 +21,7 @@ function showFeed() {
     if( !separateWindowsAllowed ) window.onbeforeunload = beforeUnloadFeed;
 
     function beforeUnloadFeed() {
-      Session.get( 'openConversations' ).forEach( leave );
+      ( Session.get( 'openConversations' ) || [] ).forEach( leave );
 
       function leave( sourceId ) {
         Meteor.call( 'leaveChat', sourceId );
