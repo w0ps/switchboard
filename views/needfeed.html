@@ -20,11 +20,11 @@
 
 <template name="need">
   <li class="need">
-    <span class="timecode">{{formatTime created}}</span>
     {{{getAvatar createdBy}}}
     <span class="name">{{userIdToUserName createdBy}}</span>
     <!-- <button class="delete">x</button> -->
-    <p {{contenteditability}}>{{title}}</p>
+    <span class="timecode">{{formatTime created}}</span>
+    <span {{contenteditability}}>{{title}}</span>
   </li>
 </template>
 

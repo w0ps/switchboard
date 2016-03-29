@@ -57,7 +57,6 @@ li.need {
 	position: relative;
 	min-height: 50px;
 	line-height: 15px;
-	list-style: none;
 	margin: 2px;
 	padding: 4px;
 	background-color: white;
@@ -69,9 +68,9 @@ li.need:hover {
 	background-color: #FFC;
 }
 
-li.need span.time {
-	padding-top: 20px;
-	margin-right: 5px;
+li.need span.timecode:before {
+	content: "\a";
+	white-space: pre;
 }
 
 li.need img.avatar {
@@ -79,7 +78,7 @@ li.need img.avatar {
 	margin: 0 4px;
 }
 
-li.need p[contentEditable=true]:hover {
+li.need span[contentEditable=true]:hover {
 	text-decoration: underline;
 	cursor: text;
 }
