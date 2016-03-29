@@ -4,8 +4,8 @@ Router.configure( {
 } );
 
 Router.route( '/', function(){ this.render( 'root' ); } );
-Router.route( '/needs', showFeed );
 Router.route( '/profile' );
+Router.route( '/needs', showFeed );
 Router.route( '/needs/:id', showNeed );
 Router.route( '/roles', showRoles );
 Router.route( '/users', showUsers );
@@ -13,16 +13,20 @@ Router.route( '/snapshots', showSnapshots );
 Router.route( '/pretend', showPretend );
 
 function showFeed() {
-  if( isAllowed( 'separate windows' ) ) window.onbeforeunload = beforeUnLoadFeed.bind( this );
+  isAllowedWhenConnected( 'separate windows', bindBeforeUnload );
 
   return this.render( 'needs' );
 
-  function beforeUnloadNeedDetail( event ) {
-    Session.get( 'openConversations' ).forEach( leave );
+  function bindBeforeUnload( separateWindowsAllowed ) {
+    if( !separateWindowsAllowed ) window.onbeforeunload = beforeUnloadFeed;
 
-    function leave( sourceId ) {
-      Meteor.call( 'leaveChat', sourceId );
-      Meteor.call( 'stopTyping', sourceId );
+    function beforeUnloadFeed() {
+      Session.get( 'openConversations' ).forEach( leave );
+
+      function leave( sourceId ) {
+        Meteor.call( 'leaveChat', sourceId );
+        Meteor.call( 'stopTyping', sourceId );
+      }
     }
   }
 }
