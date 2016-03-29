@@ -79,7 +79,7 @@ li.need img.avatar {
 	margin: 0 4px;
 }
 
-li.need p:hover {
+li.need p[contentEditable=true]:hover {
 	text-decoration: underline;
 	cursor: text;
 }
