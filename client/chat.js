@@ -138,7 +138,7 @@ function chatMessageKeyup( event ) {
   if( !event.ctrlKey ) return;
 
   var keyPressed = String.fromCharCode( event.which ),
-      needId = this._id,
+      needId = this.sourceId,
       handlers = {
         // C: function updateNeedColor () {
         //  var input = document.createElement( 'input' ),
@@ -156,7 +156,7 @@ function chatMessageKeyup( event ) {
 
           if( !selectedText ) return;
 
-          Meteor.call( 'changeNeedTitle', needId, getSelectedText() );
+          Meteor.call( 'changeNeedTitle', needId, selectedText );
         },
         'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
       };
