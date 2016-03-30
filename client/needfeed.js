@@ -4,9 +4,18 @@ Template.needs.events( {
   "keyup input[name=need]": keyupNeedInput,
   'focus [contentEditable=true]': editableFocusHandler,
   'blur [contentEditable=true]': editableBlurHandler,
-  'click #needlist > .resource': clickAddResource,
+  //JF commented out: 'click #needlist > .resource': clickAddResource,
+  // /JF
   'click .need .resource': clickAddResourceToNeed
 } );
+
+// JF added
+Template.needlist.events( { 
+
+  'click .resource': clickAddResource,
+
+} );
+// /JF
 
 Template.needlist.helpers( {
   needs: function() {
@@ -33,10 +42,15 @@ Template.need.helpers( {
 } );
 
 Template.need.events( {
-  'click li.need': openChat,
+
+// JF: orginal line was:  'click li.need': openChat,
+// instead of this, only open a chat when clicked on the NAME:
+  'click li.need .name': openChat,
   'click li.need [contentEditable=true]': function() {
-    return false;
-  }
+    return false;},
+  // JF added next line:  
+  'click .resource': clickAddResourceToNeed
+  // /JF
 } );
 
 Template.chatcollection.events( {
@@ -66,6 +80,11 @@ function clickAddResource( event ) {
   var input = event.target.parentNode.querySelector( '[name=need]' ),
       value = input.value;
 
+  // JF debug  
+  // alert ("clickAddResource - " + value);
+  // /JF
+
+
   input.value = '';
   event.target.style = '';
 
@@ -77,6 +96,7 @@ function clickAddResourceToNeed( event ) {
       resourceInput = document.createElement( 'input' ),
       needElement = event.target.parentNode,
       list = needElement.parentNode;
+
 
   resourceInput.className = 'inverted';
   resourceInput.style = 'width: 100%';
