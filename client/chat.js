@@ -44,7 +44,7 @@ Template.chat.helpers( {
 		return this.createdBy === Meteor.userId() ? ' mine' : '';
 	},
   showTyping: function( whosTyping ) {
-    var copy = whosTyping.slice(),
+    var copy = ( whosTyping || [] ).slice(),
         index = copy.indexOf( Meteor.userId() );
 
     if( index > -1 ) copy.splice( index, 1 );
