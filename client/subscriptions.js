@@ -3,7 +3,8 @@ var collectionNames = [
 			'users',
 			'roles',
 			'snapshots',
-			'chatmessages'
+			'chatmessages',
+			'supplies'
 		],
 		loadedCollections = [];
 
@@ -22,7 +23,7 @@ onLoadCollections = function( collectionNames, fun ) {
 
 	function spliceCollectionName( name ) {
 		var collectionIndex = collectionNames.indexOf( name );
-		
+
 		if( collectionIndex > -1 ) collectionNames.splice( collectionIndex, 1 );
 	}
 };

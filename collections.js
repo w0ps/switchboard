@@ -2,7 +2,7 @@ Needs = new Mongo.Collection( 'needs' );
 
 ChatMessages = new Mongo.Collection( 'chatmessages' );
 
-Responses = new Mongo.Collection( 'responses' );
+Supplies = new Mongo.Collection( 'supplies' );
 
 Roles = new Mongo.Collection( 'roles' );
 
@@ -11,7 +11,7 @@ Snapshots = new Mongo.Collection( 'snapshots' );
 permissions = [
   'post needs',
   'post chatmessages',
-  'post responses',
+  'post supplies',
   'edit roles',
   'edit users',
   'edit needs',
@@ -81,6 +81,12 @@ Meteor.methods({
     if( !isAllowed( 'edit chatmessages' ) ) throw new Meteor.Error( 'not-authorized' );
 
     ChatMessages.update( { _id: chatmessageId }, { $set: { created: created } } );
+  },
+  addSupply: function( value, needId ) {
+    if( !isAllowed( 'post supplies') ) throw new Meteor.Error( 'not-authorized' );
+
+    var supply = new Supply( value, needId );
+    Supplies.insert( supply );
   },
   joinChat: function( id ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
@@ -306,7 +312,7 @@ function arrayReplaceUpdate( collection, key, originalValue, newValue ) {
   update2.$push[ key ] = newValue;
 
   collection.update( originalQuery, update1, { multi: true } );
-  collection.update( secondQuery, update2, { multi: true} );
+  collection.update( secondQuery, update2, { multi: true } );
 }
 
 function Need( options ) {
@@ -321,7 +327,7 @@ function Need( options ) {
   this.subscribed = [ this.createdBy ];
   this.keywords = options.keywords || [];
   // ids of response posts
-  this.responses = options.responses || [];
+  this.supplies = options.supplies || [];
   // other needs this need needs to be met
   this.requirements = options.requirements || [];
   this.inChat = options.inChat || [];
@@ -335,12 +341,11 @@ function ChatMessage( options ) {
   this.sourceId = options.sourceId;
 }
 
-function Response( text, sourceId ) {
-  this.text = text;
+function Supply( value, sourceId ) {
+  this.value = value;
   this.created = new Date();
   this.createdBy = Meteor.userId();
-  this.sourceId = sourceId;
-  this.responses = [];
+  this.sourceId = sourceId || 'free';
 }
 
 function Snapshot( name ) {

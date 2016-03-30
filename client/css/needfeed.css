@@ -69,6 +69,28 @@ li.need:hover {
 	background-color: #FFC;
 }
 
+li.need:hover .supply {
+	display: inherit;
+}
+
+li.need .supply {
+	display: none;
+	color: white;
+	background-color: green;
+	font-family: open-sans-extrabold, impact;
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	cursor: pointer;
+	border: none;
+	border-radius: 25%;
+	text-shadow: 0 0 7px black;
+}
+
+li.need .supply:hover {
+	background-color: #3F3;
+}
+
 li.need span.timecode:before {
 	content: "\a";
 	white-space: pre;

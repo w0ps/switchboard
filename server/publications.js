@@ -11,6 +11,9 @@ var publications = {
       },
       snapshots: function() {
         return Snapshots.find( {} );
+      },
+      supplies: function(){
+        return Supplies.find( {} );
       }
     };
 

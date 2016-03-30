@@ -20,12 +20,21 @@
 
 <template name="need">
   <li class="need">
+    {{#if isAllowed 'post supplies'}}
+      <button class="supply">S</button>
+    {{/if}}
     {{{getAvatar createdBy}}}
     <span class="name">{{userIdToUserName createdBy}}</span>
-    <!-- <button class="delete">x</button> -->
     <span class="timecode">{{formatTime created}}</span>
     <span {{contenteditability}}>{{title}}</span>
+    {{#each getSupplies _id}}
+      {{> supply this}}
+    {{/each}}
   </li>
+</template>
+
+<template name="supply">
+  <p>{{{getAvatar createdBy}}}{{value}}</p>
 </template>
 
 <template name="chatcollection">

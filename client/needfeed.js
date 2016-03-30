@@ -10,7 +10,8 @@ Template.needs.events( {
     Meteor.call( 'addNeed', value );
   },
   'focus [contentEditable=true]': editableFocusHandler,
-  'blur [contentEditable=true]': editableBlurHandler
+  'blur [contentEditable=true]': editableBlurHandler,
+  'click .need .supply': clickAddSupplyToNeed
 } );
 
 Template.needlist.helpers( {
@@ -22,6 +23,13 @@ Template.needlist.helpers( {
 Template.chatcollection.helpers( {
   conversations: function(){
     return Session.get( 'openConversations' );
+  }
+} );
+
+Template.need.helpers( {
+  getSupplies: function( sourceId ) {
+    console.log( 'getting supplies', sourceId );
+    return Supplies.find( { sourceId: sourceId } );
   }
 } );
 
@@ -65,25 +73,41 @@ Template.chatcollection.events( {
   }
 } );
 
+function clickAddSupplyToNeed( event ) {
+  var need = this,
+      supplyInput = document.createElement( 'input' ),
+      needElement = event.target.parentNode,
+      list = needElement.parentNode;
 
-var storeEditTimeout;
+  supplyInput.className = 'inverted';
+  supplyInput.style = 'width: 100%';
 
-function contentEdit( event ) {
-  var id = this._id,
-      type = this.type,
-      content = event.target.textContent;
+  list.insertBefore( supplyInput, needElement.nextSibling );
 
-  clearTimeout( storeEditTimeout );
+  supplyInput.focus();
 
-  if( event.type === 'focusout' || event.type === 'blur' ) storeEdit();
-  else storeEditTimeout = setTimeout( storeEdit, constants.editableTypingStoreDelay * 1000 );
+  supplyInput.addEventListener( 'blur', blur );
+  supplyInput.addEventListener( 'keyup', keyup );
 
-  function storeEdit() {
-    Meteor.call( 'changeNeedTitle', id, content );
+  return false; // prevent need click -> chat open
+
+  function blur( event ) {
+    list.removeChild( supplyInput );
+  }
+
+  function keyup( event ) {
+    var value = getValueIfReturnKey( event );
+
+    if( event.keyCode === 27 ) { // esc
+      return supplyInput.blur();
+    }
+
+    if( !value ) return;
+
+    Meteor.call( 'addSupply', value, need._id );
+    supplyInput.blur();
   }
 }
-
-
 
 var previousNeedTitles;
 
