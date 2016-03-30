@@ -33,8 +33,13 @@
     {{/if}}
     {{{getAvatar createdBy}}}
     <span class="name">{{userIdToUserName createdBy}}</span>
-    <span class="timecode">{{formatTime created}}</span>
-    <span {{contenteditability}}>{{title}}</span>
+    <!-- JF change CSS based on Need state        -->
+    <span class="need-title-state-{{state}}">
+    <!-- /JF -->
+        <span class="timecode">{{formatTime created}}</span>    
+        <span {{contenteditability}}>{{title}}</span>        
+    </span>
+    
   </li>
   {{#if getResources _id}}
     {{#each getResources _id}}

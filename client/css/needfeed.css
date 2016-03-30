@@ -111,6 +111,22 @@ button.resource:hover {
 	background-color: #3A3;
 }
 
+/* JF change color of Need title depending on Need state */
+li.need span.need-title-state-initial {
+    color: blue;
+}
+li.need span.need-title-state-titleChanged {
+    color: green;
+}
+li.need span.need-title-state-sentToRepository {
+    color: orange;
+}
+li.need span.need-title-state-matched {
+    color: red;
+}
+/* /JF div classes to change color of Need title depending on Need state */
+
+
 li.need span.timecode:before {
 	content: "\a";
 	white-space: pre;
@@ -120,6 +136,8 @@ li.need img.avatar {
 	/*float: left;*/
 	margin: 0 4px;
 }
+
+
 
 li.need span[contentEditable=true]:hover {
 	text-decoration: underline;

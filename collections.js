@@ -32,6 +32,10 @@ Meteor.methods({
     var need = new Need( { title: title, createdBy: userId } ),
         nId = Needs.insert( need );
 
+    // JF
+    Needs.update ( { _id: nId }, { $set: { state: 'initial' } } );
+    // /JF
+
     Meteor.call( 'addChatMessage', { text: need.title, sourceId: nId } );
   },
   deleteNeed: function( needId ) {
@@ -50,6 +54,11 @@ Meteor.methods({
     if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
 
     Needs.update( { _id: needId }, { $set: { title: title } } );
+        
+    // JF
+    Needs.update( { _id: needId }, { $set: { title: title, state: 'titleChanged' } } );
+    // /JF
+    
   },
   changeNeedCreated: function( needId, created ) {
     if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
@@ -57,6 +66,16 @@ Meteor.methods({
     Needs.update( { _id: needId }, { $set: { created: created } } );
     ChatMessages.update( { sourceId: needId }, { $set: { created: created } } );
   },
+  
+  // Each NeedState should be represented by a different color
+  // state: 'initial', 'titleChanged', 'sentToRepository', 'matched'
+  changeNeedState: function( needId, state ) {
+    if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
+
+    Needs.update( { _id: needId }, { $set: { state: state } } );
+  },
+  // /JF
+
   addChatMessage: function( options ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
     if ( !isAllowed( 'post chatmessages') ) throw new Meteor.Error( 'not-authorized' );
@@ -404,6 +423,11 @@ function Need( options ) {
   // this.requirements = options.requirements || [];
   this.inChat = options.inChat || [];
   this.writingMessage = options.writingMessage || [];
+  
+  // JF
+  this.state = options.state;
+  // /JF
+
 }
 
 function ChatMessage( options ) {
