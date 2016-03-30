@@ -5,15 +5,12 @@ Template.needs.events( {
   'focus [contentEditable=true]': editableFocusHandler,
   'blur [contentEditable=true]': editableBlurHandler,
   //JF commented out: 'click #needlist > .resource': clickAddResource,
-  // /JF
   'click .need .resource': clickAddResourceToNeed
 } );
 
-// JF added
+// JF added:
 Template.needlist.events( { 
-
   'click .resource': clickAddResource,
-
 } );
 // /JF
 
@@ -46,9 +43,11 @@ Template.need.events( {
 // JF: orginal line was:  'click li.need': openChat,
 // instead of this, only open a chat when clicked on the NAME:
   'click li.need .name': openChat,
+  
   'click li.need [contentEditable=true]': function() {
     return false;},
-  // JF added next line:  
+    
+  // JF added:  
   'click .resource': clickAddResourceToNeed
   // /JF
 } );
