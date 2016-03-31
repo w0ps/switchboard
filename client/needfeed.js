@@ -103,6 +103,7 @@ function clickAddResourceToNeed( event ) {
 
     if( !value ) return;
 
+    console.log( need._id );
     Meteor.call( 'addResource', value, need._id );
     resourceInput.blur();
   }

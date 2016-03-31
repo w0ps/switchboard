@@ -70,6 +70,7 @@ function clickDeleteItem( event ) {
   switch( this.type ) {
     case 'need': return Meteor.call( 'deleteNeed', this._id );
     case 'chatmessage': return Meteor.call( 'deleteChatMessage', this._id );
+    case 'resource': return Meteor.call( 'deleteResource', this._id );
   }
 }
 
@@ -123,6 +124,7 @@ function clickItemName( event ) {
         name = value;
         if( item.type === 'need' ) Meteor.call( 'changeNeedOwner', item._id, users[ value ] );
         if( item.type === 'chatmessage' ) Meteor.call( 'changeChatMessageOwner', item._id, users[ value ] );
+        if( item.type === 'resource' ) Meteor.call( 'changeResourceOwner', item._id, users[ value ] );
         input.blur();
       } else {
         input.style.border = '1px solid red';
@@ -176,6 +178,7 @@ function clickDateTime( event ) {
 
     if( type === 'need' ) Meteor.call( 'changeNeedCreated', item._id, globalDate );
     if( type === 'chatmessage' ) Meteor.call( 'changeChatMessageCreated', item._id, globalDate );
+    if( type === 'resource' ) Meteor.call( 'changeResourceCreated', item._id, globalDate );
   }
 
   function inputBlur() {

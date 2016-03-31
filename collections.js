@@ -16,6 +16,7 @@ permissions = [
   'edit users',
   'edit needs',
   'edit chatmessages',
+  'edit resources',
   'edit snapshots',
   'pretend',
   'separate windows'
@@ -87,7 +88,27 @@ Meteor.methods({
 
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
 
-    Resources.insert( new Resource( { value: value, needId: needId, createdBy: user.pretend || user._id } ) );
+    Resources.insert( new Resource( { value: value, sourceId: needId, createdBy: user.pretend || user._id } ) );
+  },
+  deleteResource: function( resourceId ) {
+    if( !isAllowed( 'edit resources' ) ) throw new Meteor.Error( 'not-authorized' );
+
+    Resources.remove( { _id: resourceId } );
+  },
+  changeResourceOwner: function( resourceId, newOwnerId ) {
+    if( !isAllowed( 'edit resources') ) throw new Meteor.Error( 'not-authorized' );
+
+    Resources.update( { _id: resourceId }, { $set: { createdBy: newOwnerId } } );
+  },
+  'changeResourceText': function( resourceId, text ) {
+    if( !isAllowed( 'edit resources') ) throw new Meteor.Error( 'not-authorized' );
+
+    Resources.update( { _id: resourceId }, { $set: { text: text } } );
+  },
+  changeResourceCreated: function( resourceId, created ) {
+    if( !isAllowed( 'edit resources' ) ) throw new Meteor.Error( 'not-authorized' );
+
+    Resources.update( { _id: resourceId }, { $set: { created: created } } );
   },
   joinChat: function( id ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );

@@ -152,9 +152,13 @@ function showSnapshots() {
         return snapshots;
 
         function addSnapshot( snapshot ) {
+          var need;
+
           snapshot.timeline = [];
 
           Needs.find( { snapshot: snapshot._id } ).forEach( addNeedAndItsChatsToTimeline );
+
+          Resources.find( { snapshot: snapshot._id } ).forEach( addResourceToTimeline );
 
           if( typeof snapshot._id === 'object' ) delete snapshot._id;
 
@@ -165,7 +169,8 @@ function showSnapshots() {
           function addNeedAndItsChatsToTimeline( need ) {
             addEntityToTimeline( 'need', need );
 
-            return ChatMessages.find( { sourceId: need._id }, { sort: { created: 1 } } ).forEach( addChatmessageToTimeline );
+            ChatMessages.find( { sourceId: need._id }, { sort: { created: 1 } } ).forEach( addChatmessageToTimeline );
+            Resources.find( { sourceId: need._id }, { sort: { created: 1 } } ).forEach( addResourceToTimeline );
 
             function addChatmessageToTimeline( chatmessage, index ) {
               if( !index ) {
@@ -175,6 +180,11 @@ function showSnapshots() {
               chatmessage.need = need;
               addEntityToTimeline( 'chatmessage', chatmessage );
             }
+          }
+
+          function addResourceToTimeline( resource ) {
+            if( need ) resource.need = need;
+            addEntityToTimeline( 'resource', resource );
           }
 
           function addEntityToTimeline( entityType, entity ) {

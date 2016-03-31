@@ -36,6 +36,18 @@
 									</h3>
 									<p class="content" contentEditable="true">{{text}}</p>
 								{{/if}}
+								{{#if compare type 'resource'}}
+									<h3>
+										<span class="name">{{userIdToUserName createdBy}}</span>
+										{{#if need}}
+											<span class="action"> added to "{{truncate need.title "..." 30}}" </span>
+										{{else}}
+											<span class="action"> added</span>
+										{{/if}}
+										<span class="datetime">{{formatTime created 'both'}}:</span>
+									</h3>
+									<p class="content" contentEditable="true">{{value}}</p>
+								{{/if}}
 							</li>
 						{{/each}}
 					</ul>
