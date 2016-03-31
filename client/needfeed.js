@@ -13,7 +13,10 @@ Template.needlist.helpers( {
     return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
   },
   getLooseResources: function() {
-    return Resources.find( { sourceId: { $exists: false }, snapshot: { $exists: false } } );
+    return Resources.find(
+      { sourceId: { $exists: false }, snapshot: { $exists: false } },
+      { sort: { created: -1  } }
+    );
   }
 } );
 

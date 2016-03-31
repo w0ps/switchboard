@@ -85,8 +85,9 @@ Meteor.methods({
   addResource: function( value, needId ) {
     if( !isAllowed( 'post resources') ) throw new Meteor.Error( 'not-authorized' );
 
-    var resource = new Resource( value, needId );
-    Resources.insert( resource );
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+
+    Resources.insert( new Resource( { value: value, needId: needId, createdBy: user.pretend || user._id } ) );
   },
   joinChat: function( id ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
@@ -340,11 +341,11 @@ function ChatMessage( options ) {
   this.sourceId = options.sourceId;
 }
 
-function Resource( value, sourceId ) {
-  this.value = value;
+function Resource( options ) {
+  this.value = options.value;
   this.created = new Date();
-  this.createdBy = Meteor.userId();
-  if( sourceId ) this.sourceId = sourceId;
+  this.createdBy = options.createdBy;
+  if( options.sourceId ) this.sourceId = options.sourceId;
 }
 
 function Snapshot( name ) {

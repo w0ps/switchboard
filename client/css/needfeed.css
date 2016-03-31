@@ -60,9 +60,14 @@ li.resource {
 	margin: 2px;
 	margin-left: 15px;
 	padding: 4px;
+	padding-left: 10px;
 	background-color: white;
-	border-radius: 15px 0 0 15px;
 	color: black;
+	border-radius: 0 0 0 15px;
+}
+
+li.resource.free {
+	border-radius: 15px 0 0 15px;
 }
 
 li.resource p {
