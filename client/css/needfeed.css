@@ -3,6 +3,7 @@
 	float: left;
 	height: calc( 100% - 52px );
 	overflow-y: scroll;
+	position: relative;
 }
 
 #openchats {
@@ -54,6 +55,20 @@ ul.needs {
 	background-color: black;
 }
 
+li.resource {
+	position: relative;
+	margin: 2px;
+	margin-left: 15px;
+	padding: 4px;
+	background-color: white;
+	border-radius: 15px 0 0 15px;
+	color: black;
+}
+
+li.resource p {
+	margin: 0;
+}
+
 li.need {
 	position: relative;
 	min-height: 50px;
@@ -69,11 +84,11 @@ li.need:hover {
 	background-color: #FFC;
 }
 
-li.need:hover .supply {
+.need:hover button.resource {
 	display: inherit;
 }
 
-li.need .supply {
+button.resource {
 	display: none;
 	color: white;
 	background-color: green;
@@ -87,8 +102,8 @@ li.need .supply {
 	text-shadow: 0 0 7px black;
 }
 
-li.need .supply:hover {
-	background-color: #3F3;
+button.resource:hover {
+	background-color: #3A3;
 }
 
 li.need span.timecode:before {

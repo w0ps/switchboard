@@ -1,22 +1,19 @@
 var chatWindows = {};
 
 Template.needs.events( {
-  "keyup input[name=need]": function( event ) {
-    if( event.keyCode !== 13 ) return;
-    var value = event.target.value, split, description;
-    if( !value ) return;
-    event.target.value = '';
-
-    Meteor.call( 'addNeed', value );
-  },
+  "keyup input[name=need]": keyupNeedInput,
   'focus [contentEditable=true]': editableFocusHandler,
   'blur [contentEditable=true]': editableBlurHandler,
-  'click .need .supply': clickAddSupplyToNeed
+  'click #needlist > .resource': clickAddResource,
+  'click .need .resource': clickAddResourceToNeed
 } );
 
 Template.needlist.helpers( {
   needs: function() {
     return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+  },
+  getLooseResources: function() {
+    return Resources.find( { sourceId: { $exists: false }, snapshot: { $exists: false } } );
   }
 } );
 
@@ -27,86 +24,115 @@ Template.chatcollection.helpers( {
 } );
 
 Template.need.helpers( {
-  getSupplies: function( sourceId ) {
-    console.log( 'getting supplies', sourceId );
-    return Supplies.find( { sourceId: sourceId } );
+  getResources: function( sourceId ) {
+    return Resources.find( { sourceId: sourceId } );
   }
 } );
 
 Template.need.events( {
-  'click button.delete': function( event ) {
-    Meteor.call( 'deleteNeed', this._id );
-  },
-  'click li.need': function( event ) {
-    if( isAllowed( 'separate windows' ) ) {
-      var windowName = this.title;
-
-      chatWindows[ windowName ] = window.open( '/needs/' + this._id, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
-      return false;
-    }
-
-    var openConversations = Session.get( 'openConversations' ) && Session.get( 'openConversations' ).slice() || [],
-        index = openConversations.indexOf( this._id );
-
-    if( index > -1 ) openConversations.splice( index, 1 );
-    openConversations.unshift( this._id );
-
-    Session.set( 'openConversations', openConversations );
-    Meteor.call( 'joinChat', this._id );
-  },
+  'click li.need': openChat,
   'click li.need [contentEditable=true]': function() {
     return false;
   }
 } );
 
 Template.chatcollection.events( {
-  'click .close': function() {
-    var sourceId = this.toString();
-    Meteor.call( 'leaveChat', sourceId );
-    Meteor.call( 'stopTyping', sourceId );
-
-    var openConversations = Session.get( 'openConversations' ).slice(),
-        index = openConversations.indexOf( sourceId );
-
-    if( index > -1 ) openConversations.splice( index, 1 );
-    Session.set( 'openConversations', openConversations );
-  }
+  'click .close': closeChat
 } );
 
-function clickAddSupplyToNeed( event ) {
+function keyupNeedInput( event ) {
+  var value = event.target.value,
+      split, description;
+
+  if( event.keyCode !== 13 ) {
+    if( value ) {
+      event.target.parentNode.querySelector( '.resource' ).style = 'display: inherit';
+    } else event.target.parentNode.querySelector( '.resource' ).style = 'display: none';
+    return;
+  }
+
+  if( !value ) return;
+
+  event.target.value = '';
+  event.target.parentNode.querySelector( '.resource' ).style = 'display: none';
+
+  Meteor.call( 'addNeed', value );
+}
+
+function clickAddResource( event ) {
+  var input = event.target.parentNode.querySelector( '[name=need]' ),
+      value = input.value;
+
+  input.value = '';
+  event.target.style = '';
+
+  Meteor.call( 'addResource', value );
+}
+
+function clickAddResourceToNeed( event ) {
   var need = this,
-      supplyInput = document.createElement( 'input' ),
+      resourceInput = document.createElement( 'input' ),
       needElement = event.target.parentNode,
       list = needElement.parentNode;
 
-  supplyInput.className = 'inverted';
-  supplyInput.style = 'width: 100%';
+  resourceInput.className = 'inverted';
+  resourceInput.style = 'width: 100%';
 
-  list.insertBefore( supplyInput, needElement.nextSibling );
+  list.insertBefore( resourceInput, needElement.nextSibling );
 
-  supplyInput.focus();
+  resourceInput.focus();
 
-  supplyInput.addEventListener( 'blur', blur );
-  supplyInput.addEventListener( 'keyup', keyup );
+  resourceInput.addEventListener( 'blur', blur );
+  resourceInput.addEventListener( 'keyup', keyup );
 
   return false; // prevent need click -> chat open
 
   function blur( event ) {
-    list.removeChild( supplyInput );
+    list.removeChild( resourceInput );
   }
 
   function keyup( event ) {
     var value = getValueIfReturnKey( event );
 
     if( event.keyCode === 27 ) { // esc
-      return supplyInput.blur();
+      return resourceInput.blur();
     }
 
     if( !value ) return;
 
-    Meteor.call( 'addSupply', value, need._id );
-    supplyInput.blur();
+    Meteor.call( 'addResource', value, need._id );
+    resourceInput.blur();
   }
+}
+
+function openChat( event ) {
+  if( isAllowed( 'separate windows' ) ) {
+    var windowName = this.title;
+
+    chatWindows[ windowName ] = window.open( '/needs/' + this._id, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
+    return false;
+  }
+
+  var openConversations = Session.get( 'openConversations' ) && Session.get( 'openConversations' ).slice() || [],
+      index = openConversations.indexOf( this._id );
+
+  if( index > -1 ) openConversations.splice( index, 1 );
+  openConversations.unshift( this._id );
+
+  Session.set( 'openConversations', openConversations );
+  Meteor.call( 'joinChat', this._id );
+}
+
+function closeChat() {
+  var sourceId = this.toString();
+  Meteor.call( 'leaveChat', sourceId );
+  Meteor.call( 'stopTyping', sourceId );
+
+  var openConversations = Session.get( 'openConversations' ).slice(),
+      index = openConversations.indexOf( sourceId );
+
+  if( index > -1 ) openConversations.splice( index, 1 );
+  Session.set( 'openConversations', openConversations );
 }
 
 var previousNeedTitles;

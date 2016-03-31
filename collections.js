@@ -2,7 +2,7 @@ Needs = new Mongo.Collection( 'needs' );
 
 ChatMessages = new Mongo.Collection( 'chatmessages' );
 
-Supplies = new Mongo.Collection( 'supplies' );
+Resources = new Mongo.Collection( 'resources' );
 
 Roles = new Mongo.Collection( 'roles' );
 
@@ -11,7 +11,7 @@ Snapshots = new Mongo.Collection( 'snapshots' );
 permissions = [
   'post needs',
   'post chatmessages',
-  'post supplies',
+  'post resources',
   'edit roles',
   'edit users',
   'edit needs',
@@ -82,11 +82,11 @@ Meteor.methods({
 
     ChatMessages.update( { _id: chatmessageId }, { $set: { created: created } } );
   },
-  addSupply: function( value, needId ) {
-    if( !isAllowed( 'post supplies') ) throw new Meteor.Error( 'not-authorized' );
+  addResource: function( value, needId ) {
+    if( !isAllowed( 'post resources') ) throw new Meteor.Error( 'not-authorized' );
 
-    var supply = new Supply( value, needId );
-    Supplies.insert( supply );
+    var resource = new Resource( value, needId );
+    Resources.insert( resource );
   },
   joinChat: function( id ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } );
@@ -326,10 +326,9 @@ function Need( options ) {
   // users that get notified when something happens in this thread
   this.subscribed = [ this.createdBy ];
   this.keywords = options.keywords || [];
-  // ids of response posts
-  this.supplies = options.supplies || [];
-  // other needs this need needs to be met
-  this.requirements = options.requirements || [];
+
+  // // other needs this need needs to be met
+  // this.requirements = options.requirements || [];
   this.inChat = options.inChat || [];
   this.writingMessage = options.writingMessage || [];
 }
@@ -341,11 +340,11 @@ function ChatMessage( options ) {
   this.sourceId = options.sourceId;
 }
 
-function Supply( value, sourceId ) {
+function Resource( value, sourceId ) {
   this.value = value;
   this.created = new Date();
   this.createdBy = Meteor.userId();
-  this.sourceId = sourceId || 'free';
+  if( sourceId ) this.sourceId = sourceId;
 }
 
 function Snapshot( name ) {

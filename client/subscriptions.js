@@ -4,7 +4,7 @@ var collectionNames = [
 			'roles',
 			'snapshots',
 			'chatmessages',
-			'supplies'
+			'resources'
 		],
 		loadedCollections = [];
 
