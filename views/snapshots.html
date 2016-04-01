@@ -31,7 +31,7 @@
 								{{#if compare type 'chatmessage'}}
 									<h3>
 										<span class="name">{{userIdToUserName createdBy}}</span>
-										<span class="action"> replied to "{{truncate need.title "..." 30}}" </span>
+										<span class="action"> replied to "{{truncate need.title "..." 30}}" at </span>
 										<span class="datetime">{{formatTime created 'both'}}:</span>
 									</h3>
 									<p class="content" contentEditable="true">{{text}}</p>
@@ -40,9 +40,9 @@
 									<h3>
 										<span class="name">{{userIdToUserName createdBy}}</span>
 										{{#if need}}
-											<span class="action"> added to "{{truncate need.title "..." 30}}" </span>
+											<span class="action"> added a resource to "{{truncate need.title "..." 30}}" at </span>
 										{{else}}
-											<span class="action"> added</span>
+											<span class="action"> added a resource at </span>
 										{{/if}}
 										<span class="datetime">{{formatTime created 'both'}}:</span>
 									</h3>

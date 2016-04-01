@@ -76,7 +76,8 @@ var helpers = {
         var type = guessType( this );
         if(
           ( type === 'need' && isAllowed( 'edit needs' ) ) ||
-          ( type === 'chatmessage' && isAllowed( 'edit chatmessages' ) )
+          ( type === 'chatmessage' && isAllowed( 'edit chatmessages' ) ) ||
+          ( type === 'resource' && isAllowed( 'edit resources' ) )
         ) return { contentEditable: true };
       }
     };

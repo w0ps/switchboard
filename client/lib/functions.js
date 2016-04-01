@@ -35,4 +35,5 @@ editableBlurHandler = function( event ) {
 
   if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
   if( type === 'chatmessage' ) return Meteor.call( 'changeChatMessageText', id, content );
+  if( type === 'resource' ) return Meteor.call( 'changeResourceText', id, content );
 };

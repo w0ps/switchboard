@@ -103,7 +103,7 @@ Meteor.methods({
   'changeResourceText': function( resourceId, text ) {
     if( !isAllowed( 'edit resources') ) throw new Meteor.Error( 'not-authorized' );
 
-    Resources.update( { _id: resourceId }, { $set: { text: text } } );
+    Resources.update( { _id: resourceId }, { $set: { value: text } } );
   },
   changeResourceCreated: function( resourceId, created ) {
     if( !isAllowed( 'edit resources' ) ) throw new Meteor.Error( 'not-authorized' );
