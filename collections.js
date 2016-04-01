@@ -212,9 +212,9 @@ Meteor.methods({
       delete need._id;
       need.snapshot = snapshotId;
 
-      Needs.insert( need, copyChatMessages );
+      Needs.insert( need, copyChatMessagesAndResources );
 
-      function copyChatMessages( err, _id ) {
+      function copyChatMessagesAndResources( err, _id ) {
         ChatMessages.find( { sourceId: oldNeedId } ).forEach( copyChatMessage );
         Resources.find( { sourceId: oldNeedId } ).forEach( copyResource );
 
@@ -229,7 +229,7 @@ Meteor.methods({
           delete resource._id;
           resource.sourceId = _id;
 
-          Resources.find( resource );
+          Resources.insert( resource );
         }
       }
     }
