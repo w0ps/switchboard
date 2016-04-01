@@ -184,7 +184,9 @@ Meteor.methods({
     } } );
   },
   copyToSnapshot: function( name, source ) {
-    var snapshot = new Snapshot( name ),
+    var need,
+        snapshot = new Snapshot( name ),
+        resourceQuery = { sourceId: { $exists: false } },
         needQuery = {},
         snapshotId;
 
@@ -193,10 +195,16 @@ Meteor.methods({
     snapshotId = Snapshots.findOne( { name: name } )._id;
 
     // copy needs
-    if( source ) needQuery.snapshot = source;
-    else needQuery.snapshot = { $exists: false };
+    if( source ) {
+      needQuery.snapshot = source;
+      resourceQuery.snapshot = source;
+    } else {
+      needQuery.snapshot = { $exists: false };
+      resourceQuery.snapshot = { $exists: false };
+    }
 
-    return Needs.find( needQuery ).forEach( copyNeed );
+    Needs.find( needQuery ).forEach( copyNeed );
+    Resources.find( resourceQuery ).forEach( copyResource );
 
     function copyNeed( need ) {
       var oldNeedId = need._id;
@@ -208,6 +216,7 @@ Meteor.methods({
 
       function copyChatMessages( err, _id ) {
         ChatMessages.find( { sourceId: oldNeedId } ).forEach( copyChatMessage );
+        Resources.find( { sourceId: oldNeedId } ).forEach( copyResource );
 
         function copyChatMessage( chatmessage ) {
           delete chatmessage._id;
@@ -215,7 +224,23 @@ Meteor.methods({
 
           ChatMessages.insert( chatmessage );
         }
+
+        function copyResource( resource ) {
+          delete resource._id;
+          resource.sourceId = _id;
+
+          Resources.find( resource );
+        }
       }
+    }
+
+    function copyResource( resource ) {
+      var oldResourceId = resource._id;
+
+      delete resource._id;
+      resource.snapshot = snapshotId;
+
+      Resources.insert( resource );
     }
   },
   loadSnapshot: function( name ) {
@@ -223,7 +248,8 @@ Meteor.methods({
 
     var snapshotId = Snapshots.findOne( { name: name } )._id;
 
-    return Needs.find( { snapshot: snapshotId } ).forEach( copyNeed );
+    Needs.find( { snapshot: snapshotId } ).forEach( copyNeed );
+    Resources.find( { snapshot: snapshotId } ).forEach( copyResource );
 
     function copyNeed( need ) {
       var oldNeedId = need._id;
@@ -234,7 +260,8 @@ Meteor.methods({
       return Needs.insert( need, copyChatMessages );
 
       function copyChatMessages( err, _id ) {
-        return ChatMessages.find( { sourceId : oldNeedId } ).forEach( copyChatmessage );
+        ChatMessages.find( { sourceId : oldNeedId } ).forEach( copyChatmessage );
+        Resources.find( { sourceId: oldNeedId } ).forEach( copyResource );
 
         function copyChatmessage( chatmessage ) {
           delete chatmessage._id;
@@ -242,7 +269,21 @@ Meteor.methods({
 
           ChatMessages.insert( chatmessage );
         }
+
+        function copyResource( resource ) {
+          delete resource._id;
+          resource.sourceId = _id;
+
+          Resources.insert( resource );
+        }
       }
+    }
+
+    function copyResource( resource ) {
+      delete resource._id;
+      delete resource.snapshot;
+
+      Resources.insert( resource );
     }
   },
   deleteSnapshot: function( name ) {
@@ -257,8 +298,12 @@ Meteor.methods({
     } else query.snapshot = Snapshots.findOne( { name: name } )._id;
 
     Needs.find( query ).forEach( getId );
+
     Needs.remove( query );
+    Resources.remove( query );
+
     ChatMessages.remove( { sourceId : { $in: sourceIds } } );
+    Resources.remove( { sourceId: { $in: sourceIds } } );
 
     if( name !== 'current content' ) Snapshots.remove( { name: name } );
 
@@ -267,23 +312,29 @@ Meteor.methods({
     }
   },
   timeOffsetSnapshot: function( name, offsetAndUnit ) {
-    var needQuery = {},
+    var query = {},
         split = offsetAndUnit.split( ' ' ),
         offset = parseInt( split.shift(), 10 ),
         unit = split.shift();
 
-    if( name === 'current content' ) needQuery.snapshot = { $exists: false };
-    else needQuery.snapshot = Snapshots.findOne( { name: name } )._id;
+    if( name === 'current content' ) query.snapshot = { $exists: false };
+    else query.snapshot = Snapshots.findOne( { name: name } )._id;
 
-    Needs.find( needQuery ).forEach( updateNeedAndChatMessages );
+    Needs.find( query ).forEach( updateNeedAndChatMessages );
+    Resources.find( query ).forEach( updateResource );
 
     function updateNeedAndChatMessages( need ) {
       Needs.update( { _id: need._id }, { $set: { created: offsetDate( need.created ) } } );
       ChatMessages.find( { sourceId: need._id } ).forEach( updateChatMessage );
+      Resources.find( { sourceId: need._id } ).forEach( updateResource );
     }
 
     function updateChatMessage( chatmessage ) {
       ChatMessages.update( { _id: chatmessage._id }, { $set: { created: offsetDate( chatmessage.created ) } } );
+    }
+
+    function updateResource( resource ) {
+      Resources.update( { _id: resource._id }, { $set: { created: offsetDate( resource.created ) } } );
     }
 
     function offsetDate( date ) {
