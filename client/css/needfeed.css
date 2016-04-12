@@ -58,7 +58,7 @@ ul.needs {
 li.resource {
 	position: relative;
 	margin: 2px;
-	margin-left: 120px;
+	margin-left: 45px;
 	padding: 4px;
 	padding-left: 10px;
 	background-color: white;
@@ -69,7 +69,7 @@ li.resource {
 li.freeResource {
 	position: relative;
 	margin: 2px;
-	margin-left: 120px;
+	margin-left: 45px;
 	padding: 4px;
 	padding-left: 10px;
 	background-color: white;
@@ -142,6 +142,9 @@ li.need span.timecode:before {
 li.need span.timecode {
     color: black;
     font-size: smaller;
+
+   /* font-style: italic; */
+    font-weight: bold;
 }
 
 li.need img.avatar {

@@ -19,7 +19,8 @@ permissions = [
   'edit resources',
   'edit snapshots',
   'pretend',
-  'separate windows'
+  'separate windows',
+  'start videochat'
 ];
 
 Meteor.methods({

@@ -18,7 +18,16 @@ var helpers = {
           '<img class="avatar" src="', user.avatar || defaultPictureSrc, '" alt="', user.username, '" />'
         ].join( '' );
 
-        if( user.videochaturl && user._id !== Meteor.userId() && user._id !== pretend ) {
+        /* Jf debug
+        
+        console.log("----getAvatar----");
+        console.log(["user.videochaturl: ",user.videochaturl]);
+        console.log(["user._id: ",user._id]);
+        console.log(["Meteor.userId(): ",Meteor.userId()]);
+        console.log(["pretend: ",pretend]);
+        */
+
+        if( user.videochaturl && user._id !== Meteor.userId() && user._id !== pretend && isAllowed ('start videochat') ) {        
           htmlString = '<a href="' + user.videochaturl + '" title="videochat with ' + user.username + '" >' + htmlString + '</a>';
           htmlString = [
           '<a href="', user.videochaturl, '" title="videochat with ', user.username, '">', htmlString, '</a>'
