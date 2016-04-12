@@ -1,5 +1,9 @@
 var chatWindows = {};
 
+// JF 2016-04-12
+// feedlist = new Meteor.Collection("feedlist");
+// /JF
+
 Template.needs.events( {
   "keyup input[name=need]": keyupNeedInput,
   'focus [contentEditable=true]': editableFocusHandler,
@@ -14,6 +18,23 @@ Template.needlist.events( {
 } );
 // /JF
 
+Template.resource.helpers( { 
+  isNotNull:  function(value) {
+    console.log("Resource value: ".concat(value));
+    return value != null ;
+    //return value !== "";
+  }       
+} );
+
+Template.freeResource.helpers( { 
+  isNotNull:  function(value) {
+    console.log("freeResource value: ".concat(value));
+    return value != null ;
+    //return value !== "";
+  }       
+} );
+
+
 Template.needlist.helpers( {
   needs: function() {
     return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
@@ -24,7 +45,43 @@ Template.needlist.helpers( {
       { sort: { created: -1  } }
     );
   }
+  
+  // JF 2016-04-12 Create mixed client side collection of needs and resources
+  ,
+  needsAndLooseResources: function() {
+    var tempNeeds = Needs.find( { snapshot: { $exists: false } } ).fetch();
+    var tempLooseResources = Resources.find( { sourceId: { $exists: false }, snapshot: { $exists: false } } ).fetch();
+    var tempNeedsAndLooseResources = tempNeeds.concat(tempLooseResources);
+    return _.sortBy(tempNeedsAndLooseResources, function(tempNeedsAndLooseResources) {return -tempNeedsAndLooseResources.created;});  
+  },
+  
+  isNotNull:  function(value) {
+    console.log("needlist value: ".concat(value));
+    return value != null;
+  }   
+  
+  // /JF
+  
 } );
+
+
+
+/* -- JF commented out 2016-04-12 
+
+Template.needlist.helpers( {
+  needs: function() {
+    return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+  },
+  getLooseResources: function() {
+    return Resources.find(
+      { sourceId: { $exists: false }, snapshot: { $exists: false } },
+      { sort: { created: -1  } }
+    );
+  }
+  
+} );
+
+*/
 
 Template.chatcollection.helpers( {
   conversations: function(){
@@ -35,7 +92,16 @@ Template.chatcollection.helpers( {
 Template.need.helpers( {
   getResources: function( sourceId ) {
     return Resources.find( { sourceId: sourceId } );
-  }
+  },
+
+  isNotNull:  function(value) {
+
+    console.log("Need value: ".concat(value));
+    
+    return value != null;
+  }   
+  
+  
 } );
 
 Template.need.events( {

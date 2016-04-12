@@ -2,10 +2,37 @@
   {{#if isAllowed 'separate windows'}}
     {{> needlist}}
   {{else}}
+    <!-- JF 2016-04-12  <aside id="feedlist">{{> feedlist}}</aside> -->
     <aside id="needlist">{{> needlist}}</aside>
     <section id="openchats">{{> chatcollection}}</section>
   {{/if}}
 </template>
+
+
+<!-- JF 2016-04-12 -->
+<template name="needlist">
+  {{#if isAllowed 'post needs'}}
+    <input class="inverted" name="need" placeholder="what is your need" />
+    {{#if isAllowed 'post resources'}}
+      <button class="resource">R</button>
+    {{/if}}
+  {{/if}}
+
+  <ul class="needs">
+    {{#each needsAndLooseResources}}
+        {{> need}}
+        
+        <!-- <li class="freeResource"> -->
+            {{> freeResource this}}
+        <!-- </li> -->
+    {{/each}}
+  </ul>
+
+</template>
+
+<!-- /JF-->
+
+<!-- JF commented out 2016-04-12
 
 <template name="needlist">
   {{#if isAllowed 'post needs'}}
@@ -26,32 +53,50 @@
   </ul>
 </template>
 
+-->
+
 <template name="need">
-  <li class="need">
-    {{#if isAllowed 'post resources'}}
-      <button class="resource">R</button>
-    {{/if}}
-    {{{getAvatar createdBy}}}
-    <span class="name">{{userIdToUserName createdBy}}</span>
-    <!-- JF change CSS based on Need state        -->
-    <span class="need-title-state-{{state}}">
-    <!-- /JF -->
-        <span class="timecode">{{formatTime created}}</span>    
-        <span {{contenteditability}}>{{title}}</span>        
-    </span>
-    
-  </li>
-  {{#if getResources _id}}
-    {{#each getResources _id}}
-      <li class="resource">
-        {{> resource this}}
+  {{#if isNotNull title}}
+      <li class="need">
+        {{#if isAllowed 'post resources'}}
+          <button class="resource">R</button>
+        {{/if}}
+        {{{getAvatar createdBy}}}
+        <span class="name">{{userIdToUserName createdBy}}</span>
+        <!-- JF change CSS based on Need state        -->
+        <span class="need-title-state-{{state}}">
+        <!-- /JF -->
+            <span class="timecode">{{formatTime created}}</span>    
+            <span {{contenteditability}}>{{title}}</span>        
+        </span>
+        
       </li>
-    {{/each}}
-  {{/if}}
+      {{#if getResources _id}}
+        {{#each getResources _id}}
+          <li class="resource">
+            {{> resource this}}
+          </li>
+        {{/each}}
+      {{/if}}
+  {{/if}}   
+</template>
+
+<template name="freeResource">
+    {{#if isNotNull value}}
+        <li class="freeResource">
+            {{{getAvatar createdBy}}}
+            <span class="name">{{userIdToUserName createdBy}}</span>
+            <span {{contenteditability}}>{{value}}</span>
+        </li>
+    {{/if}}
 </template>
 
 <template name="resource">
-  {{{getAvatar createdBy}}}<span {{contenteditability}}>{{value}}</span>
+    {{#if isNotNull value}}
+        {{{getAvatar createdBy}}}
+        <span class="name">{{userIdToUserName createdBy}}</span>
+        <span {{contenteditability}}>{{value}}</span>
+    {{/if}}
 </template>
 
 <template name="chatcollection">
