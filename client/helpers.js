@@ -2,6 +2,7 @@ var defaultPictureSrc = '/defaultpicture.jpg';
 
 var helpers = {
       log: console.log.bind( console ),
+      session: function( key ) { return Session.get( 'key' ); },
       userIdToUserName: function ( userId ) {
         var user = Meteor.users.findOne( { _id: userId} );
         return user ? user.username : user;

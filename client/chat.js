@@ -1,48 +1,18 @@
-var isWriting;
+var chatStates = {};
 
 Template.chat.events( {
-  'keyup textarea[name=message]': function( event ) {
-    var sourceId = this._id,
-        target = event.target,
-        currentHeight = parseInt( style = window.getComputedStyle( target ).height, 10 ),
-        scrollHeight = target.scrollHeight;
-
-    if( scrollHeight > currentHeight ) {
-      target.style.height = scrollHeight + 'px';
-    }
-
-    if( !isWriting && event.keyCode !== 13 && event.target.value ) {
-      isWriting = true;
-      Meteor.call( 'startTyping', sourceId );
-      return;
-    }
-
-    if( isWriting && !event.target.value ) {
-      isWriting = false;
-      Meteor.call( 'stopTyping', sourceId );
-      return;
-    }
-
-    var value = getValueIfReturnKey( event, true );
-
-    if( !value ) return;
-
-    target.style.height = '25px';
-
-    isWriting = false;
-    Meteor.call( 'stopTyping', sourceId );
-    Meteor.call( 'addChatMessage', { text: value, sourceId: sourceId } );
-  },
+  'keyup textarea[name=message]': textAreaKeyup,
   'focus [contentEditable=true]': editableFocusHandler,
   'keyup [contentEditable=true]': chatMessageKeyup,
-  'blur [contentEditable=true]': editableBlurHandler
+  'blur [contentEditable=true]': editableBlurHandler,
+  'scroll section.chat': onScroll
 } );
 
 Template.chat.helpers( {
   getConversation: getConversation,
-	whose: function() {
-		return this.createdBy === Meteor.userId() ? ' mine' : '';
-	},
+  whose: function() {
+    return this.createdBy === Meteor.userId() ? ' mine' : '';
+  },
   showTyping: function( whosTyping ) {
     var copy = ( whosTyping || [] ).slice(),
         index = copy.indexOf( Meteor.userId() );
@@ -50,50 +20,61 @@ Template.chat.helpers( {
     if( index > -1 ) copy.splice( index, 1 );
 
     return !!copy.length;
+  },
+  footerHeight: function(){
+    return getFooterHeight.call( this );
   }
 } );
 
-scrolledToBottom = true;
+function getFooterHeight() {
+  if( !this.need ) return 0;
+  return isAllowed( 'post chatmessages' ) ?
+    Session.get( 'bottomInputHeight-' + this.need._id ) || 25 + 5 :
+    0;
+}
 
 var autoScrolling = false;
 
 Template.chat.onRendered( onRendered );
 
 function onRendered() {
-  var sourceId = this.data;
+  var sourceId = this.data,
+      chat = this;
 
   Tracker.autorun( function(){
     // refer to data.conversation to make this rerun on update
+    getConversation( sourceId );
 
-    if( scrolledToBottom && getConversation( sourceId ).length ) scrollToBottom();
+    // stuff gets drawn later than this, so scroll down in timeout
+    setTimeout( function(){
+      var chatSection = document.querySelector( 'section.chat[data-sourceId="' + sourceId + '"]' ),
+          chatState = chatStates[ sourceId ] = chatStates[ sourceId ] || {};
+
+      if( chatSection && chatState.scrolledToBottom !== false ) {
+        scrollToBottom( chatSection );
+      }
+    } );
   } );
-
-  window.addEventListener( 'scroll', onScroll );
 }
 
-function scrollToBottom() {
+function scrollToBottom( element ) {
   autoScrolling = true;
-  document.body.scrollTop = document.body.scrollHeight;
-
+  element.scrollTop = element.scrollHeight;
 }
-
-var scrollTimeout;
 
 function onScroll( event ) {
+  // prevent scroll recursive endless loop
   if( autoScrolling ) {
     autoScrolling = false;
     return;
   }
 
-  var delay = 150;
+  var chatSection = event.target,
+      sourceId = this.need._id,
+      chatState = chatStates[ sourceId ] = chatStates[ sourceId ] || {};
 
-  if( scrollTimeout ) clearTimeout( scrollTimeout );
-  scrollTimeout = setTimeout( detectScrollPosition, delay );
-
-  function detectScrollPosition(){
-    scrollTimeout = null;
-    scrolledToBottom = document.body.scrollHeight < ( document.body.scrollTop + window.innerHeight + 30 );
-  }
+  chatState.scrolledToBottom = chatSection.scrollHeight <
+    ( chatSection.scrollTop + window.innerHeight + getFooterHeight() );
 }
 
 function getConversation( id ) {
@@ -132,6 +113,48 @@ function getConversation( id ) {
     previousStreak.lines.push( message );
     previousStreak.created = message.created;
   }
+}
+
+function textAreaKeyup( event ) {
+  var sourceId = this._id,
+      target = event.target,
+      currentHeight = parseInt( style = window.getComputedStyle( target ).height, 10 ),
+      scrollHeight = target.scrollHeight;
+
+  chatStates[ sourceId ] = chatStates[ sourceId ] || {};
+
+  if( scrollHeight > currentHeight ) {
+    target.style.height = scrollHeight + 'px';
+
+    Session.set( 'bottomInputHeight-' + sourceId, scrollHeight );
+  }
+
+  if( !chatState.isWriting && event.keyCode !== 13 && event.target.value ) {
+    chatState.isWriting = true;
+
+    Meteor.call( 'startTyping', sourceId );
+    return;
+  }
+
+  // backspace or other methods of clearing
+  if( isWriting && !event.target.value ) {
+    chatState.isWriting = false;
+
+    Meteor.call( 'stopTyping', sourceId );
+    return;
+  }
+
+  var value = getValueIfReturnKey( event, true );
+
+  if( !value ) return;
+
+  target.style.height = '25px';
+  Session.set( 'bottomInputHeight-' + sourceId, 25 );
+
+  chatState.isWriting = false;
+
+  Meteor.call( 'stopTyping', sourceId );
+  Meteor.call( 'addChatMessage', { text: value, sourceId: sourceId } );
 }
 
 function chatMessageKeyup( event ) {

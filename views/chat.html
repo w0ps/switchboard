@@ -1,6 +1,6 @@
 <template name="chat">
   {{#with getConversation this}}
-    <section class="chat">
+    <section class="chat" data-sourceId="{{need._id}}" style="height: calc( 100% - {{footerHeight}}px )">
       <div>
         {{#each speakingTurns}}
           <div class="speakingturn{{whose}}">
@@ -31,15 +31,15 @@
         {{/if}}
       </div>
     </section>
-    <footer id="need-detail-footer">
-      {{#with need}}
-        {{#if isAllowed 'post chatmessages'}}
+    {{#if isAllowed 'post chatmessages'}}
+      <footer id="need-detail-footer">
+        {{#with need}}
           <textarea style="width: calc( 100% - 25px * {{inChat.length}} )" class="inverted" name="message" placeholder="..." autocomplete="off" resize="none"></textarea>
-        {{/if}}
-        {{#each inChat}}
-          {{{getAvatar this}}}
-        {{/each}}
-      {{/with}}
-    </footer>
+          {{#each inChat}}
+            {{{getAvatar this}}}
+          {{/each}}
+        {{/with}}
+      </footer>
+    {{/if}}
   {{/with}}
 </template>
