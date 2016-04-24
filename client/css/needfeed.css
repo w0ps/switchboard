@@ -53,6 +53,8 @@ ul.needs {
 	padding: 2px 0;
 	margin: 0;
 	background-color: black;
+	height: calc( 100% - 25px );
+	overflow-y: scroll;
 }
 
 li.resource {
