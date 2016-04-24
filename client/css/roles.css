@@ -1,0 +1,4 @@
+#roles-wrap {
+	height: calc( 100% - 52px );
+	overflow-y: scroll;
+}

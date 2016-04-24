@@ -1,35 +1,37 @@
 <template name="users">
-	<h1>Manage users</h1>
-	<table>
-		<tbody>
-			{{#each usersByRole}}
-				<tr>
-					<td colspan="2">
-						<h2>{{role.name}}</h2>
-					</td>
-				</tr>
-				{{#each users}}
+	<div id="users">
+		<h1>Manage users</h1>
+		<table>
+			<tbody>
+				{{#each usersByRole}}
 					<tr>
-						<td>{{username}}</td>
-						<td>
-							<select name="select-role">
-								<option selected disabled value="no change">change role</option>
-								{{#each selectableRoles}}
-									<option>{{this}}</option>
-								{{/each}}
-							</select>
-						</td>
-                        <!-- JF -->
-                        <td>
-                            <input name="videochaturl" value="{{videochaturl}}" />
-                        </td>
-                        <!-- /JF -->
-						<td>
-							<button class="delete">x</button>
+						<td colspan="2">
+							<h2>{{role.name}}</h2>
 						</td>
 					</tr>
+					{{#each users}}
+						<tr>
+							<td>{{username}}</td>
+							<td>
+								<select name="select-role">
+									<option selected disabled value="no change">change role</option>
+									{{#each selectableRoles}}
+										<option>{{this}}</option>
+									{{/each}}
+								</select>
+							</td>
+	            <!-- JF -->
+	            <td>
+	                <input name="videochaturl" placeholder="set a videochat url" value="{{videochaturl}}" />
+	            </td>
+	            <!-- /JF -->
+							<td>
+								<button class="delete">x</button>
+							</td>
+						</tr>
+					{{/each}}
 				{{/each}}
-			{{/each}}
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
 </template>

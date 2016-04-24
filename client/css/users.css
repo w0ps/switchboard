@@ -1,8 +1,9 @@
-#profile {
+#users {
+	position: relative;
 	height: calc( 100% - 52px );
 	overflow-y: scroll;
 }
 
-input[name="videochaturl"] {
-	width: 250px;
+#users h1 {
+	margin: 0;
 }

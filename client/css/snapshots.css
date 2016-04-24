@@ -1,13 +1,20 @@
 #snapshots {
   position: relative;
   width: 100%;
-  min-height: 100%;
+  /* header height = 52 */
+  height: calc( 100% - 52px );
+}
+
+#snapshots h1 {
+  margin: 0;
 }
 
 #snapshots aside.snapshot-list {
   width: 200px;
   float: left;
   background-color: #888;
+  height: calc( 100% - 43px );
+  overflow-y: scroll;
 }
 
 #snapshots .snapshot-list ul {
@@ -40,7 +47,9 @@
 
 #snapshots section {
   width: calc( 100% - 400px );
+  height: calc( 100% - 43px );
   float: left;
+  overflow-y: scroll;
 }
 
 #snapshots section li {
