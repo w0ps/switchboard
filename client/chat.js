@@ -119,9 +119,8 @@ function textAreaKeyup( event ) {
   var sourceId = this._id,
       target = event.target,
       currentHeight = parseInt( style = window.getComputedStyle( target ).height, 10 ),
-      scrollHeight = target.scrollHeight;
-
-  chatStates[ sourceId ] = chatStates[ sourceId ] || {};
+      scrollHeight = target.scrollHeight,
+      chatState = chatStates[ sourceId ] = chatStates[ sourceId ] || {};
 
   if( scrollHeight > currentHeight ) {
     target.style.height = scrollHeight + 'px';
@@ -137,7 +136,7 @@ function textAreaKeyup( event ) {
   }
 
   // backspace or other methods of clearing
-  if( isWriting && !event.target.value ) {
+  if( chatState.isWriting && !event.target.value ) {
     chatState.isWriting = false;
 
     Meteor.call( 'stopTyping', sourceId );
