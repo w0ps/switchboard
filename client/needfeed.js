@@ -9,12 +9,12 @@ Template.needs.events( {
   'focus [contentEditable=true]': editableFocusHandler,
   'blur [contentEditable=true]': editableBlurHandler,
   //JF commented out: 'click #needlist > .resource': clickAddResource,
-  'click .need .resource': clickAddResourceToNeed
+  'click .need .resourceButton': clickAddResourceToNeed
 } );
 
 // JF added:
 Template.needlist.events( { 
-  'click .resource': clickAddResource,
+  'click .resourceButton': clickAddResource,
 } );
 // /JF
 
@@ -114,7 +114,7 @@ Template.need.events( {
     return false;},
     
   // JF added:  
-  'click .resource': clickAddResourceToNeed
+  'click .resourceButton': clickAddResourceToNeed
   // /JF
 } );
 
@@ -128,15 +128,15 @@ function keyupNeedInput( event ) {
 
   if( event.keyCode !== 13 ) {
     if( value ) {
-      event.target.parentNode.querySelector( '.resource' ).style = 'display: inherit';
-    } else event.target.parentNode.querySelector( '.resource' ).style = 'display: none';
+      event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: inherit';
+    } else event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';
     return;
   }
 
   if( !value ) return;
 
   event.target.value = '';
-  event.target.parentNode.querySelector( '.resource' ).style = 'display: none';
+  event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';
 
   Meteor.call( 'addNeed', value );
 }

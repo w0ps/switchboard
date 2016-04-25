@@ -14,7 +14,7 @@
   {{#if isAllowed 'post needs'}}
     <input class="inverted" name="need" placeholder="what is your need" />
     {{#if isAllowed 'post resources'}}
-      <button class="resource">R</button>
+      <button class="resourceButton">R</button>
     {{/if}}
   {{/if}}
 
@@ -59,7 +59,7 @@
   {{#if isNotNull title}}
       <li class="need">
         {{#if isAllowed 'post resources'}}
-          <button class="resource">R</button>
+          <button class="resourceButton">R</button>
         {{/if}}
         {{{getAvatar createdBy}}}
         <span class="name">{{userIdToUserName createdBy}}</span>

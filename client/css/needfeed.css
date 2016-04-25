@@ -98,11 +98,11 @@ li.need:hover {
 	background-color: #FFC;
 }
 
-.need:hover button.resource {
+.need:hover button.resourceButton {
 	display: inherit;
 }
 
-button.resource {
+button.resourceButton {
 	display: none;
 	color: white;
 	background-color: green;
@@ -116,7 +116,7 @@ button.resource {
 	text-shadow: 0 0 7px black;
 }
 
-button.resource:hover {
+button.resourceButton:hover {
 	background-color: #3A3;
 }
 
