@@ -101,7 +101,7 @@ li.resource {
 	margin-left: 45px;
 	padding: 4px;
 	padding-left: 10px;
-	background-color: white;
+	background-color: #f4f4f4;
 	color: black;
 	border-radius: 0 0 0 15px;
 }
@@ -112,7 +112,7 @@ li.freeResource {
 	margin-left: 45px;
 	padding: 4px;
 	padding-left: 10px;
-	background-color: white;
+	background-color: #f4f4f4;
 	color: black;
 	border-radius: 15px 0 0 15px;
 }
@@ -127,7 +127,7 @@ li.need {
 	line-height: 15px;
 	margin: 2px;
 	padding: 4px;
-	background-color: white;
+	background-color: #f4f4f4;
 	color: black;
 	cursor: pointer;
 }

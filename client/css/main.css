@@ -5,6 +5,10 @@ body {
 	height: 100vh;
 	overflow: hidden;
 	position: relative;
+    /* JF 2016-04-26 */
+    background-color: #f8f8f8;
+    /* */
+    
 }
 
 .inverted {
