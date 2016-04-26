@@ -4,6 +4,7 @@ var collectionNames = [
 			'roles',
 			'snapshots',
 			'chatmessages',
+            'tagchatmessages',
 			'resources'
 		],
 		loadedCollections = [];

@@ -1,6 +1,7 @@
 var publications = {
       needs: function() { return Needs.find( {} ); },
       chatmessages: function() { return ChatMessages.find( {} ); },
+      tagchatmessages: function() { return TagChatMessages.find( {} ); },
       users: function() {
         return Meteor.users.find( {}, {
           fields: { username: 1, avatar: 1, role: 1, pretend: 1, videochaturl: 1 }

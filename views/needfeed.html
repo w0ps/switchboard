@@ -14,7 +14,7 @@
   {{#if isAllowed 'post needs'}}
     <input class="inverted" name="need" placeholder="what is your need" />
     {{#if isAllowed 'post resources'}}
-      <button class="resourceButton">R</button>
+      <button class="resourceButton">Resource</button>
     {{/if}}
   {{/if}}
 
@@ -62,7 +62,22 @@
           <button class="resourceButton">R</button>
         {{/if}}
         {{{getAvatar createdBy}}}
+        
         <span class="name">{{userIdToUserName createdBy}}</span>
+        
+        {{#if isNotNull tags}}
+            {{#if getTagUsers tags createdBy}}
+            
+                <span class="tags">
+                
+                    <img class="taglink" src="/link.png">
+                    {{#each getTagUsers tags createdBy}}
+                        {{{getAvatar this}}}
+                        {{userIdToUserName this}} 
+                    {{/each}}
+                </span>    
+            {{/if}}
+        {{/if}}        
         <!-- JF change CSS based on Need state        -->
         <span class="need-title-state-{{state}}">
         <!-- /JF -->
@@ -100,8 +115,28 @@
 </template>
 
 <template name="chatcollection">
+  <div style="width: calc( ( {{conversations.length}} + {{tagconversations.length}} ) * 300px ); height: 100%; position: relative">
+  
+    {{#each conversations}}
+      <div class="conversation">
+        <button class="close">x</button>
+        {{> chat this}}
+      </div>
+    {{/each}}
+    
+    {{#each tagconversations}}
+      <div class="conversation">
+        <button class="tagclose">x</button>
+        {{> tagchat this}}
+      </div>
+    {{/each}}
+        
+  </div>
+</template>
 
-                                    <!-- JF 2016-04-11 was 300px -->
+<!--
+<template name="chatcollection">
+
   <div style="width: calc( {{conversations.length}} * 300px ); height: 100%; position: relative">
     {{#each conversations}}
       <div class="conversation">
@@ -111,3 +146,4 @@
     {{/each}}
   </div>
 </template>
+-->

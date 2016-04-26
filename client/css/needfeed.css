@@ -15,6 +15,16 @@
 	position: relative;
 }
 
+#opentagchats {
+	width: calc( 100% - 305px );
+	float: left;
+	height: calc( 100% - 52px );
+	overflow-x: scroll;
+	overflow-y: hidden;
+	position: relative;
+}
+
+
 div.conversation {
 	float: left;
 	position: relative;
@@ -48,6 +58,34 @@ div.conversation:hover .close {
 div.conversation .close:hover {
 	background-color: red;
 }
+
+div.conversation .tagclose {
+	display: none;
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	width: 20px;
+	height: 20px;
+	color: white;
+	font-family: open-sans-extrabold, impact;
+	text-shadow: 0 0 7px black;
+	background-color: #C00;
+	content: 'x';
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 10;
+}
+
+div.conversation:hover .tagclose {
+	display: inherit;
+}
+
+div.conversation .tagclose:hover {
+	background-color: red;
+}
+
+
 
 ul.needs {
 	padding: 2px 0;
@@ -164,6 +202,11 @@ li.need span[contentEditable=true]:hover {
 li.need .name {
 	font-family: open-sans-extrabold, impact;
 }
+
+li.need .tags {
+	font-family: open-sans-extrabold, impact;
+}
+
 
 li.resource .name {
 	font-family: open-sans-extrabold, impact;

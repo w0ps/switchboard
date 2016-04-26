@@ -7,6 +7,9 @@ Router.route( '/', function(){ this.render( 'root' ); } );
 Router.route( '/profile' );
 Router.route( '/needs', showFeed );
 Router.route( '/needs/:id', showNeed );
+// JF 2016-04-22
+Router.route( '/needs/tagged/:id', showNeedTagged );
+// /JF
 Router.route( '/roles', showRoles );
 Router.route( '/users', showUsers );
 Router.route( '/snapshots', showSnapshots );
@@ -22,10 +25,15 @@ function showFeed() {
 
     function beforeUnloadFeed() {
       ( Session.get( 'openConversations' ) || [] ).forEach( leave );
+      ( Session.get( 'openTagConversations' ) || [] ).forEach( leave );
 
       function leave( sourceId ) {
         Meteor.call( 'leaveChat', sourceId );
         Meteor.call( 'stopTyping', sourceId );
+        
+        Meteor.call( 'leaveTagChat', sourceId );
+        Meteor.call( 'stopTypingTagChat', sourceId );
+
       }
     }
   }
@@ -51,6 +59,30 @@ function showNeed() {
     Meteor.call( 'stopTyping', this.params.id );
   }
 }
+
+// JF 2016-04-22
+function showNeedTagged() {
+  var id = this.params.id;
+  Meteor.call( 'joinTagChat', id );
+
+  window.onbeforeunload = beforeUnloadNeedDetail.bind( this );
+
+  return this.render( 'tag-need-detail', {
+    data: {
+      need: function() {
+        return Needs.findOne( { _id: id } );
+      },
+      conversationId: id
+    }
+  } );
+
+  function beforeUnloadNeedDetail() {
+    Meteor.call( 'leaveTagChat', this.params.id );
+    Meteor.call( 'stopTypingTagChat', this.params.id );
+  }
+}
+// /JF
+
 
 function showRoles() {
   redirectIfNotAllowed( 'edit roles', this );
@@ -218,6 +250,11 @@ function showPretend() {
 function setLayout(){
   if( (
     this.url === '/needs' ||
+    // JF 2016-04-22
+    this.url === '/needs/tagged' ||
+    this.route.getName() === 'needs.tagged.:id' ||
+    // /JF
+    
     this.route.getName() === 'needs.:id'
   ) && isAllowed( 'separate windows' ) ) {
     this.layout( 'emptylayout' );
