@@ -6,6 +6,9 @@ Router.configure( {
 Router.route( '/', function(){ this.render( 'root' ); } );
 Router.route( '/profile' );
 Router.route( '/needs', showFeed );
+
+Router.route( '/needscolumns', showFeed );
+
 Router.route( '/needs/:id', showNeed );
 // JF 2016-04-22
 Router.route( '/needs/tagged/:id', showNeedTagged );
@@ -38,6 +41,33 @@ function showFeed() {
     }
   }
 }
+
+/*
+function showFeedColumns() {
+  isAllowedWhenConnected( 'separate windows', bindBeforeUnload );
+
+  return this.render( 'needscolumns' );
+
+  function bindBeforeUnload( separateWindowsAllowed ) {
+    if( !separateWindowsAllowed ) window.onbeforeunload = beforeUnloadFeed;
+
+    function beforeUnloadFeed() {
+      ( Session.get( 'openConversations' ) || [] ).forEach( leave );
+      ( Session.get( 'openTagConversations' ) || [] ).forEach( leave );
+
+      function leave( sourceId ) {
+        Meteor.call( 'leaveChat', sourceId );
+        Meteor.call( 'stopTyping', sourceId );
+        
+        Meteor.call( 'leaveTagChat', sourceId );
+        Meteor.call( 'stopTypingTagChat', sourceId );
+
+      }
+    }
+  }
+}
+*/
+
 
 function showNeed() {
   var id = this.params.id;
@@ -250,6 +280,7 @@ function showPretend() {
 function setLayout(){
   if( (
     this.url === '/needs' ||
+    this.url === '/needscolumns' ||
     // JF 2016-04-22
     this.url === '/needs/tagged' ||
     this.route.getName() === 'needs.tagged.:id' ||

@@ -6,7 +6,12 @@
 		{{> loginButtons}}
 	</aside>
 	<nav>
-		<a href="/needs">view needs</a>
+		<a href="/needs">needs</a>
+        <!-- JF 2016-04-27 -->
+		{{#if isAllowed 'needs multicolumn'}}
+            <a href="/needscolumns">needs columns</a>
+        {{/if}}
+        <!-- -->   
 		{{#if currentUser}}
 			<a href="/profile">profile</a>
 		{{/if}}

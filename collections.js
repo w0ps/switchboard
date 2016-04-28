@@ -14,6 +14,7 @@ Snapshots = new Mongo.Collection( 'snapshots' );
 
 permissions = [
   'post needs',
+  'needs multicolumn',
   'post chatmessages',
   'post resources',
   'edit roles',

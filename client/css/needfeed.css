@@ -1,9 +1,11 @@
 #needlist {
-	width: 300px;
+	width: 1200px;
 	float: left;
 	height: calc( 100% - 52px );
     /* overflow-y: scroll; */ /* JF: This caused double vertical scroll bar in non-"separate window" view */
 	position: relative;
+    
+    
 }
 
 #openchats {
@@ -94,6 +96,13 @@ ul.needs {
 	height: calc( 100% - 25px );
 	overflow-y: scroll;
 }
+
+.needs-multiColumn {     
+    -moz-column-width: 300px;
+    -webkit-column-width: 300px;
+    column-width: 300px;
+}
+
 
 li.resource {
 	position: relative;

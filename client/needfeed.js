@@ -61,7 +61,19 @@ Template.needlist.helpers( {
   }   
   
   // /JF
+ 
+  // JF 2016-04-28
+  ,  
+  needsMultiColumn: function() {
   
+    console.log ("--------needsMultiColumn-------");
+    console.log ("$(window).width(): "+$(window).width());
+    if ($(window).width() > 600) {
+        return "needs-multiColumn";
+    }
+  }
+  // /JF
+    
 } );
 
 
