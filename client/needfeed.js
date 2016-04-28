@@ -62,12 +62,12 @@ Template.needlist.helpers( {
   
   // /JF
  
-  // JF 2016-04-28
+  // JF 2016-04-28 - for rendering the MULTI COLUMN VIEW (handled by CSS .needs-multiColumn)
   ,  
   needsMultiColumn: function() {
   
-    console.log ("--------needsMultiColumn-------");
-    console.log ("$(window).width(): "+$(window).width());
+    // console.log ("--------needsMultiColumn-------");
+    // console.log ("$(window).width(): "+$(window).width());
     if ($(window).width() > 600) {
         return "needs-multiColumn";
     }
@@ -359,7 +359,7 @@ function closeTagChat() {
 }
 
 
-var previousNeedTitles;
+var previousNeedTitles, previousResourceValues;
 
 Template.needs.onRendered( onRendered );
 
@@ -367,30 +367,60 @@ function onRendered() {
   Tracker.autorun( function(){
 
     var currentNeedTitles = [],
-        prevTitles = previousNeedTitles ? previousNeedTitles.slice() : [];
+        prevNeedTitles = previousNeedTitles ? previousNeedTitles.slice() : [];
 
-    Needs.find( { snapshot: { $exists: false } } ).forEach( registerName );
+    var currentResourceValues = [],
+        prevResourceValues = previousResourceValues ? previousResourceValues.slice() : [];
+
+    Needs.find( { snapshot: { $exists: false } } ).forEach( registerNeedName );
+
+    Resources.find( { snapshot: { $exists: false } } ).forEach( registerResourceValue );
 
     if( previousNeedTitles && currentNeedTitles.length > previousNeedTitles.length ) {
       playSound( 'pop1' ); // new need
+      console.log ('PLAYSOUND pop1 (new need)');
     }
 
-    if( prevTitles.length ) {
+    if( prevNeedTitles.length ) {
       playSound( 'snare' ); // changed need
+      console.log ('PLAYSOUND snare (changed need)');
     }
+    
+    if( previousResourceValues && currentResourceValues.length > previousResourceValues.length ) {
+      playSound( 'pop2' ); // new resource      
+      console.log ('PLAYSOUND pop2 (new resource)');
+    }
+
+    
 
     previousNeedTitles = currentNeedTitles;
+    previousResourceValues = currentResourceValues;
 
-    function registerName( need ) {
+
+    function registerNeedName( need ) {
       var title = need.title,
           index;
 
       currentNeedTitles.push( title );
-      index = prevTitles.indexOf( title );
+      index = prevNeedTitles.indexOf( title );
       if( index > -1 ) {
-        prevTitles.splice( index, 1 );
+        prevNeedTitles.splice( index, 1 );
       }
     }
+    
+    function registerResourceValue( resource ) {
+      var value = resource.value,
+          index;
+
+      currentResourceValues.push( value );
+      index = prevResourceValues.indexOf( value );
+      if( index > -1 ) {
+        prevResourceValues.splice( index, 1 );
+      }
+    }
+    
+    
+    
   } );
 }
 
