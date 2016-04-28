@@ -9,7 +9,9 @@
 		<a href="/needs">needs</a>
         <!-- JF 2016-04-27 -->
 		{{#if isAllowed 'needs multicolumn'}}
-            <a href="/needscolumns">needs columns</a>
+            {{#if isAllowed 'separate windows'}}
+                <a href="/needscolumns">needs columns</a>
+            {{/if}}    
         {{/if}}
         <!-- -->   
 		{{#if currentUser}}

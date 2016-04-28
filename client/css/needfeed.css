@@ -1,9 +1,10 @@
 #needlist {
-	width: 1200px;
+	width: 300px;
 	float: left;
 	height: calc( 100% - 52px );
     /* overflow-y: scroll; */ /* JF: This caused double vertical scroll bar in non-"separate window" view */
 	position: relative;
+    overflow-x: hidden; /* JF 2016-04-28 */
     
     
 }
