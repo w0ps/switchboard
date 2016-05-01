@@ -131,9 +131,13 @@ span.chatline.mine {
 #need-detail-footer textarea[name="message"] {
 	box-sizing: border-box;
 	height: 25px;
-	line-height: 25px;
+    /* line-height: 25px; */ /* JF 2016-05-01 */
 	padding: 0 4px;
 	resize: none;
+    /* JF 2016-05-01 */
+    font-family: open-sans-regular, sans-serif;
+    font-size: 14px;
+    /* /JF */
 }
 
 #need-detail-footer img.avatar {
@@ -151,3 +155,4 @@ span.chatline.mine {
       opacity: 0;
     }
 }
+
