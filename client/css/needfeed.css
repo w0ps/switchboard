@@ -99,9 +99,9 @@ ul.needs {
 }
 
 .needs-multiColumn {     
-    -moz-column-width: 300px;
-    -webkit-column-width: 300px;
-    column-width: 300px;
+    -moz-column-width: 280px;
+    -webkit-column-width: 280px;
+    column-width: 280px;
 }
 
 
