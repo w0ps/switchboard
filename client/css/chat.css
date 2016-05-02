@@ -4,14 +4,26 @@ section.chat {
 	height: 100%;
 }
 
+table.chat-table.mine {
+    float: right;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+
+table.chat-table {
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
 .speakingturn {
 	/*display: inline-block;*/
-	float: left;
+	/* float: left; */
 	clear: both;
 	position: relative;
-	padding: 0 20px;
-	margin-top: -25px;
-	text-align: center;
+	padding: 0 30px;
+	margin-top: 0px;
+	text-align: left;
 }
 
 .speakingturn:first-child {
@@ -19,7 +31,7 @@ section.chat {
 }
 
 .speakingturn.mine {
-	float: right;
+	/* float: right; */
 	text-align: right;
 }
 
@@ -33,17 +45,21 @@ section.chat {
 }
 
 .speakingturn span.name {
-	margin: 0 10px;
+	/* margin: 0 10px; */
 	line-height: 25px;
 	font-family: open-sans-light, impact;
 }
 
 .speakingturn:not(.mine) span.name {
-	float: left;
+	/* float: left; */
+    text-align: left;
+
 }
 
 .speakingturn.mine span.name {
-	float: right;
+	/* float: right; */
+    text-align: right;
+
 }
 
 .streak {
@@ -66,6 +82,12 @@ section.chat {
 	border-bottom-right-radius: 0;
 	background-color: #FFC;
 }
+
+.streak-avatar {
+	float: left;
+    display: inline-block;
+}
+
 
 .chat-timecode {
 	font-size: 10px;

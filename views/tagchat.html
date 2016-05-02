@@ -3,15 +3,32 @@
     <section class="tagchat" data-sourceId="{{need._id}}" style="height: calc( 100% - {{footerHeight}}px )">
       <div>
         {{#each speakingTurns}}
-          <div class="speakingturn{{whose}}">
-            {{#if isOwner}}
-              <span class="name">me</span>
-            {{else}}
-              <span class="name">{{userIdToUserName createdBy}}</span>
-              {{> avatar}}
-            {{/if}}
-          </div>
+        
+         <table class="chat-table{{whose}}" border="0" cellspacing="0" cellpadding="0">
+         <tr>
+          {{#if isOwner}}
+            <td width="100%">
+              <div class="speakingturn{{whose}}">
+                  <span class="name">{{userIdToUserName createdBy}}</span>
+              </div>
+             </td>
+            <td></td>
+          
+          {{else}}
+            <td></td>
+            <td width="100%">
+              <div class="speakingturn{{whose}}">
+                  <span class="name">{{userIdToUserName createdBy}}</span>
+              </div>
+             </td>
+          {{/if}} 
+            
+          </tr>    
           {{#each streaks}}
+          <tr>
+          {{#if isOwner}}
+
+           <td>
             <div class="streak{{whose}}">
               {{#each lines}}
                 <span {{contenteditability}} class="chatline{{whose}}">
@@ -20,7 +37,36 @@
               {{/each}}
             </div>
             <p class="chat-timecode{{whose}}">{{formatTime created}}</p>
+            </td>
+
+            <td valign="middle">
+            <div class="streak-avatar">
+                {{> avatar}}
+            </div>
+           </td>
+   
+          {{else}}
+          
+            <td valign="middle">
+            <div class="streak-avatar">
+                {{> avatar}}
+            </div>
+           </td>
+           <td>
+            <div class="streak{{whose}}">
+              {{#each lines}}
+                <span {{contenteditability}} class="chatline{{whose}}">
+                  {{text}}
+                </span>
+              {{/each}}
+            </div>
+            <p class="chat-timecode{{whose}}">{{formatTime created}}</p>
+            </td>
+           
+          {{/if}}
+           </tr>
           {{/each}}
+           </table> 
         {{/each}}
         {{#if showTyping need.writingMessageTagChat}}
           <div class="streak">
