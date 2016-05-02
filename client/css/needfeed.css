@@ -9,6 +9,8 @@
     
 }
 
+
+
 #openchats {
 	width: calc( 100% - 305px );
 	float: left;
@@ -243,6 +245,19 @@ input[name="need"] {
 	padding-left: 5px;
 	box-sizing: border-box;
 }
+
+/* JF 2016-05-02 font color of placeholder text in input field */
+input[name="need"]::-webkit-input-placeholder {
+    color: white;
+}
+input[name="need"]::-moz-placeholder {
+    color: white;
+}
+input[name="need"]::-ms-input-placeholder {
+    color: white;
+}
+
+
 
 /*li.need span.timecode {
 	float: left;
