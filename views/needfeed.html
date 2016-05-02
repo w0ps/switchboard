@@ -12,7 +12,7 @@
 <!-- JF 2016-04-12 -->
 <template name="needlist">
   {{#if isAllowed 'post needs'}}
-    <input class="inverted" name="need" placeholder="what is your need" />
+    <input class="inverted" name="need" placeholder="need" />
     {{#if isAllowed 'post resources'}}
       <button class="resourceButton">Resource</button>
     {{/if}}
@@ -78,9 +78,9 @@
                 </span>    
             {{/if}}
         {{/if}}        
-        <!-- JF change CSS based on Need state        -->
-        <span class="need-title-state-{{state}}">
-        <!-- /JF -->
+        <!-- JF change CSS based on Need state        
+        <span class="need-title-state-{{state}}"> -->
+        <span class="need-title-state-none">
             <span class="timecode">{{formatTime created}}</span>    
             <span {{contenteditability}}>{{title}}</span>        
         </span>
