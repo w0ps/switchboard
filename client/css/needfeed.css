@@ -249,12 +249,15 @@ input[name="need"] {
 /* JF 2016-05-02 font color of placeholder text in input field */
 input[name="need"]::-webkit-input-placeholder {
     color: white;
+    font-weight: bold;
 }
 input[name="need"]::-moz-placeholder {
     color: white;
+    font-weight: bold;
 }
 input[name="need"]::-ms-input-placeholder {
     color: white;
+    font-weight: bold;
 }
 
 
