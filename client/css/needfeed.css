@@ -96,7 +96,7 @@ ul.needs {
 	padding: 2px 0;
 	margin: 0;
 	background-color: black;
-	height: calc( 100% - 25px );
+	height: calc( 100% - 30px ); /* JF 2016-05-02 changed from 25 to 30, bottom scrollbar was not completely visible */
 	overflow-y: scroll;
 }
 
@@ -184,6 +184,12 @@ li.need span.need-title-state-matched {
     color: red;
 }
 /* /JF div classes to change color of Need title depending on Need state */
+
+/* JF 2016-05-02 decided to remove text colors depending on Need state */
+li.need span.need-title-state-none {
+    color: black;
+}
+
 
 
 li.need span.timecode:before {
