@@ -5,9 +5,9 @@ body {
 	height: 100vh;
 	overflow: hidden;
 	position: relative;
-    /* JF 2016-04-26 */
-    background-color: #f8f8f8;
-    /* */
+    /* background-color: #f8f8f8; */    /* JF 2016-04-26 very light grey*/
+    background-color: #e8e8e8; /* JF 2016-05-04 bit darker very light grey */
+    
     
 }
 
