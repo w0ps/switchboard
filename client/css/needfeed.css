@@ -100,10 +100,11 @@ ul.needs {
 	overflow-y: scroll;
 }
 
+/*JF 2016-05-04 width for Brussels is 225 px per column */
 .needs-multiColumn {     
-    -moz-column-width: 280px;
-    -webkit-column-width: 280px;
-    column-width: 280px;
+    -moz-column-width: 225px;
+    -webkit-column-width: 225px;
+    column-width: 225px;
 }
 
 
