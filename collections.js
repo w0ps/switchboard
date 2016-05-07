@@ -334,6 +334,20 @@ Meteor.methods({
       role: role
     } } );
   },
+
+  setUserVideochatUrl: function( userId, url ) {
+    Meteor.users.update( { _id: userId }, { $set: {
+      videochaturl: url
+    } } );
+  },
+
+  setUserEmail: function( userId, newEmail ) {
+    Meteor.users.update( { _id: userId }, { $set: {
+      email: newEmail
+    } } );
+  },
+
+
   copyToSnapshot: function( name, source ) {
     var need,
         snapshot = new Snapshot( name ),

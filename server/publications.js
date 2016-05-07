@@ -4,7 +4,7 @@ var publications = {
       tagchatmessages: function() { return TagChatMessages.find( {} ); },
       users: function() {
         return Meteor.users.find( {}, {
-          fields: { username: 1, avatar: 1, role: 1, pretend: 1, videochaturl: 1 }
+          fields: { username: 1, avatar: 1, role: 1, pretend: 1, email: 1, videochaturl: 1 }
         } );
       },
       roles: function() {

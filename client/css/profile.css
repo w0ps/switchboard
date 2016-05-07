@@ -6,3 +6,7 @@
 input[name="videochaturl"] {
 	width: 250px;
 }
+
+input[name="email"] {
+	width: 250px;
+}

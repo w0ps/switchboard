@@ -2,9 +2,8 @@
 
 Template.users.events( {
   'change select[name="select-role"]': selectRoleChange,
-   // JF
-   'keyup input[name="videochaturl"]': videochaturlChange
-    // /JF
+   'keyup input[name="videochaturl"]': videochaturlChange,
+   'keyup input[name="email"]': emailChange
 } );
 
 function selectRoleChange( event ) {
@@ -28,3 +27,11 @@ function videochaturlChange( event ) {
   Meteor.call( 'setUserVideochatUrl', userId, url );
 }
 // /JF
+
+
+function emailChange( event ) {
+  var newEmail = event.target.value;
+  var userId = this._id;
+
+  Meteor.call( 'setUserEmail', userId, newEmail );
+}

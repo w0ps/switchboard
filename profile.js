@@ -39,6 +39,9 @@ if( Meteor.isServer ) {
     },
     updateVideochaturl: function( url ) {
       Meteor.users.update( { _id: Meteor.userId() }, { $set: { videochaturl: url } } );
+    },
+    updateEmail: function( newEmail ) {
+      Meteor.users.update( { _id: Meteor.userId() }, { $set: { email: newEmail } } );
     }
   } );
 
@@ -49,7 +52,9 @@ if( Meteor.isServer ) {
     'keyup input[name="username"]': usernameKeyup,
     'change input[name="avatar-file"]': avatarFileChange,
     'keyup input[name="avatar-url"]': avatarUrlChange,
-    'keyup input[name="videochaturl"]': videochaturlChange
+    'keyup input[name="videochaturl"]': videochaturlChange,
+    'keyup input[name="email"]': emailChange
+    
   } );
 }
 
@@ -97,4 +102,9 @@ function updateAvatar(err, fileObj) {
 function videochaturlChange( event ) {
   var value = event.target.value;
   Meteor.call( 'updateVideochaturl', value );
+}
+
+function emailChange( event ) {
+  var value = event.target.value;
+  Meteor.call( 'updateEmail', value );
 }
