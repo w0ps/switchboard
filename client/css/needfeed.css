@@ -268,6 +268,14 @@ input[name="need"]::-ms-input-placeholder {
 }
 
 
+/* JF 2016-05-10 to avoid breaking needs & resources between columns */
+li {
+-webkit-column-break-inside: avoid;
+          page-break-inside: avoid;
+               break-inside: avoid;
+}
+
+
 
 /*li.need span.timecode {
 	float: left;
