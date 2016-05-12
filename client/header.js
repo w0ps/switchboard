@@ -1,6 +1,6 @@
 var needsFeedWidth = 350, 
-    /* needsFeedColumnsWidth = 1280, */
-    needsFeedColumnsWidth = 351, 
+    needsFeedColumnsWidth = 1280,
+    /* needsFeedColumnsWidth = 351, 
     /* watch out, multicolumn view is only enabled if column width > 350 */
     /* (hard coded in needfeed.js > needsMultiColumn) */
     needsFeedWindow;
