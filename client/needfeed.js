@@ -68,7 +68,7 @@ Template.needlist.helpers( {
   
     // console.log ("--------needsMultiColumn-------");
     // console.log ("$(window).width(): "+$(window).width());
-    if ( ($(window).width() > 700) && (isAllowed( 'needs multicolumn' )) )  {
+    if ( ($(window).width() > 350) && (isAllowed( 'needs multicolumn' )) )  {
         return "needs-multiColumn";
     }
   }
