@@ -13,9 +13,17 @@
 <template name="needlist">
   {{#if isAllowed 'post needs'}}
     <input class="inverted" name="need" placeholder="need" />
+    
+    <!-- 2016-05-29 Actually this resource button is now hidden by request of Edit,
+                    the hiding is done in needfeed.js function keyupNeedInput( event ) 
+                    
+                    I left these 3 lines here for now as removing them breaks things: 
+                        you can then not enter needs anymore.
+                    -->
     {{#if isAllowed 'post resources'}}
       <button class="resourceButton">Resource</button>
     {{/if}}
+    <!-- -->
   {{/if}}
 
   <ul class="needs {{needsMultiColumn}}">

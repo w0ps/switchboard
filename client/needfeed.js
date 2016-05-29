@@ -220,7 +220,9 @@ function keyupNeedInput( event ) {
 
   if( event.keyCode !== 13 ) {
     if( value ) {
-      event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: inherit';
+      // event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: inherit';
+      // 2016-05-29 to hide the resource button (by Edits request)
+      event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';
     } else event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';
     return;
   }
