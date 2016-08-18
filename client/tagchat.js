@@ -79,7 +79,8 @@ function onScroll( event ) {
 
 function getTagConversation( id ) {
   var need = Needs.findOne( { _id: id } ),
-      messages = TagChatMessages.find( { sourceId: id } ),
+                                                        // JF 2016-08-18 sort messages on date of creation
+      messages = TagChatMessages.find( { sourceId: id }, {sort: {created: 1}} ),
       speakingTurns = [];
 
   messages.forEach( processMessage );
