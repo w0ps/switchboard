@@ -105,6 +105,7 @@ Template.chatcollection.helpers( {
 } );
 
 Template.need.helpers( {
+
   getResources: function( sourceId ) {
     return Resources.find( { sourceId: sourceId } );
   },
@@ -187,7 +188,34 @@ Template.need.helpers( {
   
 } );
 
+
+
+
 Template.need.events( {
+    
+  // After pressing ENTER in a need title, put focus on the top need input field.
+  // By not allowing enter characters in the title, we also prevent the known bug with contenteditable and enter that causes text duplication 
+  'keydown .need-title': function(event) {
+  
+    // console.log("-------- keypress .need-title- event.which: "+event.which);
+
+    if(event.which === 13) 
+    {
+        var nextItem = $(this).next('input');
+
+        // console.log("-------- nextItem: " + nextItem);
+        
+        if( nextItem.size() === 0 ) {
+            nextItem = $('input').eq(0);
+            // console.log("-------- nextItem: " + nextItem);
+        }
+        
+        nextItem.focus();
+        
+        return false;
+    }
+  },    
+
 
 // JF: orginal line was:  'click li.need': openChat,
 // instead of this, only open a chat when clicked on the NAME:
@@ -208,6 +236,33 @@ Template.need.events( {
   
 } );
 
+Template.resource.events( {
+
+  // After pressing ENTER in a resource title, put focus on the top need input field.
+  // By not allowing enter characters in the title, we also prevent the known bug with contenteditable and enter that causes text duplication 
+  'keydown .resource-title': function(event) {
+  
+    // console.log("-------- keypress .resource-title- event.which: "+event.which);
+
+    if(event.which === 13) 
+    {
+        var nextItem = $(this).next('input');
+
+        // console.log("-------- nextItem: " + nextItem);
+        
+        if( nextItem.size() === 0 ) {
+            nextItem = $('input').eq(0);
+            // console.log("-------- nextItem: " + nextItem);
+        }
+        
+        nextItem.focus();
+        
+        return false;
+    }
+  }
+} );
+
+
 Template.chatcollection.events( {
   'click .close': closeChat,
   'click .tagclose': closeTagChat
@@ -217,7 +272,7 @@ Template.chatcollection.events( {
 function keyupNeedInput( event ) {
   var value = event.target.value,
       split, description;
-
+      
   if( event.keyCode !== 13 ) {
     if( value ) {
       // event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: inherit';
@@ -228,6 +283,9 @@ function keyupNeedInput( event ) {
   }
 
   if( !value ) return;
+
+
+  console.log("-------- keyupNeedInput 2 - value: "+value);
 
   event.target.value = '';
   event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';

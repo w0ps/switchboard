@@ -12,7 +12,7 @@
 <!-- JF 2016-04-12 -->
 <template name="needlist">
   {{#if isAllowed 'post needs'}}
-    <input class="inverted" name="need" placeholder="need" />
+    <input class="inverted" name="need" placeholder="Enter your need here" />
     
     <!-- 2016-05-29 Actually this resource button is now hidden by request of Edit,
                     the hiding is done in needfeed.js function keyupNeedInput( event ) 
@@ -90,7 +90,8 @@
         <span class="need-title-state-{{state}}"> -->
         <span class="need-title-state-none">
             <span class="timecode">{{formatTime created}}</span>    
-            <span {{contenteditability}}>{{title}}</span>        
+            <span class="need-title" {{contenteditability}}>{{title}}</span>  
+
         </span>
         
       </li>
@@ -118,7 +119,7 @@
     {{#if isNotNull value}}
         {{{getAvatar createdBy}}}
         <span class="name">{{userIdToUserName createdBy}}</span>
-        <span {{contenteditability}}>{{value}}</span>
+        <span class="resource-title" {{contenteditability}}>{{value}}</span>
     {{/if}}
 </template>
 
