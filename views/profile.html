@@ -3,14 +3,14 @@
 		<h1>Profile</h1>
 		{{#with currentUser}}
 			<img src="{{avatar}}" alt="{{username}}" />
-			<p>update your username (press enter to confirm)</p>
-			<input name="username" value="{{username}}" />
-			<p>add an avatar from your computer</p>
+			<p>Add an avatar from your computer:</p>
 			<input type="file" name="avatar-file" />
-			<p>or add an avatar with a url</p>
+			<p>or add an avatar with a url:</p>
 			<input name="avatar-url" />
-            <p>email address (press enter to confirm)</p>
+            <p>Email address:</p>
             <input name="email" value="{{email}}"  />
+			<p>Change your username (press enter to confirm):</p>
+			<input name="username" value="{{username}}" />
             
             <!-- JF: 2016-05-07 disabling videochaturl in profile for now 
             
