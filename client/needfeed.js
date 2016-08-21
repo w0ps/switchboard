@@ -219,7 +219,10 @@ Template.need.events( {
 
 // JF: orginal line was:  'click li.need': openChat,
 // instead of this, only open a chat when clicked on the NAME:
-  'click li.need .name': openChat,
+//  'click li.need .name': openChat,
+  
+   'click li.need .name': openChat,
+ 
   
   'click li.need [contentEditable=true]': function() {
     return false;},
@@ -347,12 +350,44 @@ function clickAddResourceToNeed( event ) {
 }
 
 function openChat( event ) {
+
+  // JF 2016-08-21
+  // NOTE: this only actually opens a chat if either you posted this need yourself, or if you posted a response to the need
+  
+  console.log ("---------openChat---------");
+  // console.log ("         Current need");
+  // console.log ("         this._id: "+  this._id);
+  // console.log ("         this.title: "+  this.title);
+  // console.log ("         this.createdBy: "+  this.createdBy);
+  
+  
+  var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+      userId = user.pretend || user._id;
+  // console.log ("         userId: "+  userId);
+  
+  // do NOT proceed if: 
+  //                    You did not create this need 
+  //                                AND 
+  //                    You did not respond to it
+  
+  if ( (this.createdBy !== userId) && (Resources.find( { sourceId: this._id }, {createdBy: userId} ).count() === 0) ) {
+    
+    console.log ("         User did not post this need neither did he respond to it, so no chat is opened");
+    return false;
+  
+  };
+  // /JF 2016-08-21
+  
+  
+  
+
   if( isAllowed( 'separate windows' ) ) {
     var windowName = this.title;
 
     chatWindows[ windowName ] = window.open( '/needs/' + this._id, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
     return false;
   }
+
 
   var openConversations = Session.get( 'openConversations' ) && Session.get( 'openConversations' ).slice() || [],
       index = openConversations.indexOf( this._id );
