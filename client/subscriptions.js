@@ -5,6 +5,7 @@ var collectionNames = [
 			'snapshots',
 			'chatmessages',
             'tagchatmessages',
+            'tagchatrooms', // JF 2016-08-22 TagChatRooms
 			'resources'
 		],
 		loadedCollections = [];

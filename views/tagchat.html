@@ -1,5 +1,9 @@
 <template name="tagchat">
   {{#with getTagConversation this}}
+    <!-- JF getTagConversation returns:
+            need: actually this is not a need but a TagChatRoom (still need to refactor)
+            speakingTurns: Ivo's magic
+            -->
     <section class="tagchat" data-sourceId="{{need._id}}" style="height: calc( 100% - {{footerHeight}}px )">
       <div>
         {{#each speakingTurns}}

@@ -78,7 +78,12 @@ function onScroll( event ) {
 }
 
 function getTagConversation( id ) {
-  var need = Needs.findOne( { _id: id } ),
+// JF 2016-08-22 TagChatRoom  
+//  var need = Needs.findOne( { _id: id } ),
+
+  // JF this var is still called 'need' here, but I'm now actually assigning it a TagChatRoom - I should refactor this later
+  var need = TagChatRooms.findOne( { _id: id } ),
+  
                                                         // JF 2016-08-18 sort messages on date of creation
       messages = TagChatMessages.find( { sourceId: id }, {sort: {created: 1}} ),
       speakingTurns = [];
@@ -174,6 +179,11 @@ function chatMessageKeyup( event ) {
         //  //  mode: 'rgb'
         //  // } );
         // },
+        
+        // Jfcomment:   Key handler for CTRL-U that will update the need title with the text you selected
+        //              Doesn't make sense in the context of a tagchat though, since a tagchat is not supposed to be linked to a need anymore
+        //              So I've commented it out for now
+        /*
         U: function updateNeedTitle () {
           var selectedText = getSelectedText();
 
@@ -181,6 +191,7 @@ function chatMessageKeyup( event ) {
 
           Meteor.call( 'changeNeedTitle', needId, selectedText );
         },
+        */
         'undefined': console.log.bind( console, 'no handler for ' + keyPressed )
       };
 

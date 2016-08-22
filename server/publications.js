@@ -2,6 +2,11 @@ var publications = {
       needs: function() { return Needs.find( {} ); },
       chatmessages: function() { return ChatMessages.find( {} ); },
       tagchatmessages: function() { return TagChatMessages.find( {} ); },
+
+      // JF 2016-08-22
+      tagchatrooms: function() { return TagChatRooms.find( {} ); },
+      // /JF
+
       users: function() {
         return Meteor.users.find( {}, {
           fields: { username: 1, avatar: 1, role: 1, pretend: 1, email: 1, videochaturl: 1 }
