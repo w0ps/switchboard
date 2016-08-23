@@ -1,9 +1,12 @@
 <template name="header">
 	<aside>
 		{{#if currentUser}}
-			<img src="{{currentUser.avatar}}" alt="{{currentUser.username}}" />
+			<!-- <img src="{{currentUser.avatar}}" alt="{{currentUser.username}}" /> -->
+			{{{getAvatar currentUser._id}}}
 		{{/if}}
-		{{> loginButtons}}
+        
+        {{> loginButtons}}
+          
 	</aside>
 	<nav>
 		<a href="/needs">needs</a>
