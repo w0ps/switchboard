@@ -56,6 +56,15 @@ if( Meteor.isServer ) {
     'keyup input[name="email"]': emailChange
     
   } );
+  
+  // JF 2016-23 new registration page
+  Template.register2.events( {
+    'change input[name="avatar-file"]': avatarFileChange,
+    'keyup input[name="email"]': emailChange
+    
+  } );
+  // /JF
+
 }
 
 function usernameKeyup( event ) {

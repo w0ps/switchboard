@@ -18,6 +18,11 @@ Router.route( '/users', showUsers );
 Router.route( '/snapshots', showSnapshots );
 Router.route( '/pretend', showPretend );
 
+// JF 2016-08-23
+Router.route('/register', function () { this.render('register');});
+Router.route('/register2', function () { this.render('register2');});
+// /JF
+
 function showFeed() {
   isAllowedWhenConnected( 'separate windows', bindBeforeUnload );
 
@@ -290,6 +295,10 @@ function setLayout(){
   ) && isAllowed( 'separate windows' ) ) {
     this.layout( 'emptylayout' );
   }
+  
+  // JF 2016-08-23 
+  if (this.url === '/register' || this.url === '/register2') {this.layout( 'emptylayout' );}
+  // / JF 2016-08-23
 
   this.next();
 }
