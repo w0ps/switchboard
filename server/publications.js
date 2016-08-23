@@ -30,3 +30,15 @@ function publish( name ) {
 }
 
 Object.keys( publications ).forEach( publish );
+
+
+// JF 2016-08-23 
+// When a new user is created, set its role to 'audience' by default
+Accounts.onCreateUser(function(options, user) {
+
+    console.log("---- /server/publications - Accounts.onCreateUser -- user.username:"+user.username);
+
+    user.role = 'audience';
+    
+  return user;
+});
