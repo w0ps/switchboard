@@ -4,7 +4,9 @@ var publications = {
       tagchatmessages: function() { return TagChatMessages.find( {} ); },
 
       // JF 2016-08-22
-      tagchatrooms: function() { return TagChatRooms.find( {} ); },
+      tagchatrooms: function() {                // ensure that title is unique, i.e. prevent "duplicate" chatrooms
+                                    TagChatRooms._ensureIndex( {title:1}, {unique:true} );
+                                    return TagChatRooms.find( {} ); },
       // /JF
 
       users: function() {
