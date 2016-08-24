@@ -782,6 +782,7 @@ fieldset[disabled] .btn-link:focus {
   border-bottom: 1px solid transparent;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
+  text-align: center; /* JF 2016-08-24 */
 }
 .panel-heading > .dropdown .dropdown-toggle {
   color: inherit;
