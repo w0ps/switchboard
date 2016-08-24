@@ -96,7 +96,8 @@ ul.needs {
 	padding: 2px 0;
 	margin: 0;
 	background-color: black;
-	height: calc( 100% - 30px ); /* JF 2016-05-02 changed from 25 to 30, bottom scrollbar was not completely visible */
+	/* height: calc( 100% - 30px ); /* JF 2016-05-02 changed from 25 to 30, bottom scrollbar was not completely visible */
+	height: calc( 100% - 55px ); /* JF 2016-08-24 changed from 30 to 55, as the height of the need input field was increased from 25 to 50 */
 	overflow-y: scroll;
 }
 
@@ -247,7 +248,9 @@ li.need p {
 
 input[name="need"] {
 	line-height: 25px;
-	height: 25px;
+    /* JF 2016-08-24 - increased height of need input from 25 to 50 px, to make it more visible */
+	/* height: 25px; */
+	height: 50px;
 	width: 100%;
 	padding-left: 5px;
 	box-sizing: border-box;
