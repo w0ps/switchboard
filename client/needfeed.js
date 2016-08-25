@@ -184,6 +184,29 @@ Template.need.helpers( {
   
   },
   // /JF
+
+  // JF 2016-08-24
+  NeedChatNotification: function (need) {
+  
+      // if current user did not create this need, or if there is nobody in a chat for this need: return right now
+      if ( (need.createdBy !== Meteor.userId()) || (need.inChat.length < 1) ) {
+        return false;
+        
+      } else {
+            console.log('---- NeedChatNotification: need.createdBy: '+need.createdBy);
+            console.log('       need.inChat.includes(Meteor.userId)):  '+need.inChat.includes(Meteor.userId()));
+            
+          // is current user not in this chat? then he should be notified that someone opened a chat with him, i.e. return true
+          if (need.inChat.includes(Meteor.userId()) === false) {
+             return true;
+          } else {
+             return false;
+          }
+          
+      }
+         
+  }
+  // /JF
   
   
 } );
@@ -221,7 +244,7 @@ Template.need.events( {
 // instead of this, only open a chat when clicked on the NAME:
 //  'click li.need .name': openChat,
   
-   'click li.need .name': openChat,
+  'click li.need .name': openChat,
  
   
   'click li.need [contentEditable=true]': function() {
@@ -262,7 +285,24 @@ Template.resource.events( {
         
         return false;
     }
-  }
+  },
+  
+  
+  // JF 2016-08-24 by clicking on a username in a resource connected to a need, we start a needchat
+  'click .name': function(event) {
+  
+    console.log("-------- click .name"); 
+    // console.log("-------- click li.resource .name - Needs.findOne( {_id:this.sourceId} )._id : "+Needs.findOne( {_id:event.sourceId} )._id );
+    console.log("          event.type: "+event.type);
+    console.log("          this._id: "+this._id);
+    
+    // openChat( Needs.findOne( {_id:this.sourceId} ) );
+    
+    openChatByNeed (Needs.findOne( {_id:this.sourceId} ) );
+  }  
+  
+  
+  
 } );
 
 
@@ -360,6 +400,8 @@ function openChat( event ) {
   // console.log ("         this.title: "+  this.title);
   // console.log ("         this.createdBy: "+  this.createdBy);
   
+  /* JF 2016-08-25 disabling this check for Groningen, as the 'R'esource button in needs is also hidden now, users cannot post resources
+     // so with this check disabled anyone can open a chat now
   
   var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
       userId = user.pretend || user._id;
@@ -378,7 +420,7 @@ function openChat( event ) {
   };
   // /JF 2016-08-21
   
-  
+  */ // / JF 2016-08-25
   
 
   if( isAllowed( 'separate windows' ) ) {
@@ -399,6 +441,62 @@ function openChat( event ) {
   Meteor.call( 'joinChat', this._id );
 }
 
+
+// JF 2016-08-24
+function openChatByNeed( need ) {
+
+  // JF 2016-08-21
+  // NOTE: this only actually opens a chat if either you posted this need yourself, or if you posted a response to the need
+  
+  console.log ("---------openChat---------");
+  // console.log ("         Current need");
+  // console.log ("         this._id: "+  this._id);
+  // console.log ("         this.title: "+  this.title);
+  // console.log ("         this.createdBy: "+  this.createdBy);
+  
+  
+  var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+      userId = user.pretend || user._id;
+  // console.log ("         userId: "+  userId);
+  
+  // do NOT proceed if: 
+  //                    You did not create this need 
+  //                                AND 
+  //                    You did not respond to it
+  
+  if ( (need.createdBy !== userId) && (Resources.find( { sourceId: need._id }, {createdBy: userId} ).count() === 0) ) {
+    
+    console.log ("         User did not post this need neither did he respond to it, so no chat is opened");
+    return false;
+  
+  };
+  // /JF 2016-08-21
+  
+  
+  
+
+  if( isAllowed( 'separate windows' ) ) {
+    var windowName = need.title;
+
+    chatWindows[ windowName ] = window.open( '/needs/' + need._id, windowName, 'height=' + constants.chatHeight + ',width=' + constants.chatWidth + ',left=' + window.innerWidth );
+    return false;
+  }
+
+
+  var openConversations = Session.get( 'openConversations' ) && Session.get( 'openConversations' ).slice() || [],
+      index = openConversations.indexOf( need._id );
+
+  if( index > -1 ) openConversations.splice( index, 1 );
+  openConversations.unshift( need._id );
+
+  Session.set( 'openConversations', openConversations );
+  Meteor.call( 'joinChat', need._id );
+}
+// /JF 2016-08-24
+
+
+
+
 function openTagChat( event ) {
 
 
@@ -407,7 +505,8 @@ function openTagChat( event ) {
   
 
   // JF 2016-08-22 TagChatRoom
-  
+                                // get tagchatrooms that have the tag(s) used in this need
+                                // if there is no tagchatroom yet with this tag, it is created
   var TagChatRoomsToBeOpened = getTagChatRooms(this._id); 
   
   console.log ("TagChatRoomsToBeOpened: ");
