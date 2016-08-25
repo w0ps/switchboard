@@ -244,8 +244,10 @@ Template.need.events( {
 // instead of this, only open a chat when clicked on the NAME:
 //  'click li.need .name': openChat,
   
+  /* JF 2016-08-25 Commented this out for Groningen by Edits request
+  //  to disable opening chats by clicking on the user names altogether
   'click li.need .name': openChat,
- 
+  */ // /JF 2016-08-25
   
   'click li.need [contentEditable=true]': function() {
     return false;},
@@ -287,6 +289,9 @@ Template.resource.events( {
     }
   },
   
+  /* JF 2016-08-25 Commented this out for Groningen by Edits request
+  //  to disable opening chats by clicking on the user names altogether
+  
   
   // JF 2016-08-24 by clicking on a username in a resource connected to a need, we start a needchat
   'click .name': function(event) {
@@ -300,7 +305,8 @@ Template.resource.events( {
     
     openChatByNeed (Needs.findOne( {_id:this.sourceId} ) );
   }  
-  
+  */ // /JF 2016-08-25
+
   
   
 } );
