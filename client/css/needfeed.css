@@ -151,7 +151,9 @@ li.need:hover {
 }
 
 .need:hover button.resourceButton {
-	display: inherit;
+    /* 2016-08-25 JF hiding resource button in need by edits request */
+	/* display: inherit; */
+    display: none;
 }
 
 button.resourceButton {
@@ -254,6 +256,8 @@ input[name="need"] {
 	width: 100%;
 	padding-left: 5px;
 	box-sizing: border-box;
+    
+    font-size: 25px; /*2016-08-25 doubled font size by edits request */
 }
 
 /* JF 2016-05-02 font color of placeholder text in input field */

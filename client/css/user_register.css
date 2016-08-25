@@ -15,7 +15,12 @@ label.error{
   /* height: 34px; */
   
   padding: 6px 12px;
-  font-size: 14px;
+
+  /* font-size: 14px; */
+  /* JF 2016-08-25 */
+  font-size: large;
+
+
   line-height: 1.428571429;
   color: #555;
   background-color: #fff;
@@ -403,7 +408,11 @@ label.error{
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0;
-  font-size: 14px;
+  
+  /* font-size: 14px; */
+  /* JF 2016-08-25 */
+  font-size: large;
+  
   font-weight: normal;
   line-height: 1.428571429;
   text-align: center;
@@ -776,6 +785,9 @@ fieldset[disabled] .btn-link:focus {
 }
 .panel-body {
   padding: 15px;
+  
+  /* JF 2016-08-25  */
+  font-size: larger;
 }
 .panel-heading {
   padding: 10px 15px;
@@ -806,6 +818,10 @@ fieldset[disabled] .btn-link:focus {
   border-top: 1px solid #ddd;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
+
+  /* JF 2016-08-25  */
+  font-size: larger;
+
 }
 .panel > .list-group,
 .panel > .panel-collapse > .list-group {
