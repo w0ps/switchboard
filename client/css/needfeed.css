@@ -257,8 +257,15 @@ input[name="need"] {
 	padding-left: 5px;
 	box-sizing: border-box;
     
-    font-size: 25px; /*2016-08-25 doubled font size by edits request */
+    /*2016-08-26 changed font size by edits request */
+    font-size: 20px; 
+    font-weight: bold;
+    color: white;
+    background-color: #363636;
+    border: none;
+    
 }
+
 
 /* JF 2016-05-02 font color of placeholder text in input field */
 input[name="need"]::-webkit-input-placeholder {
@@ -268,8 +275,15 @@ input[name="need"]::-webkit-input-placeholder {
 input[name="need"]::-moz-placeholder {
     color: white;
     font-weight: bold;
+    opacity: 1;
 }
 input[name="need"]::-ms-input-placeholder {
+    color: white;
+    font-weight: bold;
+}
+
+/* JF 2016-08-25 */
+input[name="need"]::placeholder {
     color: white;
     font-weight: bold;
 }
