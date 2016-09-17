@@ -68,7 +68,9 @@ Meteor.methods({
     ChatMessages.update( { sourceId: needId }, { $set: { createdBy: newOwnerId } } );
   },
   changeNeedTitle: function( needId, title ) {
-    if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
+    // 2016-09-17 JF commented this line out, as part of the new "one need per person" scheme, where editing your own need in the need input field is ALWAYS allowed
+    // if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
+    // /JF 
 
     Needs.update( { _id: needId }, { $set: { title: title } } );
         

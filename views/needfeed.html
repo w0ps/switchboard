@@ -14,7 +14,8 @@
   {{#if isAllowed 'post needs'}}
 
     <!-- 2016-08-25    <input autofocus class="inverted" name="need" placeholder="Enter your need here" /> -->
-    <input autofocus name="need" placeholder="Enter your need here" />   
+                                                <!-- 2016-09-17 currentUserNeed: only 1 need per user now -->
+    <input autofocus name="need" placeholder="Enter your need here" value="{{currentUserNeed}}" />   
     <!-- 2016-05-29 Actually this resource button is now hidden by request of Edit,
                     the hiding is done in needfeed.js function keyupNeedInput( event ) 
                     
@@ -27,13 +28,10 @@
     <!-- -->
   {{/if}}
 
-  <ul class="needs {{needsMultiColumn}}">
-    {{#each needsAndLooseResources}}
+  <ul class="needs {{needsMultiColumn}}" id="needs">
+    <!-- JF 2016-09-16 removed resources -->
+    {{#each needs}}
         {{> need}}
-        
-        <!-- <li class="freeResource"> -->
-            {{> freeResource this}}
-        <!-- </li> -->
     {{/each}}
   </ul>
 
@@ -73,7 +71,6 @@
         {{{getAvatar createdBy}}}
         
         <span class="name">{{userIdToUserName createdBy}}</span>
-        
         {{#if isNotNull tags}}
             {{#if getTagUsers tags createdBy}}
             
@@ -96,13 +93,6 @@
         </span>
         
       </li>
-      {{#if getResources _id}}
-        {{#each getResources _id}}
-          <li class="resource">
-            {{> resource this}}
-          </li>
-        {{/each}}
-      {{/if}}
   {{/if}}   
 </template>
 
@@ -143,6 +133,8 @@
         
   </div>
 </template>
+
+
 
 <!--
 <template name="chatcollection">

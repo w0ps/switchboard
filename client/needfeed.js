@@ -37,7 +37,28 @@ Template.freeResource.helpers( {
 
 Template.needlist.helpers( {
   needs: function() {
-    return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+  
+    /*
+  
+                                    // JF 2016-09-16 on devices with a mobile screen ( <800 px), only return the first 50 needs
+    if (screen.width < 800) {
+    
+        var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+            userId = user.pretend || user._id;
+      
+        var numberOfOwnNeeds = Needs.find( { snapshot: { $exists: false } }, {createdBy: userId ).count();
+
+        console.log("numberOfOwnNeeds: "+numberOfOwnNeeds);
+        
+        var temp
+                                                                                // JF 2016-09-16 added limit:50 
+        return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 }, limit:50 } );
+    } else {
+        return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+    }
+    */
+        return Needs.find( { snapshot: { $exists: false } }, { sort: { created: -1 } } );
+    
   },
   getLooseResources: function() {
     return Resources.find(
@@ -70,6 +91,23 @@ Template.needlist.helpers( {
     // console.log ("$(window).width(): "+$(window).width());
     if ( ($(window).width() > 350) && (isAllowed( 'needs multicolumn' )) )  {
         return "needs-multiColumn";
+    }
+  }
+  // /JF
+  
+  // JF 2016-09-17
+  , 
+  currentUserNeed: function() {
+    
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+        userId = user.pretend || user._id; // userId is current (pretend) userId
+        
+    var userNeed = Needs.findOne( { createdBy:userId, $and: [ { "snapshot": {$exists: false} } ] } );
+    
+    if (userNeed) {
+      return userNeed.title;
+    } else {
+      return "";
     }
   }
   // /JF
@@ -193,8 +231,8 @@ Template.need.helpers( {
         return false;
         
       } else {
-            console.log('---- NeedChatNotification: need.createdBy: '+need.createdBy);
-            console.log('       need.inChat.includes(Meteor.userId)):  '+need.inChat.includes(Meteor.userId()));
+            // console.log('---- NeedChatNotification: need.createdBy: '+need.createdBy);
+            // console.log('       need.inChat.includes(Meteor.userId)):  '+need.inChat.includes(Meteor.userId()));
             
           // is current user not in this chat? then he should be notified that someone opened a chat with him, i.e. return true
           if (need.inChat.includes(Meteor.userId()) === false) {
@@ -322,6 +360,11 @@ function keyupNeedInput( event ) {
   var value = event.target.value,
       split, description;
       
+  //JF 2016-09-17
+  var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+      userId = user.pretend || user._id; // userId is current (pretend) userId
+  ///JF
+      
   if( event.keyCode !== 13 ) {
     if( value ) {
       // event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: inherit';
@@ -336,10 +379,25 @@ function keyupNeedInput( event ) {
 
   console.log("-------- keyupNeedInput 2 - value: "+value);
 
-  event.target.value = '';
+  // JF 2016-09-17 Only allow 1 need per user, no need to clear the value anymore, so outcommented the next line 
+  // event.target.value = '';
+  // /JF
   event.target.parentNode.querySelector( '.resourceButton' ).style = 'display: none';
 
-  Meteor.call( 'addNeed', value );
+  // JF 2016-09-17 Only allow 1 need per user
+  //var userNeed = Needs.findOne( { createdBy:userId }, { snapshot: { $exists: false } } );
+  var userNeed = Needs.findOne( { createdBy:userId, $and: [ { "snapshot": {$exists: false} } ] } );
+
+  if (userNeed) { 
+    // user already entered a need, so now we change its title
+    console.log ("user already entered a need, so now we change its title to "+value);
+    Meteor.call( 'changeNeedTitle', userNeed._id, value );
+  } else {
+    // user has not entered a need yet, so now we will create one
+    console.log ("user has not entered a need yet, so now we will create one with title "+value);
+    Meteor.call( 'addNeed', value );
+  }
+  // JF
 }
 
 function clickAddResource( event ) {
@@ -400,7 +458,7 @@ function openChat( event ) {
   // JF 2016-08-21
   // NOTE: this only actually opens a chat if either you posted this need yourself, or if you posted a response to the need
   
-  console.log ("---------openChat---------");
+  // console.log ("---------openChat---------");
   // console.log ("         Current need");
   // console.log ("         this._id: "+  this._id);
   // console.log ("         this.title: "+  this.title);
@@ -454,7 +512,7 @@ function openChatByNeed( need ) {
   // JF 2016-08-21
   // NOTE: this only actually opens a chat if either you posted this need yourself, or if you posted a response to the need
   
-  console.log ("---------openChat---------");
+  // console.log ("---------openChat---------");
   // console.log ("         Current need");
   // console.log ("         this._id: "+  this._id);
   // console.log ("         this.title: "+  this.title);
@@ -472,7 +530,7 @@ function openChatByNeed( need ) {
   
   if ( (need.createdBy !== userId) && (Resources.find( { sourceId: need._id }, {createdBy: userId} ).count() === 0) ) {
     
-    console.log ("         User did not post this need neither did he respond to it, so no chat is opened");
+    // console.log ("         User did not post this need neither did he respond to it, so no chat is opened");
     return false;
   
   };
@@ -520,7 +578,7 @@ function openTagChat( event ) {
   // for each tagchatroom:
   TagChatRoomsToBeOpened.forEach(function(tcroom){
      
-    console.log("--------- Opening TagChatRoom id:"+tcroom._id+" title:"+tcroom.title);
+    // console.log("--------- Opening TagChatRoom id:"+tcroom._id+" title:"+tcroom.title);
 
 
     Meteor.call( 'updateAutogeneratedTagChatMessages', tcroom._id );
@@ -690,7 +748,7 @@ function getUnifiedTagChatNeed( needSourceId ) {
 
 function getTagChatRoom( needSourceId ) {
 
-  console.log ("-------- getTagChatRoom (" + needSourceId + ")" );
+  // console.log ("-------- getTagChatRoom (" + needSourceId + ")" );
 
   //tags attached to this Need
   var tempTags = Needs.findOne( {_id: needSourceId} ).tags;
@@ -712,9 +770,9 @@ function getTagChatRoom( needSourceId ) {
       if (tempTagChatRoomsWithSameTag == null)
       
         {
-              console.log ("        tempTagChatRoomsWithSameTag == null");
+              // console.log ("        tempTagChatRoomsWithSameTag == null");
         
-              console.log ("        addTagChatRoom(" + tempTags[0] + ")" );
+              // console.log ("        addTagChatRoom(" + tempTags[0] + ")" );
               Meteor.call ('addTagChatRoom', tempTags[0]);
               
               tempTagChatRoomsWithSameTag = TagChatRooms.findOne( { $and: [selector1, selector2]}, {sort:{created:1}} );
@@ -722,7 +780,7 @@ function getTagChatRoom( needSourceId ) {
 
 
             
-      console.log ("getTagChatRoom._id: " + tempTagChatRoomsWithSameTag._id);
+      // console.log ("getTagChatRoom._id: " + tempTagChatRoomsWithSameTag._id);
 
       return tempTagChatRoomsWithSameTag;
     
@@ -744,7 +802,7 @@ function getTagChatRoom( needSourceId ) {
 
 function getTagChatRooms( needSourceId ) {
 
-  console.log ("-------- getTagChatRooms (" + needSourceId + ")" );
+  // console.log ("-------- getTagChatRooms (" + needSourceId + ")" );
 
   //tags attached to this Need
   var tempTags = Needs.findOne( {_id: needSourceId} ).tags;
@@ -766,7 +824,7 @@ function getTagChatRooms( needSourceId ) {
           var selector1 = {snapshot: { $exists: false } };
           var selector2 = {title: tempTags[i]};
 
-          console.log("        tempTags[i]: "+tempTags[i]);   
+          // console.log("        tempTags[i]: "+tempTags[i]);   
                  
           // find tagchatroom with the same tag
           tempTagChatRoomsWithSameTag = TagChatRooms.findOne( { $and: [selector1, selector2]}, {sort:{created:1}} );
@@ -774,15 +832,15 @@ function getTagChatRooms( needSourceId ) {
           if (tempTagChatRoomsWithSameTag == null)
           
             {
-                  console.log ("        tempTagChatRoomsWithSameTag == null");
+                  // console.log ("        tempTagChatRoomsWithSameTag == null");
             
-                  console.log ("        addTagChatRoom(" + tempTags[i] + ")" );
+                  // console.log ("        addTagChatRoom(" + tempTags[i] + ")" );
                   Meteor.call ('addTagChatRoom', tempTags[i]);
                   
                   tempTagChatRoomsWithSameTag = TagChatRooms.findOne( { $and: [selector1, selector2]}, {sort:{created:1}} );
             }
             
-           console.log ("getTagChatRooms._id: " + tempTagChatRoomsWithSameTag._id);
+           // console.log ("getTagChatRooms._id: " + tempTagChatRoomsWithSameTag._id);
 
             
        }
