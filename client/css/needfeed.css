@@ -152,8 +152,9 @@ li.need:hover {
 
 .need:hover button.resourceButton {
     /* 2016-08-25 JF hiding resource button in need by edits request */
-	/* display: inherit; */
-    display: none;
+	display: inherit;
+    /* display: none; */ 
+    /* 2016-09-28 JF re-enabled resource button in need for Portugal performance */
 }
 
 button.resourceButton {
