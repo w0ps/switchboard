@@ -153,7 +153,14 @@
         
         {{{getAvatarFromCFS createdByAvatar}}}
         <span class="name">{{createdByUsername}}</span>
-        <span class="resource-title" {{contenteditability}}>{{value}}</span>
+        
+        <!-- 2016-09-29 only show resource title if you created it or if you created the source need -->
+        {{#if isAllowedToSeeResource}}
+            <span class="resource-title" {{contenteditability}}>{{value}}</span>
+        {{else}}
+            <span class="resource-title" > <i>(private response)</i> </span>            
+        {{/if}}    
+        
     {{/if}}
 </template>
 

@@ -23,7 +23,28 @@ Template.resource.helpers( {
     // console.log("Resource value: ".concat(value));
     return value != null ;
     //return value !== "";
-  }       
+  },
+  // 2016-09-29
+  isAllowedToSeeResource:  function() {
+  // only show a resource if you created it, or if you created its source need
+  
+    // console.log("--- isAllowedToSeeResource --- ");
+    
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+        userId = user.pretend || user._id; // userId is current (pretend) userId
+    
+    if ( this.createdBy === userId ) { // return true if you created the resource
+        return true;
+    }
+    
+    if ( Needs.findOne({_id:this.sourceId}).createdBy === userId ) { // return true if you created the source need
+        return true; 
+    }
+    
+    return false; // in all other cases: return false
+
+  }
+         
 } );
 
 Template.freeResource.helpers( { 
