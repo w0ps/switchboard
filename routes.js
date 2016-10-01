@@ -1,6 +1,10 @@
 Router.configure( {
-    layoutTemplate: "mainlayout",
-    before: setLayout
+    // 2016-09-29
+    // layoutTemplate: "mainlayout",
+    // before: setLayout
+    
+    layoutTemplate: "emptylayout",
+    before: setLayout2
 } );
 
 Router.route( '/', function(){ this.render( 'root' ); } );
@@ -287,7 +291,8 @@ function showPretend() {
   } } );
 }
 
-function setLayout(){
+// 2016-09-29 this is not used anymore, but keeping it in the source case it needs to be reverted
+function setLayout(){ 
   if( (
     this.url === '/needs' ||
     this.url === '/needscolumns' ||
@@ -305,5 +310,51 @@ function setLayout(){
   if (this.url === '/register' || this.url === '/register2' || this.url === '/register3' || this.url === '/login') {this.layout( 'emptylayout' );}
   // / JF 2016-08-23
 
+  this.next();
+}
+
+// 2016-09-29 to prevent the "top menu" showing by default for users with "seperate windows" before the rest is loaded, as was the case until now, which confused the mobile users
+function setLayout2(){
+  // this.layout is 'emptylayout' by default. change this to 'mainlayout' if user has 'separate windows' permission
+
+  console.log (' ---- setLayout2 ---- ');
+
+  var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+  
+  if( !user ) { // not logged in
+    
+    if (this.url === '/register' || this.url === '/register2' || this.url === '/register3' || this.url === '/login') { 
+      this.layout( 'emptylayout' ); 
+     } else { 
+         this.layout( 'mainlayout' ); 
+       }
+     
+    this.next();
+    return;
+  } 
+  
+  // user IS logged in: 
+  
+  var role = Roles.findOne( { name: user.role } ) || [];
+
+  console.log (' role[ "separate windows" ]: ',role[ 'separate windows' ]);
+
+  if (this.url === '/register' || this.url === '/register2' || this.url === '/register3' || this.url === '/login') { 
+    // this.layout( 'emptylayout' );
+  } else {
+  
+    if(  role[ 'separate windows' ] == false ) {
+ 
+      console.log (' User does NOT have "separate windows" permission');
+      this.layout( 'mainlayout' );
+     
+    } else {
+      console.log (' Assuming that user has "separate windows" permission, since role["separate windows"] is either true or undefined');
+      // then still default to the empty layout - except for url '/', so that we can login from there
+      if( this.url === '/' ) { this.layout( 'mainlayout' ); }
+      }
+    }
+  
+  
   this.next();
 }
