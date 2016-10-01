@@ -153,7 +153,20 @@ Template.need.helpers( {
     // console.log("Need value: ".concat(value));
     
     return value != null;
-  },   
+  },
+  
+  isNotNullOrEmpty:  function(value) {
+
+    // console.log('isNotNullOrEmpty value: ',value);
+
+    if (value == null ) return false;
+    
+    if (value.length == 0) return false;
+    
+    return true;
+        
+  },
+        
 
   // JF 2016-04-24
   // returns ids of users that posted needs with the specified tags. excludes the specified user from the results.
@@ -188,21 +201,21 @@ Template.need.helpers( {
         */
     
         var countUsernames = 0;
-        var userNames = '';
+        // JF-2016-09-28 var userNames = '';
         var userIDsArray = [];
-        var userNamesArray = [];
+        // JF-2016-09-28 var userNamesArray = [];
            
         tempNeedsWithSameTag.forEach(function(doc){
         
             // convert userId to userName
             var tempUserId = doc.createdBy;            
-            var tempUser = Meteor.users.findOne( { _id: tempUserId} );
-            var tempUserName = tempUser ? tempUser.username : tempUser;
+            // JF-2016-09-28 var tempUser = Meteor.users.findOne( { _id: tempUserId} );
+            // JF-2016-09-28 var tempUserName = tempUser ? tempUser.username : tempUser;
  
             // console.log('UserID: '+doc.createdBy + '- Username:' +tempUserName);
                         
             userIDsArray.push(tempUserId);
-            userNamesArray.push(tempUserName);
+            // JF-2016-09-28 userNamesArray.push(tempUserName);
                 
             countUsernames = countUsernames+1;
             
@@ -212,7 +225,7 @@ Template.need.helpers( {
             
             // no double usernames
             userIDsArray = _.uniq(userIDsArray);
-            userNamesArray = _.uniq(userNamesArray);
+            // JF-2016-09-28 userNamesArray = _.uniq(userNamesArray);
                         
             return userIDsArray;
         } else {
@@ -638,7 +651,7 @@ Template.needs.onRendered( onRendered );
 
 function onRendered() {
   Tracker.autorun( function(){
-
+    
     var currentNeedTitles = [],
         prevNeedTitles = previousNeedTitles ? previousNeedTitles.slice() : [];
 
@@ -691,8 +704,7 @@ function onRendered() {
         prevResourceValues.splice( index, 1 );
       }
     }
-    
-    
+        
     
   } );
 }

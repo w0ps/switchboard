@@ -37,6 +37,20 @@ var helpers = {
 
         return htmlString;
       },
+      // 2016-09-29 wrap some html around an avatar (as provided in the denormalized need feed) 
+      getAvatarFromCFS: function ( avatar ) {
+        var htmlString = [
+          '<img class="avatar" src="', avatar || defaultPictureSrc, '" />'
+        ].join( '' );
+
+        /* Jf debug
+        
+        console.log("----getAvatarFromCFS----");
+        */
+
+        return htmlString;
+      },
+      
       formatTime: formatTime,
       truncate: function( string, ending, limit ) {
         limit = parseInt( limit, 10 );

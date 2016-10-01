@@ -68,9 +68,39 @@
         {{#if isAllowed 'post resources'}}
           <button class="resourceButton">R</button>
         {{/if}}
-        {{{getAvatar createdBy}}}
         
-        <span class="name">{{userIdToUserName createdBy}}</span>
+        <!-- JF 2016-09-29 
+        {{{getAvatar createdBy}}}
+        -->
+        <!-- -->
+        {{{getAvatarFromCFS createdByAvatar}}}
+        <!-- -->
+        <!-- JF 2016-09-29        
+        <span class="name">{{userIdToUserName createdBy}}</span> 
+        -->
+        
+        
+        
+        <span class="name">{{createdByUsername}}</span>
+
+        {{#if isNotNullOrEmpty tagUsers}}
+            <span class="tags">
+            
+                <img class="taglink" src="/link.png">
+<!-- 2016-09-29 changed to denormalized tagusers directly in the need
+                {{#each tagUsers}}
+                    {{{getAvatar this}}}
+                    {{userIdToUserName this}} 
+                {{/each}}
+-->
+                {{#each tagUsers}}
+                    {{{getAvatarFromCFS this.avatar}}}
+                    {{this.username}} 
+                {{/each}}
+            </span>   
+        {{/if}}    
+        
+        <!-- JF 2016-09-28 test optimize 
         {{#if isNotNull tags}}
             {{#if getTagUsers tags createdBy}}
             
@@ -83,7 +113,8 @@
                     {{/each}}
                 </span>    
             {{/if}}
-        {{/if}}        
+        {{/if}}    
+        -->     
         <!-- JF change CSS based on Need state        
         <span class="need-title-state-{{state}}"> -->
         <span class="need-title-state-none">
@@ -93,6 +124,13 @@
         </span>
         
       </li>
+      {{#if getResources _id}}
+        {{#each getResources _id}}
+          <li class="resource">
+            {{> resource this}}
+          </li>
+        {{/each}}
+      {{/if}}            
   {{/if}}   
 </template>
 
@@ -108,8 +146,13 @@
 
 <template name="resource">
     {{#if isNotNull value}}
+        <!-- 2016-09-29 changed to denormalized username + avatar directly in the resource
         {{{getAvatar createdBy}}}
         <span class="name">{{userIdToUserName createdBy}}</span>
+        --> 
+        
+        {{{getAvatarFromCFS createdByAvatar}}}
+        <span class="name">{{createdByUsername}}</span>
         <span class="resource-title" {{contenteditability}}>{{value}}</span>
     {{/if}}
 </template>

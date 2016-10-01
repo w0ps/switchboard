@@ -37,21 +37,35 @@ Meteor.methods({
   addNeed: function( title ) {
     var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
         userId = user.pretend || user._id;
+        
+    user = Meteor.users.findOne( { _id: userId } );
+        
 
     if( !isAllowed( 'post needs' ) ) throw new Meteor.Error( 'not-authorized' );
 
-    var need = new Need( { title: title, createdBy: userId } ),
+    console.log ("------addNeed ("+ title +") -------");
+
+    var need = new Need( { title: title, createdBy: userId} ),
         nId = Needs.insert( need );
 
-    // JF
-    Needs.update ( { _id: nId }, { $set: { state: 'initial' } } );
-    // /JF
-    
     // JF 2016-04-18
     var tagsArray = title.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
-    Needs.update( { _id: nId }, { $set: { tags: tagsArray } } );
+
+    // JF
+    Needs.update ( { _id: nId }, { $set: { tags: tagsArray, state: 'initial', createdByUsername: user.username, createdByAvatar: user.avatar } } );
     // /JF
     
+    // JF 2016-09-29
+    // Needs.update ( { _id: nId }, { $set: { createdByUsername: user.username, createdByAvatar: user.avatar } } );
+    //
+    
+    // JF 2016-04-18
+    // var tagsArray = title.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
+    // Needs.update( { _id: nId }, { $set: { tags: tagsArray } } );
+    // /JF
+    
+    // 2016-09-29
+    Meteor.call( 'changeNeedTagUsers', nId, tagsArray ); // updates the tagUsers, i.e. list of other users with the same tag(s) in their need.
 
     Meteor.call( 'addChatMessage', { text: need.title, sourceId: nId } );
   },
@@ -64,7 +78,11 @@ Meteor.methods({
   changeNeedOwner: function( needId, newOwnerId ) {
     if( !isAllowed( 'edit needs') ) throw new Meteor.Error( 'not-authorized' );
 
-    Needs.update( { _id: needId }, { $set: { createdBy: newOwnerId } } );
+    // jf 2016-09-29
+    var user = Meteor.users.findOne( { _id: newOwnerId } );
+
+    // jf 2016-09-29 Needs.update( { _id: needId }, { $set: { createdBy: newOwnerId } } );
+    Needs.update( { _id: needId }, { $set: { createdBy: newOwnerId, createdByUsername: user.username, createdByAvatar: user.avatar  } } );
     ChatMessages.update( { sourceId: needId }, { $set: { createdBy: newOwnerId } } );
   },
   changeNeedTitle: function( needId, title ) {
@@ -82,6 +100,9 @@ Meteor.methods({
     var tagsArray = title.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
     Needs.update( { _id: needId }, { $set: { tags: tagsArray } } );
     // /JF
+
+    // 2016-09-29
+    Meteor.call( 'changeNeedTagUsers', needId, tagsArray );
     
   },
   changeNeedCreated: function( needId, created ) {
@@ -100,9 +121,114 @@ Meteor.methods({
   },
   // /JF
   
-  // JF 2016-04-18
-  changeNeedTags: function( needId, tags ) {
-    
+  // JF 2016-09-29
+  changeNeedTagUsers: function( needId, newTags ) {
+  
+      // This is a bit complicated as a result of including denormalized user data i.e. user name and avatar instead of just user id
+  
+      var tempTagUserObject, 
+          tempTagUserArray;
+      
+      newTags = newTags || [];
+       
+      // tagUsers: [userid, username, avatar]
+
+      console.log ('-----changeNeedTags------');
+      console.log ('needId: ',needId);
+      console.log ('newTags: ',newTags);
+
+      // 1. Search for other needs that we must DELETE this taguser from, i.e.:
+      
+      //    Search all needs that have this taguser in its list of tagusers AND that don't have any of the new tags in its list of tags.
+      //    For each found need: delete this taguser from the need.
+      
+      var tagUserID = Needs.findOne ( {_id: needId} ).createdBy,
+          tagUser = Meteor.users.findOne( { _id: tagUserID } );
+          
+          tagUserDenormalized = {userid: tagUser._id, username: tagUser.username, avatar: tagUser.avatar};
+
+      var selector1 = {snapshot: { $exists: false } };                       
+      var selector2 = {createdBy: {$ne: tagUserID}}; // check only for needs tagged by OTHER users
+      // var selector3 = {tagUsers: {$in:[tagUserID]}};
+      var selector3 = {"tagUsers.userid": {$in:[tagUserID]}};
+      var selector4 = {tags: {$not: {$in:newTags} }};
+
+                        
+      //var options = {fields: {_id: 1}}; // return only the field _id 
+      // var tempNeedsWithTagUser = Needs.find( { $and: [selector1, selector2, selector3]}, options);      
+      
+      var tempNeedsWithTagUser = Needs.find( { $and: [selector1, selector2, selector3, selector4]});      
+      
+      tempNeedsWithTagUser.forEach(function(doc){
+        console.log ('-----changeNeedTags - removing taguser ',tagUser.username,' from: ',doc.title);
+        
+        tempTagUserArray = doc.tagUsers;
+        
+        console.log ('-----changeNeedTags - tempTagUserArray: ',tempTagUserArray);
+        
+        
+        // tempTagUserObject = doc.tagUsers.find(function(a) {return a.userid === tagUserID; });
+        
+        Needs.update( { _id: doc._id }, {
+          // $pull: { "tagUsers": tempTagUserObject }
+          
+          // $pull: { tagUsers: { $elemMatch: {userid: tagUserID} } }
+          $pull: { tagUsers: {userid: tagUserID} }
+          } );
+        
+      
+      });
+
+      // 2. search for other needs that we must ADD this taguser to, i.e.:
+      
+      //    Search all other needs that have one of the newly specified tags AND the taguser is not already in its list of tagusers.
+      //    For each found need:  add the taguser.
+        
+       
+      selector1 = {snapshot: { $exists: false } };                       
+      selector2 = {createdBy: {$ne: tagUserID}}; // check only for needs tagged by OTHER users
+      // selector3 = {tagUsers: { $not: {$in:[tagUserID]} } }; 
+      selector3 = {"tagUsers.userid": { $not: {$in:[tagUserID]} } }; 
+      selector4 = {tags: {$in:newTags}};
+                  
+      var tempNeedsWithoutTagUser = Needs.find( { $and: [selector1, selector2, selector3, selector4]});      
+      
+      tempNeedsWithoutTagUser.forEach(function(doc){
+        console.log ('-----changeNeedTags - adding taguser to :', doc.title);
+        
+        Needs.update( { _id: doc._id }, {
+          // $addToSet: { tagUsers: tagUserID }
+          $addToSet: { tagUsers: tagUserDenormalized }
+        } );
+
+      
+      });
+      
+      // 3. Now handle the CURRENT need: 
+      //    Clear the current tagusers from the current need, 
+      //    find tagusers that match the new tags, and add them to the current need
+
+      Needs.update( { _id: needId }, { $unset: {tagUsers: ""} } ); // clear all current tagUsers
+     
+      selector1 = {snapshot: { $exists: false } };                       
+      selector2 = {createdBy: {$ne: tagUserID}}; // check only for needs created by OTHER users
+      selector3 = {tags: {$in:newTags}};         // with the same tags
+     
+      var options = {fields: {createdBy: 1}}; // return only the field createdBy 
+     
+      var tempUserIDsWithSameTag = Needs.find( { $and: [selector1, selector2, selector3]}, options);       
+     
+      tempUserIDsWithSameTag.forEach(function(doc){
+          var tempUser = Meteor.users.findOne( { _id: doc.createdBy } );
+      
+          Needs.update( { _id: needId }, {
+            // $addToSet: { tagUsers: doc.createdBy }
+          $addToSet: { tagUsers: {userid: tempUser._id, username: tempUser.username, avatar: tempUser.avatar} }
+          } );
+      });
+      
+      
+        
   
   },
   
@@ -285,9 +411,12 @@ Meteor.methods({
   addResource: function( value, needId ) {
     if( !isAllowed( 'post resources') ) throw new Meteor.Error( 'not-authorized' );
 
-    var user = Meteor.users.findOne( { _id: Meteor.userId() } );
+    var user = Meteor.users.findOne( { _id: Meteor.userId() } ),
+        userId = user.pretend || user._id;
+        
+    user = Meteor.users.findOne( { _id: userId } );
 
-    Resources.insert( new Resource( { value: value, sourceId: needId, createdBy: user.pretend || user._id } ) );
+    Resources.insert( new Resource( { value: value, sourceId: needId, createdBy: user._id, createdByUsername: user.username, createdByAvatar: user.avatar } ) );
   },
   deleteResource: function( resourceId ) {
     if( !isAllowed( 'edit resources' ) ) throw new Meteor.Error( 'not-authorized' );
@@ -752,6 +881,12 @@ function Need( options ) {
   this.writingMessageTagChat = options.writingMessageTagChat || [];
   // /JF
   // /JF
+  
+  // 2016-09-29
+  this.createdByUsername = options.createdByUsername;
+  this.createdByAvatar = options.createdByAvatar;
+  this.tagUsers = options.tagUsers || [];
+  //
 }
 
 // JF 2016-08-22 TagChatRoom
@@ -797,6 +932,10 @@ function Resource( options ) {
   this.value = options.value;
   this.created = new Date();
   this.createdBy = options.createdBy;
+  // 2016-09-29
+  this.createdByUsername = options.createdByUsername;
+  this.createdByAvater = options.createdByAvatar;
+  //
   if( options.sourceId ) this.sourceId = options.sourceId;
 }
 
