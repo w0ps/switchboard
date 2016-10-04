@@ -48,12 +48,15 @@ Meteor.methods({
     var need = new Need( { title: title, createdBy: userId} ),
         nId = Needs.insert( need );
 
+    /* 2016-10-03 disabling entering tags in input field
     // JF 2016-04-18
     var tagsArray = title.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
 
     // JF
     Needs.update ( { _id: nId }, { $set: { tags: tagsArray, state: 'initial', createdByUsername: user.username, createdByAvatar: user.avatar } } );
     // /JF
+    */
+    Needs.update ( { _id: nId }, { $set: { tags: [], state: 'initial', createdByUsername: user.username, createdByAvatar: user.avatar } } );
     
     // JF 2016-09-29
     // Needs.update ( { _id: nId }, { $set: { createdByUsername: user.username, createdByAvatar: user.avatar } } );
@@ -65,8 +68,11 @@ Meteor.methods({
     // /JF
     
     // 2016-09-29
+    
+    /* 2016-10-03 disabling entering tags in input field        
     Meteor.call( 'changeNeedTagUsers', nId, tagsArray ); // updates the tagUsers, i.e. list of other users with the same tag(s) in their need.
-
+    */
+    
     Meteor.call( 'addChatMessage', { text: need.title, sourceId: nId } );
   },
   deleteNeed: function( needId ) {
@@ -96,6 +102,8 @@ Meteor.methods({
     Needs.update( { _id: needId }, { $set: { title: title, state: 'titleChanged' } } );
     // /JF
     
+    /* JF 2016-10-03 disabling tagging from directly in the need title, there is now a separate "textTags" field for this
+    
     // JF 2016-04-18
     var tagsArray = title.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
     Needs.update( { _id: needId }, { $set: { tags: tagsArray } } );
@@ -103,7 +111,8 @@ Meteor.methods({
 
     // 2016-09-29
     Meteor.call( 'changeNeedTagUsers', needId, tagsArray );
-    
+
+    */    
   },
   changeNeedCreated: function( needId, created ) {
     if( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
@@ -121,6 +130,20 @@ Meteor.methods({
   },
   // /JF
   
+  // 2016-10-03 
+  changeNeedTextTags: function( needId, textTags ) {
+  
+    // if (textTags == '') {textTags = '#';} // prevents duplicate text bug in contenteditable // jf: actually fixed by placeholder = "&nbsp;"
+
+    Needs.update( { _id: needId }, { $set: { textTags: textTags } } );
+    
+    var tagsArray = textTags.match(/#\S+/g);  // make an array with all the hashtags e.g ['#tag1', '#tag2']    
+    Needs.update( { _id: needId }, { $set: { tags: tagsArray } } );
+  
+      Meteor.call( 'changeNeedTagUsers', needId, tagsArray );
+    
+  },
+
   // JF 2016-09-29
   changeNeedTagUsers: function( needId, newTags ) {
   
@@ -266,6 +289,12 @@ Meteor.methods({
 
     TagChatRooms.remove( tagChatRoomId );
     TagChatMessages.remove( { sourceId: tagChatRoomId } );
+  },
+  deleteAllTagChatRooms: function( ) {
+    // if ( !isAllowed( 'edit needs' ) ) throw new Meteor.Error( 'not-authorized' );
+
+    TagChatRooms.remove( {} );
+    TagChatMessages.remove( {} );
   },
   
   // JF we don't really care under which user the TagChatRoom was created, so I commented this out
@@ -747,20 +776,25 @@ Meteor.methods({
         fields = {
           _id: true
         },
-        sourceIds = [];
+        sourceIds = [], 
+        tagChatRoomSourceIds = [];
 
     if( name === 'current content' ) {
       query.snapshot = { $exists: false };
     } else query.snapshot = Snapshots.findOne( { name: name } )._id;
 
     Needs.find( query ).forEach( getId );
-
+    
+    TagChatRooms.find ( query ).forEach( getTagChatRoomId );
+    
     Needs.remove( query );
     Resources.remove( query );
-
+  
+    TagChatRooms.remove ( query );
+ 
     ChatMessages.remove( { sourceId : { $in: sourceIds } } );
     // JF 2016-04-22
-    TagChatMessages.remove( { sourceId : { $in: sourceIds } } );
+    TagChatMessages.remove( { sourceId : { $in: tagChatRoomSourceIds } } );
     // /JF
     Resources.remove( { sourceId: { $in: sourceIds } } );
 
@@ -768,6 +802,10 @@ Meteor.methods({
 
     function getId( need ) {
       sourceIds.push( need._id );
+    }
+
+    function getTagChatRoomId( tagChatRoom ) {
+      tagChatRoomSourceIds.push( tagChatRoom._id );
     }
   },
   timeOffsetSnapshot: function( name, offsetAndUnit ) {
@@ -887,6 +925,11 @@ function Need( options ) {
   this.createdByAvatar = options.createdByAvatar;
   this.tagUsers = options.tagUsers || [];
   //
+  
+  // 2016-10-03
+  this.textTags = options.textTags || '#';
+  //
+  
 }
 
 // JF 2016-08-22 TagChatRoom

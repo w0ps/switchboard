@@ -9,7 +9,7 @@ Template.needs.events( {
   'focus [contentEditable=true]': editableFocusHandler,
   'blur [contentEditable=true]': editableBlurHandler,
   //JF commented out: 'click #needlist > .resource': clickAddResource,
-  'click .need .resourceButton': clickAddResourceToNeed
+  'click .need .resourceButton': clickAddResourceToNeed,
 } );
 
 // JF added:
@@ -187,6 +187,14 @@ Template.need.helpers( {
     return true;
         
   },
+  
+  // 2016-10-03 hack to avoid double text in contenteditable (see https://github.com/Swavek/contenteditable )
+  // placeholder="&nbsp;" is workaround for issue where cursor jumps to to of need when field is empty
+  editableTextTags: function () {
+  
+  return '<span class="need-tags" contenteditable="true" placeholder="&nbsp;" id="need-tags" >' + this.textTags + '</span>';   
+
+  },
         
 
   // JF 2016-04-24
@@ -311,6 +319,29 @@ Template.need.events( {
     }
   },    
 
+  // 2016-10-03 obviously copy-pasted from above, this prevents enters in the tags field
+  'keydown .need-tags': function(event) {
+  
+    // console.log("-------- keypress .need-title- event.which: "+event.which);
+
+    if(event.which === 13) 
+    {
+        var nextItem = $(this).next('input');
+
+        // console.log("-------- nextItem: " + nextItem);
+        
+        if( nextItem.size() === 0 ) {
+            nextItem = $('input').eq(0);
+            // console.log("-------- nextItem: " + nextItem);
+        }
+        
+        nextItem.focus();
+        
+        return false;
+    }
+  },    
+
+
 
 // JF: orginal line was:  'click li.need': openChat,
 // instead of this, only open a chat when clicked on the NAME:
@@ -331,7 +362,60 @@ Template.need.events( {
   // JF 2016-04-18
   // 'click li.need .tags': clickNeedTags
    // /JF
-  'click .taglink': openTagChat
+  'click .taglink': openTagChat,
+  
+    // 2016-10-03
+  'click .need-title': function (event) {
+    var textTagsField = event.target.nextElementSibling;
+    
+    textTagsField.focus();
+    
+    setEndOfContenteditable(textTagsField); // puts the cursor at the end of the text
+    
+    // this is really dirty, the intention was to put the focus on the field containing the "textTags", i.e. "need-tags"
+    // This works, but I still need to find a neater way to directly find that field instead of using nextElementSibling
+
+    /* 
+    console.log('clicked need title ', this.title);
+    console.log('$(this)', $(this));
+    console.log('this', this);
+
+    // console.log('this.children()', this.children());
+    // console.log('this.find("need-tags")', this.find('need-tags'));
+
+    console.log('event ', event);
+    
+    // console.log('$(this).closest("need") ', $(this).closest('need') );    
+    
+    console.log('$(event.target).closest("need") ', $(event.target.parentNode).find('need-tags') );
+    
+    console.log('TEST ', $(this).closest('.need').children('.need-tags'));
+    
+
+    // console.log('event.target.parentElement.find("need-tags") ', event.target.parentElement.find('need-tags') );
+    console.log('event.target.parentElement.children("need-tags") ', event.target.parentElement.children('need-tags') );
+
+
+    console.log('$(this).find("need-tags")', $(this).find('#need-tags'));
+
+    console.log('$("#need-tags")', $('#need-tags'));
+
+    console.log('$(this).children()', $(this).children());
+
+
+    
+        
+    $(this).$('#need-tags').focus();
+    
+    //$(this).next('need-tags').focus;
+    
+
+    // $(this).find('need-tags').focus;
+    */
+    
+   }
+  //
+
   
   
 } );
@@ -893,3 +977,23 @@ function getTagChatRooms( needSourceId ) {
 
 
 
+function setEndOfContenteditable(contentEditableElement)
+{
+    var range,selection;
+    if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+    {
+        range = document.createRange();//Create a range (a range is a like the selection but invisible)
+        range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        selection = window.getSelection();//get the selection object (allows you to change selection)
+        selection.removeAllRanges();//remove any selections already made
+        selection.addRange(range);//make the range you have just created the visible selection
+    }
+    else if(document.selection)//IE 8 and lower
+    { 
+        range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+        range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        range.select();//Select the range (make it the visible selection
+    }
+}

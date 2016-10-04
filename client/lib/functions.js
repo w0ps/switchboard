@@ -33,7 +33,9 @@ editableBlurHandler = function( event ) {
 
   if( content === originalContent ) return;
 
-  if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
+  // 2016-10-03 if( type === 'need' ) return Meteor.call( 'changeNeedTitle', id, content );
+  if( type === 'need' ) return Meteor.call( 'changeNeedTextTags', id, content );
+  //
   if( type === 'chatmessage' ) return Meteor.call( 'changeChatMessageText', id, content );
   if( type === 'resource' ) return Meteor.call( 'changeResourceText', id, content );
 };

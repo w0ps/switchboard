@@ -119,7 +119,14 @@
         <span class="need-title-state-{{state}}"> -->
         <span class="need-title-state-none">
             <span class="timecode">{{formatTime created}}</span>    
+            <!--
             <span class="need-title" {{contenteditability}}>{{title}}</span>  
+            -->
+            <span class="need-title" >{{title}}</span>  
+            <!-- 2016-10-01
+            <span class="need-tags" {{contenteditability}} id="need-tags" >{{textTags}}</span>   
+            -->
+            {{{editableTextTags}}}
 
         </span>
         

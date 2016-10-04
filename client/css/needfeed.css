@@ -9,6 +9,11 @@
     
 }
 
+/* 2016-10-04 CSS code for placeholder for contenteditable */
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  /* display: block; */
+}
 
 
 #openchats {
