@@ -14,6 +14,8 @@ Template.snapshots.events( {
   'focus section li p': editableFocusHandler,
   'blur section li p': editableBlurHandler,
   'click section span.datetime': clickDateTime,
+  'click aside button.deleteTagChatrooms': clickDeleteTagChatrooms,
+  
 } );
 
 function getSelectedSnapshot() {
@@ -56,10 +58,24 @@ function clickLoad( event ) {
   Session.set( 'selected snapshot', null );
 }
 
-function clickDeleteSnapshot( event ) {
-  Meteor.call( 'deleteSnapshot', this.name );
-  Session.set( 'selected snapshot', null );
+function clickDeleteTagChatrooms( event ) {
+
+  var r = confirm("This will delete all current tag chatrooms & messages!");
+  if (r == true) {
+    Meteor.call( 'deleteAllTagChatRooms' );
+  } 
+    
 }
+
+function clickDeleteSnapshot( event ) {
+
+  var r = confirm("This will delete the entire snapshot!");
+  if (r == true) {
+    Meteor.call( 'deleteSnapshot', this.name );
+    Session.set( 'selected snapshot', null );
+  } 
+}
+
 
 function changeTimeOffset( event ) {
   Meteor.call( 'timeOffsetSnapshot', this.name, event.target.value );

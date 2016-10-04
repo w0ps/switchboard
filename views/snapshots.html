@@ -65,6 +65,13 @@
 				{{/if}}
 				<input class="save" placeholder="save as..." />
 				{{> timeoffset}}
+                
+                <button class="deleteTagChatrooms">
+					{{#if compare name 'current content' '!=='}}
+                    {{else}}
+                        clear tagchatrooms
+                    {{/if}}
+                </button>
 			</aside>
 		{{/with}}
 	</div>
